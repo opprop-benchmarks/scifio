@@ -41,16 +41,18 @@ import io.scif.FormatException;
 import io.scif.HasColorTable;
 import io.scif.ImageMetadata;
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.RandomAccessInputStream;
 import io.scif.util.FormatTools;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.Vector;
 
 import net.imagej.axis.Axes;
 import net.imglib2.display.ColorTable;
 import net.imglib2.display.ColorTable8;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 import org.scijava.plugin.Plugin;
 
 /**
@@ -351,9 +353,7 @@ public class GIFFormat extends AbstractFormat {
 		// -- Checker API methods --
 
 		@Override
-		public boolean isFormat(final RandomAccessInputStream in)
-			throws IOException
-		{
+		public boolean isFormat(final DataHandle<Location> in) throws IOException {
 			final int blockLen = GIF_MAGIC_STRING.length();
 			if (!FormatTools.validStream(in, blockLen, false)) return false;
 			return in.readString(blockLen).startsWith(GIF_MAGIC_STRING);
@@ -378,13 +378,13 @@ public class GIFFormat extends AbstractFormat {
 		// -- Parser API Methods --
 
 		@Override
-		protected void typedParse(final RandomAccessInputStream stream,
+		protected void typedParse(final DataHandle<Location> stream,
 			final Metadata meta, final SCIFIOConfig config) throws IOException,
 			FormatException
 		{
 			log().info("Verifying GIF format");
 
-			stream.order(true);
+			stream.setOrder(ByteOrder.LITTLE_ENDIAN);
 			meta.setImages(new Vector<byte[]>());
 			meta.setColorTables(new Vector<int[]>());
 
@@ -690,7 +690,7 @@ public class GIFFormat extends AbstractFormat {
 
 		/** Reads the next variable length block. */
 		private int readBlock() throws IOException {
-			if (getSource().getFilePointer() == getSource().length()) return -1;
+			if (getSource().offset() == getSource().length()) return -1;
 			getMetadata().setBlockSize(getSource().read() & 0xff);
 			int n = 0;
 			int count;
