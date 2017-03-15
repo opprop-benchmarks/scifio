@@ -45,16 +45,18 @@ import io.scif.MetadataLevel;
 import io.scif.UnsupportedCompressionException;
 import io.scif.codec.BitBuffer;
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.RandomAccessInputStream;
 import io.scif.util.FormatTools;
 import io.scif.util.ImageTools;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 
 import net.imagej.axis.Axes;
 import net.imglib2.display.ColorTable;
 import net.imglib2.display.ColorTable8;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 import org.scijava.plugin.Plugin;
 
 /**
@@ -207,7 +209,7 @@ public class BMPFormat extends AbstractFormat {
 	public static class Checker extends AbstractChecker {
 
 		@Override
-		public boolean isFormat(final RandomAccessInputStream stream)
+		public boolean isFormat(final DataHandle<Location> stream)
 			throws IOException
 		{
 			final int blockLen = 2;
@@ -219,7 +221,7 @@ public class BMPFormat extends AbstractFormat {
 	public static class Parser extends AbstractParser<Metadata> {
 
 		@Override
-		protected void typedParse(final RandomAccessInputStream stream,
+		protected void typedParse(final DataHandle<Location> stream,
 			final Metadata meta, final SCIFIOConfig config) throws IOException,
 			FormatException
 		{
@@ -228,7 +230,7 @@ public class BMPFormat extends AbstractFormat {
 			final ImageMetadata iMeta = meta.get(0);
 			final MetaTable globalTable = meta.getTable();
 
-			stream.order(true);
+			stream.setOrder(ByteOrder.LITTLE_ENDIAN);
 
 			// read the first header - 14 bytes
 
@@ -357,7 +359,7 @@ public class BMPFormat extends AbstractFormat {
 			FormatTools.checkPlaneForReading(meta, imageIndex, planeIndex, buf.length,
 				planeMin, planeMax);
 
-			if (compression != RAW && getStream().length() < FormatTools.getPlaneSize(
+			if (compression != RAW && getHandle().length() < FormatTools.getPlaneSize(
 				this, imageIndex))
 			{
 				throw new UnsupportedCompressionException(compression +
@@ -367,7 +369,7 @@ public class BMPFormat extends AbstractFormat {
 			final int rowsToSkip = meta.isInvertY() ? y : sizeY - (h + y);
 			final int rowLength = sizeX * (meta.get(imageIndex).isIndexed() ? 1
 				: sizeC);
-			getStream().seek(meta.getGlobal() + rowsToSkip * rowLength);
+			getHandle().seek(meta.getGlobal() + rowsToSkip * rowLength);
 
 			int pad = ((rowLength * bpp) / 8) % 2;
 			if (pad == 0) pad = ((rowLength * bpp) / 8) % 4;
@@ -376,13 +378,11 @@ public class BMPFormat extends AbstractFormat {
 			if (bpp >= 8) planeSize *= (bpp / 8);
 			else planeSize /= (8 / bpp);
 			planeSize += pad * h;
-			if (planeSize + getStream().getFilePointer() > getStream().length()) {
+			if (planeSize + getHandle().offset() > getHandle().length()) {
 				planeSize -= (pad * h);
 
 				// sometimes we have RGB images with a single padding byte
-				if (planeSize + sizeY + getStream().getFilePointer() <= getStream()
-					.length())
-				{
+				if (planeSize + sizeY + getHandle().offset() <= getHandle().length()) {
 					pad = 1;
 					planeSize += h;
 				}
@@ -391,10 +391,10 @@ public class BMPFormat extends AbstractFormat {
 				}
 			}
 
-			getStream().skipBytes(rowsToSkip * pad);
+			getHandle().skipBytes(rowsToSkip * pad);
 
 			final byte[] rawPlane = new byte[planeSize];
-			getStream().read(rawPlane);
+			getHandle().read(rawPlane);
 
 			final BitBuffer bb = new BitBuffer(rawPlane);
 
