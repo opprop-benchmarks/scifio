@@ -31,10 +31,11 @@
 package io.scif;
 
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.RandomAccessInputStream;
 
-import java.io.File;
 import java.io.IOException;
+
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 
 /**
  * Interface for all {@link io.scif.Parser} implementations that use generic
@@ -52,80 +53,55 @@ import java.io.IOException;
 public interface TypedParser<M extends TypedMetadata> extends Parser {
 
 	@Override
-	M parse(String fileName) throws IOException, FormatException;
+	M parse(Location loc) throws IOException, FormatException;
 
 	@Override
-	M parse(File file) throws IOException, FormatException;
+	M parse(DataHandle<Location> handle) throws IOException, FormatException;
 
 	@Override
-	M parse(RandomAccessInputStream stream) throws IOException, FormatException;
-
-	@Override
-	M parse(String fileName, SCIFIOConfig config) throws IOException,
+	M parse(Location loc, SCIFIOConfig config) throws IOException,
 		FormatException;
 
 	@Override
-	M parse(File file, SCIFIOConfig config) throws IOException, FormatException;
-
-	@Override
-	M parse(RandomAccessInputStream stream, SCIFIOConfig config)
-		throws IOException, FormatException;
+	M parse(DataHandle<Location> handle, SCIFIOConfig config) throws IOException,
+		FormatException;
 
 	/**
 	 * Generic-parameterized {@code parse} method, using
 	 * {@link io.scif.TypedMetadata} to avoid type erasure conflicts with
-	 * {@link io.scif.Parser#parse(String, Metadata)}.
+	 * {@link io.scif.Parser#parse(Location, Metadata)}.
 	 *
-	 * @see io.scif.Parser#parse(String, Metadata)
+	 * @see io.scif.Parser#parse(Location, Metadata)
 	 */
 	M parse(String fileName, M meta) throws IOException, FormatException;
 
 	/**
 	 * Generic-parameterized {@code parse} method, using
 	 * {@link io.scif.TypedMetadata} to avoid type erasure conflicts with
-	 * {@link io.scif.Parser#parse(File, Metadata)}.
+	 * {@link io.scif.Parser#parse(DataHandle, Metadata)}.
 	 *
-	 * @see io.scif.Parser#parse(File, Metadata)
+	 * @see io.scif.Parser#parse(DataHandle, Metadata)
 	 */
-	M parse(File file, M meta) throws IOException, FormatException;
-
-	/**
-	 * Generic-parameterized {@code parse} method, using
-	 * {@link io.scif.TypedMetadata} to avoid type erasure conflicts with
-	 * {@link io.scif.Parser#parse(RandomAccessInputStream, Metadata)}.
-	 *
-	 * @see io.scif.Parser#parse(RandomAccessInputStream, Metadata)
-	 */
-	M parse(RandomAccessInputStream stream, M meta) throws IOException,
+	M parse(DataHandle<Location> stream, M meta) throws IOException,
 		FormatException;
 
 	/**
 	 * Generic-parameterized {@code parse} method, using
 	 * {@link io.scif.TypedMetadata} to avoid type erasure conflicts with
-	 * {@link io.scif.Parser#parse(String, Metadata)}.
+	 * {@link io.scif.Parser#parse(Location, Metadata)}.
 	 *
-	 * @see io.scif.Parser#parse(String, Metadata, SCIFIOConfig)
+	 * @see io.scif.Parser#parse(Location, Metadata, SCIFIOConfig)
 	 */
-	M parse(String fileName, M meta, SCIFIOConfig config) throws IOException,
+	M parse(Location fileName, M meta, SCIFIOConfig config) throws IOException,
 		FormatException;
 
 	/**
 	 * Generic-parameterized {@code parse} method, using
 	 * {@link io.scif.TypedMetadata} to avoid type erasure conflicts with
-	 * {@link io.scif.Parser#parse(File, Metadata)}.
+	 * {@link io.scif.Parser#parse(DataHandle, Metadata)}.
 	 *
-	 * @see io.scif.Parser#parse(File, Metadata, SCIFIOConfig)
+	 * @see io.scif.Parser#parse(DataHandle, Metadata, SCIFIOConfig)
 	 */
-	M parse(File file, M meta, SCIFIOConfig config) throws IOException,
-		FormatException;
-
-	/**
-	 * Generic-parameterized {@code parse} method, using
-	 * {@link io.scif.TypedMetadata} to avoid type erasure conflicts with
-	 * {@link io.scif.Parser#parse(RandomAccessInputStream, Metadata)}.
-	 *
-	 * @see io.scif.Parser#parse(RandomAccessInputStream, Metadata, SCIFIOConfig)
-	 */
-	M parse(RandomAccessInputStream stream, M meta, SCIFIOConfig config)
+	M parse(DataHandle<Location> stream, M meta, SCIFIOConfig config)
 		throws IOException, FormatException;
 }

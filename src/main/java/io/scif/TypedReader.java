@@ -31,9 +31,11 @@
 package io.scif;
 
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.RandomAccessInputStream;
 
 import java.io.IOException;
+
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 
 /**
  * Interface for all {@link io.scif.Reader} implementations that use generic
@@ -123,31 +125,29 @@ public interface TypedReader<M extends TypedMetadata, P extends DataPlane<?>>
 	/**
 	 * Generic-parameterized {@code readPlane} method, using
 	 * {@link io.scif.TypedMetadata} to avoid type erasure conflicts with
-	 * {@link io.scif.Reader#readPlane(RandomAccessInputStream, int, long[], long[], Plane)}
+	 * {@link io.scif.Reader#readPlane(DataHandle, int, long[], long[], Plane)}
 	 * <p>
 	 * NB Presumes that the source stream {@code s} is set to the correct offset,
 	 * i.e. start of the plane
 	 * </p>
 	 *
-	 * @see io.scif.Reader#readPlane(RandomAccessInputStream, int, long[], long[],
-	 *      Plane)
+	 * @see io.scif.Reader#readPlane(DataHandle, int, long[], long[], Plane)
 	 */
-	P readPlane(RandomAccessInputStream s, int imageIndex, long[] planeMin,
+	P readPlane(DataHandle<Location> s, int imageIndex, long[] planeMin,
 		long[] planeMax, P plane) throws IOException;
 
 	/**
 	 * Generic-parameterized {@code readPlane} method, using
 	 * {@link io.scif.TypedMetadata} to avoid type erasure conflicts with
-	 * {@link io.scif.Reader#readPlane(RandomAccessInputStream, int, long[], long[], int, Plane)}
+	 * {@link io.scif.Reader#readPlane(DataHandle, int, long[], long[], int, Plane)}
 	 * <p>
 	 * NB Presumes that the source stream {@code s} is set to the correct offset,
 	 * i.e. start of the plane
 	 * </p>
 	 *
-	 * @see io.scif.Reader#readPlane(RandomAccessInputStream, int, long[], long[],
-	 *      int, Plane)
+	 * @see io.scif.Reader#readPlane(DataHandle, int, long[], long[], int, Plane)
 	 */
-	P readPlane(RandomAccessInputStream s, int imageIndex, long[] planeMin,
+	P readPlane(DataHandle<Location> s, int imageIndex, long[] planeMin,
 		long[] planeMax, int scanlinePad, P plane) throws IOException;
 
 	@Override

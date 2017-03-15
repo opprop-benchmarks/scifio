@@ -31,9 +31,11 @@
 package io.scif;
 
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.RandomAccessInputStream;
 
 import java.io.IOException;
+
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 
 /**
  * Interface for all SCIFIO Checker components.
@@ -70,10 +72,10 @@ public interface Checker extends HasFormat {
 	 * Checks if the provided image source is compatible with this {@code Format}.
 	 * Will not open the source during this process.
 	 *
-	 * @param name path to the image source to check.
+	 * @param loc path to the image source to check.
 	 * @return True if the image source is compatible with this {@code Format}.
 	 */
-	boolean isFormat(String name);
+	boolean isFormat(Location loc);
 
 	/**
 	 * Checks if the provided image source is compatible with this {@code Format}.
@@ -84,11 +86,11 @@ public interface Checker extends HasFormat {
 	 * and directory listings) may be performed.
 	 * </p>
 	 *
-	 * @param name path to the image source to check.
+	 * @param loc path to the image source to check.
 	 * @param config {@link SCIFIOConfig} for this isFormat call.
 	 * @return True if the image source is compatible with this {@code Format}.
 	 */
-	boolean isFormat(String name, SCIFIOConfig config);
+	boolean isFormat(Location loc, SCIFIOConfig config);
 
 	/**
 	 * Checks if the given stream is a valid stream for this {@code Format}.
@@ -97,7 +99,7 @@ public interface Checker extends HasFormat {
 	 * @return True if {@code stream} is compatible with this {@code Format}.
 	 * @throws IOException
 	 */
-	boolean isFormat(RandomAccessInputStream stream) throws IOException;
+	boolean isFormat(DataHandle<Location> stream) throws IOException;
 
 	/**
 	 * Checks if the given bytes are a valid header for this {@code Format}.

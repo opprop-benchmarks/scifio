@@ -30,10 +30,11 @@
 
 package io.scif;
 
-import io.scif.io.RandomAccessInputStream;
-
 import java.io.Serializable;
 import java.util.List;
+
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 
 /**
  * Interface for all SCIFIO Metadata objects. Based on the format, a Metadata
@@ -61,14 +62,14 @@ public interface Metadata extends Serializable, HasFormat, HasSource,
 	 *
 	 * @param in - Input source for this Metadata
 	 */
-	void setSource(RandomAccessInputStream in);
+	void setSource(DataHandle<Location> in);
 
 	/**
 	 * Returns the source used to generate this Metadata object.
 	 *
 	 * @return - The associated RandomAccessInputStream
 	 */
-	RandomAccessInputStream getSource();
+	DataHandle<Location> getSource();
 
 	/**
 	 * Returns whether or not filterMetadata was set when parsing this Metadata
