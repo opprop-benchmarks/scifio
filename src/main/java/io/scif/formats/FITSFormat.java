@@ -39,13 +39,14 @@ import io.scif.Format;
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.RandomAccessInputStream;
 import io.scif.util.FormatTools;
 
 import java.io.IOException;
 
 import net.imagej.axis.Axes;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 import org.scijava.plugin.Plugin;
 import org.scijava.util.ArrayUtils;
 
@@ -129,7 +130,7 @@ public class FITSFormat extends AbstractFormat {
 		private static final int LINE_LENGTH = 80;
 
 		@Override
-		protected void typedParse(final RandomAccessInputStream stream,
+		protected void typedParse(final DataHandle<Location> stream,
 			final Metadata meta, final SCIFIOConfig config) throws IOException,
 			FormatException
 		{
@@ -180,7 +181,7 @@ public class FITSFormat extends AbstractFormat {
 				meta.getTable().put(key, value);
 			}
 			while (getSource().read() == 0x20) { /* Read to pixel data. */}
-			meta.setPixelOffset(getSource().getFilePointer() - 1);
+			meta.setPixelOffset(getSource().offset() - 1);
 		}
 	}
 
@@ -206,9 +207,9 @@ public class FITSFormat extends AbstractFormat {
 			FormatTools.checkPlaneForReading(getMetadata(), imageIndex, planeIndex,
 				buf.length, planeMin, planeMax);
 
-			getStream().seek(getMetadata().getPixelOffset() + planeIndex * FormatTools
+			getHandle().seek(getMetadata().getPixelOffset() + planeIndex * FormatTools
 				.getPlaneSize(this, imageIndex));
-			return readPlane(getStream(), imageIndex, planeMin, planeMax, plane);
+			return readPlane(getHandle(), imageIndex, planeMin, planeMax, plane);
 		}
 	}
 }
