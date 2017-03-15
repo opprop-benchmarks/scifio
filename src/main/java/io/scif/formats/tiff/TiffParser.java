@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,14 +36,17 @@ import io.scif.codec.BitBuffer;
 import io.scif.codec.CodecOptions;
 import io.scif.common.Constants;
 import io.scif.enumeration.EnumException;
-import io.scif.io.RandomAccessInputStream;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.HashSet;
 import java.util.Vector;
 
 import org.scijava.AbstractContextual;
 import org.scijava.Context;
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
 import org.scijava.log.LogService;
 import org.scijava.util.Bytes;
 import org.scijava.util.IntRect;
@@ -61,7 +64,7 @@ public class TiffParser extends AbstractContextual {
 	// -- Fields --
 
 	/** Input source from which to parse TIFF data. */
-	private final RandomAccessInputStream in;
+	private final DataHandle<Location> in;
 
 	/** Cached tile buffer to avoid re-allocations when reading tiles. */
 	private byte[] cachedTileBuffer;
@@ -94,21 +97,19 @@ public class TiffParser extends AbstractContextual {
 	// -- Constructors --
 
 	/** Constructs a new TIFF parser from the given file name. */
-	public TiffParser(final Context context, final String filename)
-		throws IOException
-	{
-		this(context, new RandomAccessInputStream(context, filename));
+	public TiffParser(final Context context, final Location loc) {
+		this(context, context.getService(DataHandleService.class).create(loc));
 	}
 
 	/** Constructs a new TIFF parser from the given input source. */
-	public TiffParser(final Context context, final RandomAccessInputStream in) {
+	public TiffParser(final Context context, final DataHandle<Location> in) {
 		setContext(context);
 		scifio = new SCIFIO(context);
 		log = scifio.log();
 		this.in = in;
 		doCaching = true;
 		try {
-			final long fp = in.getFilePointer();
+			final long fp = in.offset();
 			checkHeader();
 			in.seek(fp);
 		}
@@ -161,7 +162,7 @@ public class TiffParser extends AbstractContextual {
 	}
 
 	/** Gets the stream from which TIFF data is being parsed. */
-	public RandomAccessInputStream getStream() {
+	public DataHandle<Location> getStream() {
 		return in;
 	}
 
@@ -194,7 +195,7 @@ public class TiffParser extends AbstractContextual {
 		if (!littleEndian && !bigEndian) return null;
 
 		// check magic number (42)
-		in.order(littleEndian);
+		in.setOrder(littleEndian ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
 		final short magic = in.readShort();
 		bigTiff = magic == TiffConstants.BIG_TIFF_MAGIC_NUMBER;
 		if (magic != TiffConstants.MAGIC_NUMBER &&
@@ -426,7 +427,7 @@ public class TiffParser extends AbstractContextual {
 			}
 			if (count < 0 || count > in.length()) break;
 
-			if (pointer != in.getFilePointer() && !doCaching) {
+			if (pointer != in.offset() && !doCaching) {
 				value = entry;
 			}
 			else value = getIFDValue(entry);
@@ -470,7 +471,7 @@ public class TiffParser extends AbstractContextual {
 			return null;
 		}
 
-		if (offset != in.getFilePointer()) {
+		if (offset != in.offset()) {
 			in.seek(offset);
 		}
 
@@ -529,7 +530,7 @@ public class TiffParser extends AbstractContextual {
 			if (count == 1) return new Long(in.readInt());
 			final long[] longs = new long[count];
 			for (int j = 0; j < count; j++) {
-				if (in.getFilePointer() + 4 <= in.length()) {
+				if (in.offset() + 4 <= in.length()) {
 					longs[j] = in.readInt();
 				}
 			}
@@ -750,7 +751,7 @@ public class TiffParser extends AbstractContextual {
 
 		// get internal non-IFD entries
 		final boolean littleEndian = ifd.isLittleEndian();
-		in.order(littleEndian);
+		in.setOrder(littleEndian ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
 
 		// get relevant IFD entries
 		final int samplesPerPixel = ifd.getSamplesPerPixel();
@@ -951,7 +952,7 @@ public class TiffParser extends AbstractContextual {
 			entryType = IFDType.get(in.readUnsignedShort());
 		}
 		catch (final EnumException e) {
-			log.error("Error reading IFD type at: " + in.getFilePointer());
+			log.error("Error reading IFD type at: " + in.offset());
 			throw e;
 		}
 
@@ -964,7 +965,7 @@ public class TiffParser extends AbstractContextual {
 		final int nValueBytes = valueCount * entryType.getBytesPerElement();
 		final int threshhold = bigTiff ? 8 : 4;
 		final long offset = nValueBytes > threshhold ? getNextOffset(0) : in
-			.getFilePointer();
+			.offset();
 
 		return new TiffIFDEntry(entryTag, entryType, valueCount, offset);
 	}
