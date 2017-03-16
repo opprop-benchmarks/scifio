@@ -12,7 +12,6 @@ import io.scif.ImageMetadata;
 import io.scif.Metadata;
 import io.scif.Reader;
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.RandomAccessInputStream;
 import io.scif.util.FormatTools;
 
 import java.nio.ByteBuffer;
@@ -23,6 +22,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.scijava.Context;
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
+import org.scijava.io.handles.BytesLocation;
 
 /**
  * Tests {@link KontronFormat} and its subclasses
@@ -32,9 +35,10 @@ import org.scijava.Context;
 public class KontronFormatTest {
 
 	private static final Context context = new Context();
-	private static final KontronFormat format = new KontronFormat();;
+	private static final KontronFormat format = new KontronFormat();
 	private static KontronFormat.Reader reader;
 	private static KontronFormat.Parser parser;
+	private static DataHandleService dataHandleService;
 	private static final KontronFormat.Checker checker =
 		new KontronFormat.Checker();
 
@@ -43,6 +47,7 @@ public class KontronFormatTest {
 		format.setContext(context);
 		reader = (KontronFormat.Reader) format.createReader();
 		parser = (KontronFormat.Parser) format.createParser();
+		dataHandleService = context.getService(DataHandleService.class);
 	}
 
 	@Before
@@ -59,16 +64,18 @@ public class KontronFormatTest {
 	 */
 	@Test
 	public void testIsFormatFalseShortStream() throws Exception {
-		final RandomAccessInputStream stream = new RandomAccessInputStream(context,
-			new byte[] { 0x1, 0x0, 0x47 });
+		final DataHandle<Location> stream = dataHandleService.create(
+			new BytesLocation(new byte[] { 0x1, 0x0, 0x47 }));
 
 		assertFalse(checker.isFormat(stream));
 	}
 
 	@Test
 	public void testIsFormatFalseIncorrectBytes() throws Exception {
-		final RandomAccessInputStream stream = new RandomAccessInputStream(context,
-			new byte[] { 0x1, 0x0, 0x47, 0x12, 0x6D, (byte) 0xA0 });
+
+		final DataHandle<Location> stream = dataHandleService.create(
+			new BytesLocation(new byte[] { 0x1, 0x0, 0x47, 0x12, 0x6D,
+				(byte) 0xA0 }));
 
 		assertFalse(checker.isFormat(stream));
 	}
@@ -76,8 +83,10 @@ public class KontronFormatTest {
 	@Test
 	public void testIsFormat() throws Exception {
 		// Add an extra byte to the end to check that it doesn't affect the result
-		final RandomAccessInputStream stream = new RandomAccessInputStream(context,
-			new byte[] { 0x1, 0x0, 0x47, 0x12, 0x6D, (byte) 0xB0, 0x13 });
+
+		final DataHandle<Location> stream = dataHandleService.create(
+			new BytesLocation(new byte[] { 0x1, 0x0, 0x47, 0x12, 0x6D, (byte) 0xB0,
+				0x13 }));
 
 		assertTrue(checker.isFormat(stream));
 	}
@@ -111,8 +120,9 @@ public class KontronFormatTest {
 		buffer.putShort((short) width);
 		buffer.putShort((short) height);
 		buffer.position(HEADER_BYTES);
-		final RandomAccessInputStream stream = new RandomAccessInputStream(context,
-			buffer.array());
+
+		final DataHandle<Location> stream = dataHandleService.create(
+			new BytesLocation(buffer));
 		reader.setSource(stream);
 
 		// EXERCISE
@@ -137,8 +147,8 @@ public class KontronFormatTest {
 		buffer.order(ByteOrder.LITTLE_ENDIAN);
 		buffer.position(KONTRON_ID.length);
 		buffer.putShort(width).putShort(height);
-		final RandomAccessInputStream stream = new RandomAccessInputStream(context,
-			buffer.array());
+		final DataHandle<Location> stream = dataHandleService.create(
+			new BytesLocation(buffer));
 		final Reader reader = format.createReader();
 		reader.setSource(stream);
 
@@ -148,6 +158,6 @@ public class KontronFormatTest {
 		// VERIFY
 		assertEquals(
 			"Position of stream incorrect: should point to the end of the file",
-			stream.length(), stream.getFilePointer());
+			stream.length(), stream.offset());
 	}
 }

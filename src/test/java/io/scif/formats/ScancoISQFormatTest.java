@@ -9,7 +9,6 @@ import io.scif.ByteArrayPlane;
 import io.scif.ImageMetadata;
 import io.scif.Reader;
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.RandomAccessInputStream;
 import io.scif.util.FormatTools;
 
 import java.nio.ByteBuffer;
@@ -24,6 +23,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.scijava.Context;
+import org.scijava.io.BytesLocation;
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
 
 /**
  * Tests {@link ScancoISQFormat} and its subclasses
@@ -37,11 +40,13 @@ public class ScancoISQFormatTest {
 		new ScancoISQFormat.Checker();
 	private static final ScancoISQFormat format = new ScancoISQFormat();
 	private static ScancoISQFormat.Parser parser;
+	private static DataHandleService dataHandleService;
 
 	@BeforeClass
 	public static void oneTimeSetup() throws Exception {
 		format.setContext(context);
 		parser = (ScancoISQFormat.Parser) format.createParser();
+		dataHandleService = context.getService(DataHandleService.class);
 	}
 
 	@AfterClass
@@ -51,16 +56,16 @@ public class ScancoISQFormatTest {
 
 	@Test
 	public void testIsFormatFalseShortStream() throws Exception {
-		final RandomAccessInputStream stream = new RandomAccessInputStream(context,
-			"CTDATA-HEADER_V".getBytes());
+		final DataHandle<Location> stream = dataHandleService.create(
+			new BytesLocation("CTDATA-HEADER_V".getBytes()));
 
 		assertFalse(checker.isFormat(stream));
 	}
 
 	@Test
 	public void testIsFormatIncorrectHeader() throws Exception {
-		final RandomAccessInputStream stream = new RandomAccessInputStream(context,
-			"CTDATA-hEADER_V1".getBytes());
+		final DataHandle<Location> stream = dataHandleService.create(
+			new BytesLocation("CTDATA-hEADER_V1".getBytes()));
 
 		assertFalse(checker.isFormat(stream));
 	}
@@ -68,8 +73,9 @@ public class ScancoISQFormatTest {
 	@Test
 	public void testIsFormat() throws Exception {
 		// Add an extra byte to the end to check that it doesn't affect the result
-		final RandomAccessInputStream stream = new RandomAccessInputStream(context,
-			"CTDATA-HEADER_V1a".getBytes());
+
+		final DataHandle<Location> stream = dataHandleService.create(
+			new BytesLocation("CTDATA-HEADER_V1a".getBytes()));
 
 		assertTrue(checker.isFormat(stream));
 	}
@@ -172,8 +178,9 @@ public class ScancoISQFormatTest {
 		buffer.putInt(intensity);
 		buffer.position(508);
 		buffer.putInt(optionalBlocks);
-		final RandomAccessInputStream stream = new RandomAccessInputStream(context,
-			buffer.array());
+
+		final DataHandle<Location> stream = dataHandleService.create(
+			new BytesLocation(buffer));
 		final SCIFIOConfig config = new SCIFIOConfig();
 		final ScancoISQFormat.Metadata metadata = new ScancoISQFormat.Metadata();
 
@@ -231,8 +238,8 @@ public class ScancoISQFormatTest {
 		buffer.order(ByteOrder.LITTLE_ENDIAN);
 		buffer.position(44);
 		buffer.putInt(width).putInt(height).putInt(depth);
-		final RandomAccessInputStream stream = new RandomAccessInputStream(context,
-			buffer.array());
+		final DataHandle<Location> stream = dataHandleService.create(
+			new BytesLocation(buffer));
 		final Reader reader = format.createReader();
 		reader.setSource(stream);
 
@@ -242,7 +249,6 @@ public class ScancoISQFormatTest {
 		// VERIFY
 		assertEquals(
 			"Position of stream incorrect: should point to the beginning of the 3rd slice",
-			ScancoISQFormat.Metadata.HEADER_BLOCK + 2 * planeBytes, stream
-				.getFilePointer());
+			ScancoISQFormat.Metadata.HEADER_BLOCK + 2 * planeBytes, stream.offset());
 	}
 }
