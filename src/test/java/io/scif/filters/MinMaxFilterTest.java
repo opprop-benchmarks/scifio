@@ -41,6 +41,7 @@ import java.io.IOException;
 import net.imagej.axis.Axes;
 
 import org.junit.Test;
+import org.scijava.io.FileLocation;
 
 /**
  * Tests for {@link MinMaxFilter}.
@@ -51,8 +52,8 @@ public class MinMaxFilterTest {
 
 	private final SCIFIO scifio = new SCIFIO();
 
-	private final String id =
-		"testImg&lengths=3,127,127,4&axes=Channel,X,Y,Time&planarDims=3.fake";
+	private final FileLocation id = new FileLocation(
+		"testImg&lengths=3,127,127,4&axes=Channel,X,Y,Time&planarDims=3.fake");
 
 	@Test
 	public void testMinMax() throws FormatException, IOException {

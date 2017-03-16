@@ -40,6 +40,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.scijava.InstantiableException;
+import org.scijava.io.FileLocation;
 
 /**
  * Tests for {@link PlaneSeparator}.
@@ -50,8 +51,8 @@ public class PlaneSeparatorTest {
 
 	private final SCIFIO scifio = new SCIFIO();
 
-	private final String id =
-		"testImg&lengths=3,4,512,512&axes=Channel,Time,X,Y.fake";
+	private final FileLocation id = new FileLocation(
+		"testImg&lengths=3,4,512,512&axes=Channel,Time,X,Y.fake");
 
 	/**
 	 * Verify that multiple interleaved axes are automatically extracted.
