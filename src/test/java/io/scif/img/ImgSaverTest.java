@@ -51,6 +51,8 @@ import net.imglib2.type.numeric.integer.UnsignedByteType;
 import org.junit.After;
 import org.junit.Test;
 import org.scijava.Context;
+import org.scijava.io.Location;
+import org.scijava.io.handles.FileLocation;
 
 /**
  * Tests for the {@link ImgSaver} class.
@@ -59,9 +61,10 @@ import org.scijava.Context;
  */
 public class ImgSaverTest {
 
-	private final String id = "testImg&lengths=512,512,2,3&axes=X,Y,Z,Time.fake";
+	private final Location id = new FileLocation(
+		"testImg&lengths=512,512,2,3&axes=X,Y,Z,Time.fake");
 
-	private final String out = "test.tif";
+	private final Location out = new FileLocation("test.tif");
 
 	private final Context ctx = new Context();
 
@@ -70,7 +73,7 @@ public class ImgSaverTest {
 
 	@After
 	public void cleanup() {
-		final File f = new File(out);
+		final File f = new File(out.getURI());
 		if (f.exists()) f.delete();
 	}
 
@@ -87,7 +90,7 @@ public class ImgSaverTest {
 		final SCIFIOConfig config = new SCIFIOConfig().imgOpenerSetImgModes(
 			ImgMode.PLANAR);
 		final ByteArrayHandle bah = new ByteArrayHandle();
-		locationService.mapFile(out, bah);
+//		locationService.mapFile(out, bah);
 
 		final SCIFIOImgPlus<?> openImg = o.openImgs(id, config).get(0);
 		final String source = openImg.getSource();

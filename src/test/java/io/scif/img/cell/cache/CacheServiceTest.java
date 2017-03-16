@@ -62,6 +62,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.scijava.Context;
+import org.scijava.io.FileLocation;
+import org.scijava.io.Location;
 
 /**
  * Unit tests for testing the {@link CacheService}. Tests storage and retrieval,
@@ -470,9 +472,9 @@ public class CacheServiceTest {
 	// -- Helper methods --
 
 	// return a fake id for a file of the specified size
-	private String makeFakeFile(final long bytes) {
+	private Location makeFakeFile(final long bytes) {
 		final long dim = Math.round(Math.sqrt(bytes));
-		return "testImg&lengths=" + dim + "," + dim + ".fake";
+		return new FileLocation("testImg&lengths=" + dim + "," + dim + ".fake");
 	}
 
 	// Creates a SCIFIOCellCache anonymously for a file of the specified size
@@ -483,7 +485,7 @@ public class CacheServiceTest {
 	}
 
 	// Creates a SCIFIOCellCache for the given id
-	private SCIFIOCellCache<ByteArray> makeCache(final String id)
+	private SCIFIOCellCache<ByteArray> makeCache(final Location id)
 		throws FormatException, IOException
 	{
 		final ReaderFilter rf = scifio.initializer().initializeReader(id,
@@ -498,7 +500,7 @@ public class CacheServiceTest {
 	private TestCellCache<ByteArray> makeTestCache(final long bytes)
 		throws FormatException, IOException
 	{
-		final String id = makeFakeFile(bytes);
+		final Location id = makeFakeFile(bytes);
 		final ReaderFilter rf = scifio.initializer().initializeReader(id,
 			new SCIFIOConfig().checkerSetOpen(true));
 		final ByteArrayLoader loader = new ByteArrayLoader(rf, null);

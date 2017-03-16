@@ -63,6 +63,8 @@ import net.imglib2.type.numeric.real.FloatType;
 
 import org.junit.Test;
 import org.scijava.Context;
+import org.scijava.io.Location;
+import org.scijava.io.handles.FileLocation;
 
 /**
  * Tests for the {@link ImgOpener} class.
@@ -75,7 +77,8 @@ public class ImgOpenerTest {
 	// to ensure all necessary services are present
 	private final ImgOpener imgOpener = new ImgOpener();
 
-	private final String id = "testImg&lengths=512,512,5&axes=X,Y,Time.fake";
+	private final Location id = new FileLocation(
+		"testImg&lengths=512,512,5&axes=X,Y,Time.fake");
 
 	/**
 	 * Verify that SCIFIO Metadata calibration values are preserved in an opened
@@ -83,8 +86,8 @@ public class ImgOpenerTest {
 	 */
 	@Test
 	public void testImgCalibration() throws ImgIOException {
-		final String calId =
-			"testImg&lengths=512,512,3,5&axes=X,Y,Z,Time&scales=5.0,6.0,7.0,8.0.fake";
+		final Location calId = new FileLocation(
+			"testImg&lengths=512,512,3,5&axes=X,Y,Z,Time&scales=5.0,6.0,7.0,8.0.fake");
 
 		@SuppressWarnings("rawtypes")
 		final ImgPlus imgPlus = imgOpener.openImgs(calId).get(0);
@@ -108,8 +111,8 @@ public class ImgOpenerTest {
 
 	@Test
 	public void testCalibrationUnits() throws ImgIOException {
-		final String calId =
-			"testImg&lengths=512,512,3&axes=X,Y,Z&scales=5.0,6.0,7.0&units=micron,um,inches.fake";
+		final Location calId = new FileLocation(
+			"testImg&lengths=512,512,3&axes=X,Y,Z&scales=5.0,6.0,7.0&units=micron,um,inches.fake");
 
 		final ImgPlus<?> imgPlus = imgOpener.openImgs(calId).get(0);
 
@@ -145,7 +148,9 @@ public class ImgOpenerTest {
 	 */
 	@Test
 	public void testOpenAllImages() throws ImgIOException {
-		final String id = "testImg&images=5&lengths=512,512&axes=X,Y.fake";
+
+		final Location id = new FileLocation(
+			"testImg&images=5&lengths=512,512&axes=X,Y.fake");
 
 		// Open all images
 		final List<SCIFIOImgPlus<?>> imgs = new MultiImgOpener().openImgs(id,
@@ -172,7 +177,8 @@ public class ImgOpenerTest {
 	 */
 	@Test
 	public void testOpenImageRange() throws ImgIOException {
-		final String id = "testImg&images=5&lengths=512,512&axes=X,Y.fake";
+		final Location id = new FileLocation(
+			"testImg&images=5&lengths=512,512&axes=X,Y.fake");
 
 		// Open images 0 and 3
 		final List<SCIFIOImgPlus<?>> imgs = new MultiImgOpener().openImgs(id,
