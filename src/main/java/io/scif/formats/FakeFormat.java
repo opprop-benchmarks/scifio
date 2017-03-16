@@ -45,10 +45,9 @@ import io.scif.MetadataService;
 import io.scif.Plane;
 import io.scif.Translator;
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.Location;
-import io.scif.io.RandomAccessInputStream;
 import io.scif.util.FormatTools;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +61,11 @@ import net.imglib2.display.ColorTable16;
 import net.imglib2.display.ColorTable8;
 
 import org.scijava.Priority;
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
+import org.scijava.io.handles.FileLocation;
+import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.util.Bytes;
 
@@ -115,7 +119,7 @@ public class FakeFormat extends AbstractFormat {
 
 	/**
 	 * Metadata class for Fake format. Actually holds no information about the
-	 * "image" as everything is stored in the attached RandomAccessInputStream.
+	 * "image" as everything is stored in the attached DataHandle<Location>.
 	 * <p>
 	 * Fake specification should be accessed by {@link Metadata#getSource()}
 	 * </p>
@@ -436,9 +440,9 @@ public class FakeFormat extends AbstractFormat {
 
 		// -- Parser API Methods --
 
-		/* @See Parser#Parse(RandomAccessInputStream, M) */
+		/* @See Parser#Parse(DataHandle<Location>, M) */
 		@Override
-		protected void typedParse(final RandomAccessInputStream stream,
+		protected void typedParse(final DataHandle<Location> stream,
 			final Metadata meta, final SCIFIOConfig config) throws IOException,
 			FormatException
 		{
@@ -636,6 +640,9 @@ public class FakeFormat extends AbstractFormat {
 		AbstractTranslator<io.scif.Metadata, Metadata>
 	{
 
+		@Parameter
+		private DataHandleService dataHandleService;
+
 		// -- Translator API Methods --
 
 		@Override
@@ -700,7 +707,7 @@ public class FakeFormat extends AbstractFormat {
 
 			try {
 				dest.close();
-				dest.setSource(new RandomAccessInputStream(getContext(), fakeId));
+				dest.setSource(dataHandleService.create(new FileLocation(fakeId)));
 			}
 			catch (final IOException e) {
 				log().debug("Failed to create RAIS: " + fakeId, e);
@@ -724,10 +731,11 @@ public class FakeFormat extends AbstractFormat {
 		public static Map<String, Object> extractFakeInfo(
 			final MetadataService metadataService, String fakePath)
 		{
-			final Location loc = new Location(metadataService.getContext(), fakePath);
+			final Location loc = new FileLocation(fakePath);
 
-			if (loc.exists()) {
-				fakePath = loc.getAbsoluteFile().getName();
+			final File f = new File(loc.getURI());
+			if (f.exists()) {
+				fakePath = f.getAbsoluteFile().getName();
 			}
 
 			// strip extension from filename
