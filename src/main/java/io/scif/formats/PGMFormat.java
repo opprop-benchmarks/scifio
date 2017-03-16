@@ -40,16 +40,20 @@ import io.scif.Format;
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.ByteArrayHandle;
-import io.scif.io.RandomAccessInputStream;
-import io.scif.io.RandomAccessOutputStream;
 import io.scif.util.FormatTools;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.StringTokenizer;
 
 import net.imagej.axis.Axes;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
+import org.scijava.io.handles.BytesLocation;
+import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
 /**
@@ -133,7 +137,7 @@ public class PGMFormat extends AbstractFormat {
 		}
 
 		@Override
-		public boolean isFormat(final RandomAccessInputStream stream)
+		public boolean isFormat(final DataHandle<Location> stream)
 			throws IOException
 		{
 			final int blockLen = 2;
@@ -149,7 +153,7 @@ public class PGMFormat extends AbstractFormat {
 		// -- Parser API Methods --
 
 		@Override
-		protected void typedParse(final RandomAccessInputStream stream,
+		protected void typedParse(final DataHandle<Location> stream,
 			final Metadata meta, final SCIFIOConfig config) throws IOException,
 			FormatException
 		{
@@ -224,13 +228,16 @@ public class PGMFormat extends AbstractFormat {
 				else iMeta.setPixelType(FormatTools.UINT8);
 			}
 
-			meta.setOffset(stream.getFilePointer());
+			meta.setOffset(stream.offset());
 
 			meta.getTable().put("Black and white", isBlackAndWhite);
 		}
 	}
 
 	public static class Reader extends ByteArrayReader<Metadata> {
+
+		@Parameter
+		private DataHandleService dataHandleService;
 
 		// -- AbstractReader API Methods --
 
@@ -251,37 +258,37 @@ public class PGMFormat extends AbstractFormat {
 			FormatTools.checkPlaneForReading(meta, imageIndex, planeIndex, buf.length,
 				planeMin, planeMax);
 
-			getStream().seek(meta.getOffset());
+			getHandle().seek(meta.getOffset());
 			if (meta.isRawBits()) {
-				readPlane(getStream(), imageIndex, planeMin, planeMax, plane);
+				readPlane(getHandle(), imageIndex, planeMin, planeMax, plane);
 			}
 			else {
-				final ByteArrayHandle handle = new ByteArrayHandle();
-				final RandomAccessOutputStream out = new RandomAccessOutputStream(
-					handle);
-				out.order(meta.get(imageIndex).isLittleEndian());
+				try (DataHandle<Location> bytes = dataHandleService.create(
+					new BytesLocation(ByteBuffer.allocate(10000))))
+				// FIXME: what is a good value for this?
+				{
 
-				while (getStream().getFilePointer() < getStream().length()) {
-					String line = getStream().readLine().trim();
-					line = line.replaceAll("[^0-9]", " ");
-					final StringTokenizer t = new StringTokenizer(line, " ");
-					while (t.hasMoreTokens()) {
-						final int q = Integer.parseInt(t.nextToken().trim());
-						if (meta.get(imageIndex).getPixelType() == FormatTools.UINT16) {
-							out.writeShort(q);
+					final boolean littleEndian = meta.get(imageIndex).isLittleEndian();
+					bytes.setOrder(littleEndian ? ByteOrder.LITTLE_ENDIAN
+						: ByteOrder.BIG_ENDIAN);
+
+					while (getHandle().offset() < getHandle().length()) {
+						String line = getHandle().readLine().trim();
+						line = line.replaceAll("[^0-9]", " ");
+						final StringTokenizer t = new StringTokenizer(line, " ");
+						while (t.hasMoreTokens()) {
+							final int q = Integer.parseInt(t.nextToken().trim());
+							if (meta.get(imageIndex).getPixelType() == FormatTools.UINT16) {
+								bytes.writeShort(q);
+							}
+							else bytes.writeByte(q);
 						}
-						else out.writeByte(q);
 					}
+
+					bytes.seek(0);
+					readPlane(bytes, imageIndex, planeMin, planeMax, plane);
 				}
-
-				out.close();
-				final RandomAccessInputStream s = new RandomAccessInputStream(
-					getContext(), handle);
-				s.seek(0);
-				readPlane(s, imageIndex, planeMin, planeMax, plane);
-				s.close();
 			}
-
 			return plane;
 		}
 	}
