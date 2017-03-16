@@ -42,6 +42,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.scijava.Context;
+import org.scijava.io.FileLocation;
 import org.scijava.thread.ThreadService;
 
 /**
@@ -99,7 +100,7 @@ public class FormatServiceTest {
 			while (System.currentTimeMillis() - time < 10000) {
 				final String s = new BigInteger(64, random).toString() + ".tif";
 				try {
-					formatService.getFormat(s);
+					formatService.getFormat(new FileLocation(s));
 				}
 				catch (final FormatException exc) {
 					return;
