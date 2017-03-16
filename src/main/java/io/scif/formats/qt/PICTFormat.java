@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -47,10 +47,12 @@ import io.scif.codec.PackbitsCodec;
 import io.scif.config.SCIFIOConfig;
 import io.scif.gui.AWTImageTools;
 import io.scif.io.ByteArrayHandle;
-import io.scif.io.RandomAccessInputStream;
 import io.scif.util.FormatTools;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import net.imagej.axis.Axes;
@@ -58,6 +60,10 @@ import net.imagej.axis.DefaultLinearAxis;
 import net.imglib2.display.ColorTable;
 import net.imglib2.display.ColorTable8;
 
+import org.scijava.io.BytesLocation;
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.util.Bytes;
@@ -147,7 +153,7 @@ public class PICTFormat extends AbstractFormat {
 		 * Vector of {@code byte[]} and/or {@code int[]} representing individual
 		 * rows.
 		 */
-		private Vector<Object> strips;
+		private List<Object> strips;
 
 		/** Whether or not the file is PICT v1. */
 		private boolean versionOne;
@@ -155,7 +161,7 @@ public class PICTFormat extends AbstractFormat {
 		/** Color lookup table for palette color images. */
 		private byte[][] lookup;
 
-		private Vector<Long> jpegOffsets = new Vector<>();
+		private List<Long> jpegOffsets = new ArrayList<>();
 
 		// -- PICTFormat Metadata getters and setters --
 
@@ -167,11 +173,11 @@ public class PICTFormat extends AbstractFormat {
 			this.rowBytes = rowBytes;
 		}
 
-		public Vector<Object> getStrips() {
+		public List<Object> getStrips() {
 			return strips;
 		}
 
-		public void setStrips(final Vector<Object> strips) {
+		public void setStrips(final List<Object> strips) {
 			this.strips = strips;
 		}
 
@@ -191,11 +197,11 @@ public class PICTFormat extends AbstractFormat {
 			this.lookup = lookup;
 		}
 
-		public Vector<Long> getJpegOffsets() {
+		public List<Long> getJpegOffsets() {
 			return jpegOffsets;
 		}
 
-		public void setJpegOffsets(final Vector<Long> jpegOffsets) {
+		public void setJpegOffsets(final List<Long> jpegOffsets) {
 			this.jpegOffsets = jpegOffsets;
 		}
 
@@ -249,7 +255,7 @@ public class PICTFormat extends AbstractFormat {
 		// -- Parser API methods --
 
 		@Override
-		protected void typedParse(final RandomAccessInputStream stream,
+		protected void typedParse(final DataHandle<Location> stream,
 			final Metadata meta, final SCIFIOConfig config) throws IOException,
 			FormatException
 		{
@@ -260,7 +266,7 @@ public class PICTFormat extends AbstractFormat {
 			short sizeY = stream.readShort();
 			short sizeX = stream.readShort();
 
-			final Vector<Object> strips = new Vector<>();
+			final List<Object> strips = new ArrayList<>();
 			final byte[][] lookup = null;
 			boolean versionOne = false;
 			meta.setStrips(strips);
@@ -308,10 +314,10 @@ public class PICTFormat extends AbstractFormat {
 				else {
 					// if at odd boundary skip a byte for opcode in PICT v2
 
-					if ((stream.getFilePointer() & 0x1L) != 0) {
+					if ((stream.offset() & 0x1L) != 0) {
 						stream.skipBytes(1);
 					}
-					if (stream.getFilePointer() + 2 >= stream.length()) {
+					if (stream.offset() + 2 >= stream.length()) {
 						break;
 					}
 					opcode = stream.readShort() & 0xffff;
@@ -326,8 +332,7 @@ public class PICTFormat extends AbstractFormat {
 		private boolean drivePictDecoder(final Metadata meta, final int opcode)
 			throws FormatException, IOException
 		{
-			log().debug("drivePictDecoder(" + opcode + ") @ " + getSource()
-				.getFilePointer());
+			log().debug("drivePictDecoder(" + opcode + ") @ " + getSource().offset());
 
 			switch (opcode) {
 				case PICT_BITSRGN: // rowBytes must be < 8
@@ -359,19 +364,17 @@ public class PICTFormat extends AbstractFormat {
 					getSource().skipBytes(x);
 					break;
 				case PICT_JPEG:
-					meta.getJpegOffsets().add(getSource().getFilePointer() + 2);
+					meta.getJpegOffsets().add(getSource().offset() + 2);
 					meta.get(0).setAxisLength(Axes.CHANNEL, 3);
 					while ((getSource().readShort() & 0xffff) != 0xffd9 && getSource()
-						.getFilePointer() < getSource()
-							.length())
+						.offset() < getSource().length())
 					{ /* Read to end of 0xffd9 */}
-					while (getSource().getFilePointer() < getSource().length()) {
+					while (getSource().offset() < getSource().length()) {
 						while ((getSource().readShort() & 0xffff) != 0xffd8 && getSource()
-							.getFilePointer() < getSource()
-								.length())
+							.offset() < getSource().length())
 						{ /* Read to jpeg offsets */}
-						if (getSource().getFilePointer() < getSource().length()) {
-							meta.getJpegOffsets().add(getSource().getFilePointer() - 2);
+						if (getSource().offset() < getSource().length()) {
+							meta.getJpegOffsets().add(getSource().offset() - 2);
 						}
 					}
 					meta.get(0).setAxisTypes(Axes.CHANNEL, Axes.X, Axes.Y);
@@ -383,7 +386,7 @@ public class PICTFormat extends AbstractFormat {
 					}
 			}
 
-			return getSource().getFilePointer() < getSource().length();
+			return getSource().offset() < getSource().length();
 		}
 
 		/** Extract the image data in a PICT bitmap structure. */
@@ -522,9 +525,8 @@ public class PICTFormat extends AbstractFormat {
 
 					if (rawLen > buf.length) rawLen = buf.length;
 
-					if ((getSource().length() - getSource().getFilePointer()) <= rawLen) {
-						rawLen = (int) (getSource().length() - getSource()
-							.getFilePointer() - 1);
+					if ((getSource().length() - getSource().offset()) <= rawLen) {
+						rawLen = (int) (getSource().length() - getSource().offset() - 1);
 					}
 
 					if (rawLen < 0) {
@@ -686,6 +688,9 @@ public class PICTFormat extends AbstractFormat {
 		@Parameter
 		private CodecService codecService;
 
+		@Parameter
+		private DataHandleService dataHandleService;
+
 		// -- AbstractReader API Methods --
 
 		@Override
@@ -705,32 +710,37 @@ public class PICTFormat extends AbstractFormat {
 			final byte[] buf = plane.getBytes();
 
 			if (meta.getJpegOffsets().size() > 0) {
-				final ByteArrayHandle v = new ByteArrayHandle();
-				getStream().seek(meta.getJpegOffsets().get(0));
-				final byte[] b = new byte[(int) (getStream().length() - getStream()
-					.getFilePointer())];
-				getStream().read(b);
-				RandomAccessInputStream s = new RandomAccessInputStream(getContext(),
-					b);
+
+				// read with JPEG offsets
+
+				getHandle().seek(meta.getJpegOffsets().get(0));
+				final byte[] b = new byte[(int) (getHandle().length() - getHandle()
+					.offset())];
+				getHandle().read(b);
+				DataHandle<Location> compressedImages = dataHandleService.create(
+					new BytesLocation(b));
+
+				DataHandle<Location> decompressedImages = dataHandleService.create(
+					new BytesLocation(ByteBuffer.allocate(10000)));
+
 				for (final long jpegOffset : meta.getJpegOffsets()) {
-					s.seek(jpegOffset - meta.getJpegOffsets().get(0));
+					compressedImages.seek(jpegOffset - meta.getJpegOffsets().get(0));
 
 					final CodecOptions options = new CodecOptions();
 					options.interleaved = meta.get(0).getInterleavedAxisCount() > 0;
 					options.littleEndian = meta.get(0).isLittleEndian();
 
 					final Codec codec = codecService.getCodec(JPEGCodec.class);
-					v.write(codec.decompress(s, options));
+					decompressedImages.write(codec.decompress(compressedImages, options));
 				}
+				compressedImages.close();
 
-				s.close();
-				s = new RandomAccessInputStream(getContext(), v);
-				s.seek(0);
+				decompressedImages.seek(0);
 				try {
-					readPlane(s, imageIndex, planeMin, planeMax, plane);
+					readPlane(decompressedImages, imageIndex, planeMin, planeMax, plane);
 				}
 				finally {
-					s.close();
+					decompressedImages.close();
 				}
 
 				return plane;
@@ -739,10 +749,10 @@ public class PICTFormat extends AbstractFormat {
 			if (((PICTFormat) getFormat()).isLegacy() || meta.getStrips()
 				.size() == 0)
 			{
-				getStream().seek(512);
-				byte[] pix = new byte[(int) (getStream().length() - getStream()
-					.getFilePointer())];
-				getStream().read(pix);
+				getHandle().seek(512);
+				byte[] pix = new byte[(int) (getHandle().length() - getHandle()
+					.offset())];
+				getHandle().read(pix);
 				byte[][] b = AWTImageTools.getBytes(AWTImageTools.makeBuffered(
 					qtJavaService.pictToImage(pix)));
 				pix = null;
