@@ -30,13 +30,15 @@
 
 package io.scif.common;
 
-import io.scif.io.RandomAccessInputStream;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormatSymbols;
 
 import org.scijava.Context;
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.FileLocation;
+import org.scijava.io.Location;
 
 /**
  * A utility class with convenience methods for reading, writing and decoding
@@ -66,16 +68,19 @@ public final class DataTools {
 	public static String readFile(final Context context, final String id)
 		throws IOException
 	{
-		final RandomAccessInputStream in = new RandomAccessInputStream(context, id);
-		final long idLen = in.length();
-		if (idLen > Integer.MAX_VALUE) {
-			in.close();
-			throw new IOException("File too large");
+		FileLocation loc = new FileLocation(id);
+		try (DataHandle<Location> in = context.getService(DataHandleService.class)
+			.create(loc))
+		{
+			final long idLen = in.length();
+			if (idLen > Integer.MAX_VALUE) {
+				in.close();
+				throw new IOException("File too large");
+			}
+			final int len = (int) idLen;
+			final String data = in.readString(len);
+			return data;
 		}
-		final int len = (int) idLen;
-		final String data = in.readString(len);
-		in.close();
-		return data;
 	}
 
 	// -- Word decoding - bytes to primitive types --
