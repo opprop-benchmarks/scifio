@@ -159,24 +159,24 @@ public interface Parser extends HasFormat, HasSource, Groupable {
 	void updateSource(Location source) throws IOException;
 
 	/** Returns an array of filenames needed to open this dataset. */
-	String[] getUsedFiles();
+	Location[] getUsedFiles();
 
 	/**
 	 * Returns an array of filenames needed to open this dataset. If the
 	 * 'noPixels' flag is set, then only files that do not contain pixel data will
 	 * be returned.
 	 */
-	String[] getUsedFiles(boolean noPixels);
+	Location[] getUsedFiles(boolean noPixels);
 
 	/** Returns an array of filenames needed to open the indicated image index. */
-	String[] getImageUsedFiles(int imageIndex);
+	Location[] getImageUsedFiles(int imageIndex);
 
 	/**
 	 * Returns an array of filenames needed to open the indicated image. If the
 	 * 'noPixels' flag is set, then only files that do not contain pixel data will
 	 * be returned.
 	 */
-	String[] getImageUsedFiles(int imageIndex, boolean noPixels);
+	Location[] getImageUsedFiles(int imageIndex, boolean noPixels);
 
 	/**
 	 * Returns an array of FileInfo objects representing the files needed to open

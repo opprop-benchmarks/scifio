@@ -111,43 +111,41 @@ public abstract class AbstractParser<M extends TypedMetadata> extends
 	}
 
 	@Override
-	public String[] getUsedFiles() {
+	public Location[] getUsedFiles() {
 		return getUsedFiles(false);
 	}
 
 	@Override
-	public String[] getUsedFiles(final boolean noPixels) {
-		final List<String> files = new ArrayList<>();
+	public Location[] getUsedFiles(final boolean noPixels) {
+		final List<Location> files = new ArrayList<>();
 		for (int i = 0; i < metadata.getImageCount(); i++) {
-			final String[] s = getImageUsedFiles(i, noPixels);
+			final Location[] s = getImageUsedFiles(i, noPixels);
 			if (s != null) {
-				for (final String file : s) {
+				for (final Location file : s) {
 					if (!files.contains(file)) {
 						files.add(file);
 					}
 				}
 			}
 		}
-		return files.toArray(new String[files.size()]);
+		return files.toArray(new Location[files.size()]);
 	}
 
 	@Override
-	public String[] getImageUsedFiles(final int imageIndex) {
+	public Location[] getImageUsedFiles(final int imageIndex) {
 		return getImageUsedFiles(imageIndex, false);
 	}
 
 	@Override
-	public String[] getImageUsedFiles(final int imageIndex,
+	public Location[] getImageUsedFiles(final int imageIndex,
 		final boolean noPixels)
 	{
-		// FIXME: Should this return an array of Locations instead?
-		return noPixels ? null : new String[] { getMetadata().getSource().get()
-			.getName() };
+		return noPixels ? null : new Location[] { getMetadata().getSource().get() };
 	}
 
 	@Override
 	public FileInfo[] getAdvancedUsedFiles(final boolean noPixels) {
-		final String[] files = getUsedFiles(noPixels);
+		final Location[] files = getUsedFiles(noPixels);
 		if (files == null) return null;
 		return getFileInfo(files);
 	}
@@ -156,7 +154,7 @@ public abstract class AbstractParser<M extends TypedMetadata> extends
 	public FileInfo[] getAdvancedImageUsedFiles(final int imageIndex,
 		final boolean noPixels)
 	{
-		final String[] files = getImageUsedFiles(imageIndex, noPixels);
+		final Location[] files = getImageUsedFiles(imageIndex, noPixels);
 		if (files == null) return null;
 		return getFileInfo(files);
 	}
@@ -207,7 +205,7 @@ public abstract class AbstractParser<M extends TypedMetadata> extends
 	{
 		final DataHandle<Location> in = getSource();
 
-		if (in == null || !in.get().getName().equals(handle.get().getName())) {
+		if (in == null || !in.get().equals(handle.get())) {
 			init(handle);
 
 			if (config.parserIsSaveOriginalMetadata()) {
@@ -252,17 +250,17 @@ public abstract class AbstractParser<M extends TypedMetadata> extends
 	 * layer, Override {@code #parse(String, TypedMetadata)} instead.
 	 * </p>
 	 */
-	protected abstract void typedParse(DataHandle<Location> handle, M meta,
+	protected abstract void typedParse(DataHandle<Location> stream, M meta,
 		SCIFIOConfig config) throws IOException, FormatException;
 
-	/* Sets the input handle for this parser if provided a new handle */
-	private void init(final DataHandle<Location> handle) throws IOException {
+	/* Sets the input stream for this parser if provided a new stream */
+	private void init(final DataHandle<Location> stream) throws IOException {
 
 		// Check to see if the stream is already open
 		if (getMetadata() != null) {
-			final String[] usedFiles = getUsedFiles();
-			for (final String fileName : usedFiles) {
-				if (handle.get().getName().equals(fileName)) return;
+			final Location[] usedFiles = getUsedFiles();
+			for (final Location fileName : usedFiles) {
+				if (stream.get().equals(fileName)) return;
 			}
 		}
 
@@ -270,13 +268,14 @@ public abstract class AbstractParser<M extends TypedMetadata> extends
 	}
 
 	/* Builds a FileInfo array around the provided array of file names */
-	private FileInfo[] getFileInfo(final String[] files) {
+	private FileInfo[] getFileInfo(final Location[] files) {
 		final FileInfo[] infos = new FileInfo[files.length];
 		for (int i = 0; i < infos.length; i++) {
 			infos[i] = new FileInfo();
-			infos[i].filename = files[i];
+			infos[i].filename = files[i].getName();
 			infos[i].reader = getFormat().getReaderClass();
-			infos[i].usedToInitialize = files[i].endsWith(getSource().get()
+			// FIXME is this logic correct?
+			infos[i].usedToInitialize = files[i].getName().endsWith(getSource().get()
 				.getName());
 		}
 		return infos;
