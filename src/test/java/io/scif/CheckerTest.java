@@ -37,7 +37,6 @@ import static org.junit.Assert.assertTrue;
 
 import io.scif.config.SCIFIOConfig;
 import io.scif.formats.FakeFormat;
-import io.scif.io.RandomAccessInputStream;
 import io.scif.io.TestParameters;
 
 import java.io.IOException;
@@ -50,6 +49,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.scijava.Context;
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
+import org.scijava.io.handles.FileLocation;
 
 /**
  * Unit tests for {@link io.scif.Checker} interface methods.
@@ -59,16 +62,18 @@ import org.scijava.Context;
 @RunWith(Parameterized.class)
 public class CheckerTest {
 
-	private final String id =
-		"8bit-signed&pixelType=int8&axes=X,Y,Z,C,T&lengths=50,50,3,5,7.fake";
+	private final Location id = new FileLocation(
+		"8bit-signed&pixelType=int8&axes=X,Y,Z,C,T&lengths=50,50,3,5,7.fake");
 
-	private final String falseId = "testFile.png";
+	private final Location falseId = new FileLocation("testFile.png");
 
 	private Checker c;
 
 	private FakeChecker fc;
 
 	private Context context;
+
+	private DataHandleService dataHandleService;
 
 	@Parameters
 	public static Collection<Object[]> parameters() {
@@ -91,6 +96,7 @@ public class CheckerTest {
 		c = f.createChecker();
 		fc = new FakeChecker();
 		fc.setContext(context);
+		dataHandleService = context.getService(DataHandleService.class);
 	}
 
 	@Test
@@ -106,8 +112,7 @@ public class CheckerTest {
 		isFormat = c.isFormat(id, new SCIFIOConfig().checkerSetOpen(true));
 		assertTrue(isFormat);
 
-		final RandomAccessInputStream stream = new RandomAccessInputStream(context,
-			id);
+		final DataHandle<Location> stream = dataHandleService.create(id);
 		isFormat = c.isFormat(stream);
 		assertFalse(isFormat);
 		stream.close();
@@ -120,7 +125,7 @@ public class CheckerTest {
 	public void checkHeaderTest() {
 		boolean isFormat = false;
 
-		isFormat = c.checkHeader(id.getBytes());
+		isFormat = c.checkHeader(id.getName().getBytes());
 		assertFalse(isFormat);
 	}
 
@@ -138,13 +143,12 @@ public class CheckerTest {
 		isFormat = fc.isFormat(id, new SCIFIOConfig().checkerSetOpen(true));
 		assertTrue(isFormat);
 
-		final RandomAccessInputStream stream = new RandomAccessInputStream(context,
-			id);
+		final DataHandle<Location> stream = dataHandleService.create(id);
 		isFormat = fc.isFormat(stream);
 		assertTrue(isFormat);
 		stream.close();
 
-		isFormat = fc.checkHeader(id.getBytes());
+		isFormat = fc.checkHeader(id.getName().getBytes());
 		assertTrue(isFormat);
 	}
 
@@ -191,7 +195,7 @@ public class CheckerTest {
 		}
 
 		@Override
-		public boolean isFormat(final RandomAccessInputStream stream)
+		public boolean isFormat(final DataHandle<Location> stream)
 			throws IOException
 		{
 			return true;

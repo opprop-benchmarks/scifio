@@ -43,6 +43,8 @@ import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
 
 import org.junit.Test;
+import org.scijava.io.Location;
+import org.scijava.io.handles.FileLocation;
 
 /**
  * Unit tests for {@link io.scif.Metadata} interface methods.
@@ -53,11 +55,11 @@ public class MetadataTest {
 
 	private final SCIFIO scifio = new SCIFIO();
 
-	private final String id =
-		"testImg&lengths=620,512,5,6,7&axes=X,Y,Time,Z,Channel.fake";
+	private final Location id = new FileLocation(
+		"testImg&lengths=620,512,5,6,7&axes=X,Y,Time,Z,Channel.fake");
 
-	private final String ndId =
-		"ndImg&axes=X,Y,Z,Channel,Time,Lifetime,Spectra,&lengths=256,128,2,6,10,4,8.fake";
+	private final Location ndId = new FileLocation(
+		"ndImg&axes=X,Y,Z,Channel,Time,Lifetime,Spectra,&lengths=256,128,2,6,10,4,8.fake");
 
 	/**
 	 * Down the middle test that verifies each method of the Metadata API.
@@ -215,8 +217,8 @@ public class MetadataTest {
 	 */
 	@Test
 	public void testTrailingAxis() throws IOException, FormatException {
-		final String id =
-			"testImg&planarDims=2&lengths=620,512,1,&axes=X,Y,Time.fake";
+		final Location id = new FileLocation(
+			"testImg&planarDims=2&lengths=620,512,1,&axes=X,Y,Time.fake");
 		final Metadata m = scifio.initializer().parseMetadata(id);
 
 		assertEquals(2, m.get(0).getAxes().size());
@@ -235,8 +237,8 @@ public class MetadataTest {
 	 */
 	@Test
 	public void testAxisCount() throws IOException, FormatException {
-		final String id =
-			"testImg&lengths=620,512,1,5,1&axes=X,Y,Time,Z,Channel.fake";
+		final Location id = new FileLocation(
+			"testImg&lengths=620,512,1,5,1&axes=X,Y,Time,Z,Channel.fake");
 		final Metadata m = scifio.initializer().parseMetadata(id);
 
 		assertEquals(4, m.get(0).getAxes().size());
@@ -248,7 +250,8 @@ public class MetadataTest {
 	 */
 	@Test
 	public void testAdjustingTrailingAxis() throws IOException, FormatException {
-		final String id = "testImg&lengths=620,512,1&axes=X,Y,Time.fake";
+		final Location id = new FileLocation(
+			"testImg&lengths=620,512,1&axes=X,Y,Time.fake");
 		final Metadata m = scifio.initializer().parseMetadata(id);
 
 		assertEquals(2, m.get(0).getAxes().size());

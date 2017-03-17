@@ -52,6 +52,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.scijava.io.Location;
+import org.scijava.io.handles.FileLocation;
 
 /**
  * Unit tests for {@link io.scif.Translator} interface methods.
@@ -74,10 +76,10 @@ public class TranslatorTest {
 		this.provider = provider;
 	}
 
-	private final String id =
-		"interleaved&pixelType=int8&axes=Channel,X,Y,Z&lengths=3,256,256,5.fake";
+	private final Location id = new FileLocation(
+		"interleaved&pixelType=int8&axes=Channel,X,Y,Z&lengths=3,256,256,5.fake");
 
-	private final String output = "testFile.ics";
+	private final Location output = new FileLocation("testFile.ics");
 
 	private final SCIFIO scifio = new SCIFIO();
 
