@@ -40,6 +40,9 @@ import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
 
+import org.scijava.io.FileLocation;
+import org.scijava.io.Location;
+
 /**
  * A simple test for {@link ImgOpener}.
  *
@@ -51,27 +54,29 @@ public class ReadImage {
 	public static void main(final String[] args) throws ImgIOException {
 		final ImgOpener imageOpener = new ImgOpener();
 
-		final String[] ids;
+		final Location[] ids;
 		if (args.length == 0) {
-			final String userHome = System.getProperty("user.home");
-			ids = new String[] {
+			final Location userHome = new FileLocation(System.getProperty(
+				"user.home"));
+			ids = new Location[] {
 				// userHome + "/data/Spindle_Green_d3d.dv",
-				userHome + "/data/mitosis-test.ipw",
+				new FileLocation(userHome + "/data/mitosis-test.ipw"),
 				// userHome + "/data/test_greys.lif",
-				userHome + "/data/slice1_810nm_40x_z1_pcc100_scanin_20s_01.sdt" };
+				new FileLocation(userHome +
+					"/data/slice1_810nm_40x_z1_pcc100_scanin_20s_01.sdt") };
 		}
-		else ids = args;
+		else ids = parseArgs(args);
 
 		// read all arguments using auto-detected type with default container
 		System.out.println("== AUTO-DETECTED TYPE, DEFAULT CONTAINER ==");
-		for (final String id : ids) {
+		for (final Location id : ids) {
 			final ImgPlus<?> img = imageOpener.openImgs(id).get(0);
 			reportInformation(img);
 		}
 
 		// read all arguments using auto-detected type with default container
 		System.out.println("== AUTO-DETECTED TYPE, CELL CONTAINER ==");
-		for (final String id : ids) {
+		for (final Location id : ids) {
 			final ImgPlus<?> img = imageOpener.openImgs(id).get(0);
 			reportInformation(img);
 		}
@@ -99,6 +104,14 @@ public class ReadImage {
 			final ImgPlus<DoubleType> img = IO.openDouble(arg);
 			reportInformation(img);
 		}
+	}
+
+	private static Location[] parseArgs(String[] args) {
+		Location[] out = new Location[args.length];
+		for (int i = 0; i < args.length; i++) {
+			out[i] = new FileLocation(args[i]);
+		}
+		return out;
 	}
 
 	/** Prints out some useful information about the {@link Img}. */
