@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,21 +33,25 @@ package io.scif.formats.tiff;
 import io.scif.FormatException;
 import io.scif.SCIFIO;
 import io.scif.codec.CodecOptions;
-import io.scif.io.ByteArrayHandle;
-import io.scif.io.RandomAccessInputStream;
-import io.scif.io.RandomAccessOutputStream;
 import io.scif.util.FormatTools;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 
 import org.scijava.AbstractContextual;
 import org.scijava.Context;
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
+import org.scijava.io.handles.BytesLocation;
+import org.scijava.io.handles.FileLocation;
 import org.scijava.log.LogService;
 
 /**
@@ -57,19 +61,20 @@ import org.scijava.log.LogService;
  * @author Eric Kjellman
  * @author Melissa Linkert
  * @author Chris Allan
+ * @author Gabriel Einsdorf
  */
 public class TiffSaver extends AbstractContextual {
 
 	// -- Fields --
 
 	/** Output stream to use when saving TIFF data. */
-	private final RandomAccessOutputStream out;
+	private final DataHandle<Location> out;
 
-	/** Output filename. */
-	private String filename;
+	/** Output Location. */
+	private Location loc;
 
 	/** Output bytes. */
-	private ByteArrayHandle bytes;
+	private BytesLocation bytes;
 
 	/** Whether or not to write BigTIFF data. */
 	private boolean bigTiff = false;
@@ -83,6 +88,8 @@ public class TiffSaver extends AbstractContextual {
 
 	private LogService log;
 
+	private DataHandleService dataHandleService;
+
 	// -- Constructors --
 
 	/**
@@ -94,28 +101,36 @@ public class TiffSaver extends AbstractContextual {
 	public TiffSaver(final Context ctx, final String filename)
 		throws IOException
 	{
-		this(ctx, new RandomAccessOutputStream(ctx, filename), filename);
+		this(ctx, new FileLocation(filename));
+	}
+
+	/**
+	 * @param ctx
+	 * @param loc
+	 * @throws IOException
+	 */
+	public TiffSaver(final Context ctx, final Location loc) throws IOException {
+		Objects.requireNonNull(loc);
+		Objects.requireNonNull(ctx);
+
+		setContext(ctx);
+		this.loc = loc;
+		this.out = dataHandleService.create(loc);
+		scifio = new SCIFIO(ctx);
+		log = scifio.log();
 	}
 
 	/**
 	 * Constructs a new TIFF saver from the given output source.
 	 *
 	 * @param out Output stream to save TIFF data to.
-	 * @param filename Filename of the output stream that we may use to create
-	 *          extra input or output streams as required.
 	 */
-	public TiffSaver(final Context ctx, final RandomAccessOutputStream out,
-		final String filename)
-	{
+	public TiffSaver(final Context ctx, final DataHandle<Location> out) {
 		if (out == null) {
 			throw new IllegalArgumentException(
 				"Output stream expected to be not-null");
 		}
-		if (filename == null) {
-			throw new IllegalArgumentException("Filename expected to be not null");
-		}
 		this.out = out;
-		this.filename = filename;
 		setContext(ctx);
 		scifio = new SCIFIO(ctx);
 		log = scifio.log();
@@ -128,9 +143,9 @@ public class TiffSaver extends AbstractContextual {
 	 * @param bytes In memory byte array handle that we may use to create extra
 	 *          input or output streams as required.
 	 */
-	public TiffSaver(final RandomAccessOutputStream out,
-		final ByteArrayHandle bytes)
-	{
+	public TiffSaver(final DataHandle<Location> out, final BytesLocation bytes) {
+		setContext(new Context());
+
 		if (out == null) {
 			throw new IllegalArgumentException(
 				"Output stream expected to be not-null");
@@ -154,13 +169,13 @@ public class TiffSaver extends AbstractContextual {
 	}
 
 	/** Gets the stream from which TIFF data is being saved. */
-	public RandomAccessOutputStream getStream() {
+	public DataHandle<Location> getStream() {
 		return out;
 	}
 
 	/** Sets whether or not little-endian data should be written. */
 	public void setLittleEndian(final boolean littleEndian) {
-		out.order(littleEndian);
+		out.setOrder(littleEndian ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
 	}
 
 	/** Sets whether or not BigTIFF data should be written. */
@@ -425,12 +440,12 @@ public class TiffSaver extends AbstractContextual {
 		final boolean isTiled = ifd.isTiled();
 
 		if (!sequentialWrite) {
-			RandomAccessInputStream in = null;
-			if (filename != null) {
-				in = new RandomAccessInputStream(getContext(), filename);
+			DataHandle<Location> in = null;
+			if (loc != null) {
+				in = dataHandleService.create(loc);
 			}
 			else if (bytes != null) {
-				in = new RandomAccessInputStream(getContext(), bytes);
+				in = dataHandleService.create(bytes);
 			}
 			else {
 				throw new IllegalArgumentException(
@@ -504,14 +519,14 @@ public class TiffSaver extends AbstractContextual {
 			ifd.putIFDValue(IFD.STRIP_OFFSETS, toPrimitiveArray(offsets));
 		}
 
-		final long fp = out.getFilePointer();
+		final long fp = out.offset();
 		writeIFD(ifd, 0);
 
 		for (int i = 0; i < strips.length; i++) {
 			out.seek(out.length());
 			final int thisOffset = firstOffset + i;
-			offsets.set(thisOffset, out.getFilePointer());
-			byteCounts.set(thisOffset, new Long(strips[i].length));
+			offsets.set(thisOffset, out.offset());
+			byteCounts.set(thisOffset, (long) strips[i].length);
 			if (log.isDebug()) {
 				log.debug(String.format("Writing tile/strip %d/%d size: %d offset: %d",
 					thisOffset + 1, totalTiles, byteCounts.get(thisOffset), offsets.get(
@@ -527,10 +542,10 @@ public class TiffSaver extends AbstractContextual {
 			ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, toPrimitiveArray(byteCounts));
 			ifd.putIFDValue(IFD.STRIP_OFFSETS, toPrimitiveArray(offsets));
 		}
-		final long endFP = out.getFilePointer();
+		final long endFP = out.offset();
 		if (log.isDebug()) {
-			log.debug("Offset before IFD write: " + out.getFilePointer() +
-				" Seeking to: " + fp);
+			log.debug("Offset before IFD write: " + out.offset() + " Seeking to: " +
+				fp);
 		}
 		out.seek(fp);
 
@@ -542,7 +557,7 @@ public class TiffSaver extends AbstractContextual {
 		}
 		writeIFD(ifd, last ? 0 : endFP);
 		if (log.isDebug()) {
-			log.debug("Offset after IFD write: " + out.getFilePointer());
+			log.debug("Offset after IFD write: " + out.offset());
 		}
 	}
 
@@ -552,11 +567,11 @@ public class TiffSaver extends AbstractContextual {
 		final TreeSet<Integer> keys = new TreeSet<>(ifd.keySet());
 		int keyCount = keys.size();
 
-		if (ifd.containsKey(new Integer(IFD.LITTLE_ENDIAN))) keyCount--;
-		if (ifd.containsKey(new Integer(IFD.BIG_TIFF))) keyCount--;
-		if (ifd.containsKey(new Integer(IFD.REUSE))) keyCount--;
+		if (ifd.containsKey(IFD.LITTLE_ENDIAN)) keyCount--;
+		if (ifd.containsKey(IFD.BIG_TIFF)) keyCount--;
+		if (ifd.containsKey(IFD.REUSE)) keyCount--;
 
-		final long fp = out.getFilePointer();
+		final long fp = out.offset();
 		final int bytesPerEntry = bigTiff ? TiffConstants.BIG_TIFF_BYTES_PER_ENTRY
 			: TiffConstants.BYTES_PER_ENTRY;
 		final int ifdBytes = (bigTiff ? 16 : 6) + bytesPerEntry * keyCount;
@@ -564,20 +579,19 @@ public class TiffSaver extends AbstractContextual {
 		if (bigTiff) out.writeLong(keyCount);
 		else out.writeShort(keyCount);
 
-		final ByteArrayHandle extra = new ByteArrayHandle();
-		final RandomAccessOutputStream extraStream = new RandomAccessOutputStream(
-			extra);
+		BytesLocation extra = new BytesLocation(1000000);
+		final DataHandle<Location> extraHandle = dataHandleService.create(extra);
 
 		for (final Integer key : keys) {
 			if (key.equals(IFD.LITTLE_ENDIAN) || key.equals(IFD.BIG_TIFF) || key
 				.equals(IFD.REUSE)) continue;
 
 			final Object value = ifd.get(key);
-			writeIFDValue(extraStream, ifdBytes + fp, key.intValue(), value);
+			writeIFDValue(extraHandle, ifdBytes + fp, key.intValue(), value);
 		}
-		if (bigTiff) out.seek(out.getFilePointer());
+		if (bigTiff) out.seek(out.offset());
 		writeIntValue(out, nextOffset);
-		out.write(extra.getBytes(), 0, (int) extra.length());
+		out.write(extra.getByteBuffer(), (int) extraHandle.length());
 	}
 
 	/**
@@ -588,11 +602,12 @@ public class TiffSaver extends AbstractContextual {
 	 * @param tag IFD tag to write
 	 * @param value IFD value to write
 	 */
-	public void writeIFDValue(final RandomAccessOutputStream extraOut,
+	public void writeIFDValue(final DataHandle<Location> extraOut,
 		final long offset, final int tag, Object value) throws FormatException,
 		IOException
 	{
-		extraOut.order(isLittleEndian());
+		extraOut.setOrder(isLittleEndian() ? ByteOrder.LITTLE_ENDIAN
+			: ByteOrder.BIG_ENDIAN);
 
 		// convert singleton objects into arrays, for simplicity
 		if (value instanceof Short) {
@@ -745,13 +760,13 @@ public class TiffSaver extends AbstractContextual {
 		}
 	}
 
-	public void overwriteLastIFDOffset(final RandomAccessInputStream raf)
+	public void overwriteLastIFDOffset(final DataHandle<Location> handle)
 		throws FormatException, IOException
 	{
-		if (raf == null) throw new FormatException("Output cannot be null");
-		final TiffParser parser = new TiffParser(getContext(), raf);
+		if (handle == null) throw new FormatException("Output cannot be null");
+		final TiffParser parser = new TiffParser(getContext(), handle);
 		parser.getIFDOffsets();
-		out.seek(raf.getFilePointer() - (bigTiff ? 8 : 4));
+		out.seek(handle.offset() - (bigTiff ? 8 : 4));
 		writeIntValue(out, 0);
 	}
 
@@ -763,9 +778,8 @@ public class TiffSaver extends AbstractContextual {
 	 * the file and updates the offset field; if not, or if the old data is
 	 * already at the end of the file, it overwrites the old data in place.
 	 */
-	public void overwriteIFDValue(final RandomAccessInputStream raf,
-		final int ifd, final int tag, final Object value) throws FormatException,
-		IOException
+	public void overwriteIFDValue(final DataHandle<Location> raf, final int ifd,
+		final int tag, final Object value) throws FormatException, IOException
 	{
 		if (raf == null) throw new FormatException("Output cannot be null");
 		log.debug("overwriteIFDValue (ifd=" + ifd + "; tag=" + tag + "; value=" +
@@ -809,31 +823,31 @@ public class TiffSaver extends AbstractContextual {
 			final TiffIFDEntry entry = parser.readTiffIFDEntry();
 			if (entry.getTag() == tag) {
 				// write new value to buffers
-				final ByteArrayHandle ifdBuf = new ByteArrayHandle(bytesPerEntry);
-				final RandomAccessOutputStream ifdOut = new RandomAccessOutputStream(
-					ifdBuf);
-				final ByteArrayHandle extraBuf = new ByteArrayHandle();
-				final RandomAccessOutputStream extraOut = new RandomAccessOutputStream(
+				final BytesLocation ifdBuf = new BytesLocation(bytesPerEntry);
+				final DataHandle<Location> ifdHandle = dataHandleService.create(ifdBuf);
+				final BytesLocation extraBuf = new BytesLocation(10000);
+				final DataHandle<Location> extraHandle = dataHandleService.create(
 					extraBuf);
-				extraOut.order(little);
-				final TiffSaver saver = new TiffSaver(ifdOut, ifdBuf);
+				extraHandle.setOrder(little ? ByteOrder.LITTLE_ENDIAN
+					: ByteOrder.BIG_ENDIAN);
+				final TiffSaver saver = new TiffSaver(ifdHandle, ifdBuf);
 				saver.setLittleEndian(isLittleEndian());
-				saver.writeIFDValue(extraOut, entry.getValueOffset(), tag, value);
-				ifdBuf.seek(0);
-				extraBuf.seek(0);
+				saver.writeIFDValue(extraHandle, entry.getValueOffset(), tag, value);
+				ifdHandle.seek(0);
+				extraHandle.seek(0);
 
 				// extract new directory entry parameters
-				final int newTag = ifdBuf.readShort();
-				final int newType = ifdBuf.readShort();
+				final int newTag = ifdHandle.readShort();
+				final int newType = ifdHandle.readShort();
 				int newCount;
 				long newOffset;
 				if (bigTiff) {
-					newCount = ifdBuf.readInt();
-					newOffset = ifdBuf.readLong();
+					newCount = ifdHandle.readInt();
+					newOffset = ifdHandle.readLong();
 				}
 				else {
-					newCount = ifdBuf.readInt();
-					newOffset = ifdBuf.readInt();
+					newCount = ifdHandle.readInt();
+					newOffset = ifdHandle.readInt();
 				}
 				log.debug("overwriteIFDValue:");
 				log.debug("\told (" + entry + ");");
@@ -841,7 +855,7 @@ public class TiffSaver extends AbstractContextual {
 					newCount + "; offset=" + newOffset + ")");
 
 				// determine the best way to overwrite the old entry
-				if (extraBuf.length() == 0) {
+				if (extraHandle.length() == 0) {
 					// new entry is inline; if old entry wasn't, old data is
 					// orphaned
 					// do not override new offset value since data is inline
@@ -872,9 +886,9 @@ public class TiffSaver extends AbstractContextual {
 				out.writeShort(newType);
 				writeIntValue(out, newCount);
 				writeIntValue(out, newOffset);
-				if (extraBuf.length() > 0) {
+				if (extraHandle.length() > 0) {
 					out.seek(newOffset);
-					out.write(extraBuf.getByteBuffer(), 0, newCount);
+					out.write(extraBuf.getByteBuffer(), newCount);
 				}
 				return;
 			}
@@ -884,7 +898,7 @@ public class TiffSaver extends AbstractContextual {
 	}
 
 	/** Convenience method for overwriting a file's first ImageDescription. */
-	public void overwriteComment(final RandomAccessInputStream in,
+	public void overwriteComment(final DataHandle<Location> in,
 		final Object value) throws FormatException, IOException
 	{
 		overwriteIFDValue(in, 0, IFD.IMAGE_DESCRIPTION, value);
@@ -912,14 +926,14 @@ public class TiffSaver extends AbstractContextual {
 	 * 'bigTiff' flag is set, then the value will be written as an 8 byte long;
 	 * otherwise, it will be written as a 4 byte integer.
 	 */
-	private void writeIntValue(final RandomAccessOutputStream out,
+	private void writeIntValue(final DataHandle<Location> handle,
 		final long offset) throws IOException
 	{
 		if (bigTiff) {
-			out.writeLong(offset);
+			handle.writeLong(offset);
 		}
 		else {
-			out.writeInt((int) offset);
+			handle.writeInt((int) offset);
 		}
 	}
 
