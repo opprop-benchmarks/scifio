@@ -38,7 +38,6 @@ import io.scif.gui.GUIService;
 import io.scif.img.ImgUtilityService;
 import io.scif.img.cell.cache.CacheService;
 import io.scif.img.converters.PlaneConverterService;
-import io.scif.io.NIOService;
 import io.scif.services.DatasetIOService;
 import io.scif.services.FilePatternService;
 import io.scif.services.FormatService;
@@ -50,6 +49,7 @@ import io.scif.xml.XMLService;
 import org.scijava.AbstractGateway;
 import org.scijava.Context;
 import org.scijava.Gateway;
+import org.scijava.io.NIOService;
 import org.scijava.plugin.Plugin;
 import org.scijava.service.SciJavaService;
 
