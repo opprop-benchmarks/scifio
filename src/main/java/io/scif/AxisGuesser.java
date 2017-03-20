@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -30,16 +30,8 @@
 
 package io.scif;
 
-import io.scif.io.Location;
-
-import java.io.IOException;
-import java.util.Arrays;
-
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
-
-import org.scijava.Context;
-import org.scijava.log.LogService;
 
 /**
  * AxisGuesser guesses which blocks in a file pattern correspond to which
@@ -397,90 +389,91 @@ public class AxisGuesser {
 
 	// -- Main method --
 
-	public static void main(final String[] args) throws FormatException,
-		IOException
-	{
-		main(args, new Context());
-	}
-
-	/** Method for testing pattern guessing logic. */
-	public static void main(final String[] args, final Context context)
-		throws FormatException, IOException
-	{
-		final SCIFIO scifio = new SCIFIO(context);
-		final LogService log = scifio.log();
-		final Location file = args.length < 1 ? new Location(context, System
-			.getProperty("user.dir")).listFiles()[0] : new Location(context, args[0]);
-		log.info("File = " + file.getAbsoluteFile());
-		final String pat = scifio.filePattern().findPattern(file);
-		if (pat == null) log.info("No pattern found.");
-		else {
-			log.info("Pattern = " + pat);
-			final FilePattern fp = new FilePattern(context, pat);
-			if (fp.isValid()) {
-				log.info("Pattern is valid.");
-				final String id = fp.getFiles()[0];
-				if (!new Location(context, id).exists()) {
-					log.info("File '" + id + "' does not exist.");
-				}
-				else {
-					// read dimensional information from first file
-					log.info("Reading first file ");
-					final Reader reader = scifio.initializer().initializeReader(id);
-					final AxisType[] dimOrder = (AxisType[]) reader.getMetadata().get(0)
-						.getAxes().toArray();
-					final long sizeZ = reader.getMetadata().get(0).getAxisLength(Axes.Z);
-					final long sizeT = reader.getMetadata().get(0).getAxisLength(
-						Axes.TIME);
-					final long sizeC = reader.getMetadata().get(0).getAxisLength(
-						Axes.CHANNEL);
-					final boolean certain = reader.getMetadata().get(0).isOrderCertain();
-					reader.close();
-					log.info("[done]");
-					log.info("\tdimOrder = " + Arrays.toString(dimOrder) + " (" + (certain
-						? "certain" : "uncertain") + ")");
-					log.info("\tsizeZ = " + sizeZ);
-					log.info("\tsizeT = " + sizeT);
-					log.info("\tsizeC = " + sizeC);
-
-					// guess axes
-					final AxisGuesser ag = new AxisGuesser(fp, dimOrder, sizeZ, sizeT,
-						sizeC, certain);
-
-					// output results
-					final String[] blocks = fp.getBlocks();
-					final String[] prefixes = fp.getPrefixes();
-					final int[] axes = ag.getAxisTypes();
-					final AxisType[] newOrder = ag.getAdjustedOrder();
-					final boolean isCertain = ag.isCertain();
-					log.info("Axis types:");
-					for (int i = 0; i < blocks.length; i++) {
-						String axis;
-						switch (axes[i]) {
-							case Z_AXIS:
-								axis = "Z";
-								break;
-							case T_AXIS:
-								axis = "T";
-								break;
-							case C_AXIS:
-								axis = "C";
-								break;
-							default:
-								axis = "?";
-						}
-						log.info("\t" + blocks[i] + "\t" + axis + " (prefix = " +
-							prefixes[i] + ")");
-					}
-					if (!Arrays.equals(dimOrder, newOrder)) {
-						log.info("Adjusted dimension order = " + Arrays.toString(newOrder) +
-							" (" + (isCertain ? "certain" : "uncertain") + ")");
-					}
-				}
-			}
-			else log.info("Pattern is invalid: " + fp.getErrorMessage());
-		}
-	}
+	// FIXME shouldn't this be in a unit test?
+//	public static void main(final String[] args) throws FormatException,
+//		IOException
+//	{
+//		main(args, new Context());
+//	}
+//
+//	/** Method for testing pattern guessing logic. */
+//	public static void main(final String[] args, final Context context)
+//		throws FormatException, IOException
+//	{
+//		final SCIFIO scifio = new SCIFIO(context);
+//		final LogService log = scifio.log();
+//		final Location file = args.length < 1 ? new Location(context, System
+//			.getProperty("user.dir")).listFiles()[0] : new Location(context, args[0]);
+//		log.info("File = " + file.getAbsoluteFile());
+//		final String pat = scifio.filePattern().findPattern(file);
+//		if (pat == null) log.info("No pattern found.");
+//		else {
+//			log.info("Pattern = " + pat);
+//			final FilePattern fp = new FilePattern(context, pat);
+//			if (fp.isValid()) {
+//				log.info("Pattern is valid.");
+//				final String id = fp.getFiles()[0];
+//				if (!new Location(context, id).exists()) {
+//					log.info("File '" + id + "' does not exist.");
+//				}
+//				else {
+//					// read dimensional information from first file
+//					log.info("Reading first file ");
+//					final Reader reader = scifio.initializer().initializeReader(id);
+//					final AxisType[] dimOrder = (AxisType[]) reader.getMetadata().get(0)
+//						.getAxes().toArray();
+//					final long sizeZ = reader.getMetadata().get(0).getAxisLength(Axes.Z);
+//					final long sizeT = reader.getMetadata().get(0).getAxisLength(
+//						Axes.TIME);
+//					final long sizeC = reader.getMetadata().get(0).getAxisLength(
+//						Axes.CHANNEL);
+//					final boolean certain = reader.getMetadata().get(0).isOrderCertain();
+//					reader.close();
+//					log.info("[done]");
+//					log.info("\tdimOrder = " + Arrays.toString(dimOrder) + " (" + (certain
+//						? "certain" : "uncertain") + ")");
+//					log.info("\tsizeZ = " + sizeZ);
+//					log.info("\tsizeT = " + sizeT);
+//					log.info("\tsizeC = " + sizeC);
+//
+//					// guess axes
+//					final AxisGuesser ag = new AxisGuesser(fp, dimOrder, sizeZ, sizeT,
+//						sizeC, certain);
+//
+//					// output results
+//					final String[] blocks = fp.getBlocks();
+//					final String[] prefixes = fp.getPrefixes();
+//					final int[] axes = ag.getAxisTypes();
+//					final AxisType[] newOrder = ag.getAdjustedOrder();
+//					final boolean isCertain = ag.isCertain();
+//					log.info("Axis types:");
+//					for (int i = 0; i < blocks.length; i++) {
+//						String axis;
+//						switch (axes[i]) {
+//							case Z_AXIS:
+//								axis = "Z";
+//								break;
+//							case T_AXIS:
+//								axis = "T";
+//								break;
+//							case C_AXIS:
+//								axis = "C";
+//								break;
+//							default:
+//								axis = "?";
+//						}
+//						log.info("\t" + blocks[i] + "\t" + axis + " (prefix = " +
+//							prefixes[i] + ")");
+//					}
+//					if (!Arrays.equals(dimOrder, newOrder)) {
+//						log.info("Adjusted dimension order = " + Arrays.toString(newOrder) +
+//							" (" + (isCertain ? "certain" : "uncertain") + ")");
+//					}
+//				}
+//			}
+//			else log.info("Pattern is invalid: " + fp.getErrorMessage());
+//		}
+//	}
 
 }
 
