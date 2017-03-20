@@ -62,8 +62,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.scijava.Context;
-import org.scijava.io.FileLocation;
 import org.scijava.io.Location;
+import org.scijava.io.handles.FileLocation;
 
 /**
  * Unit tests for testing the {@link CacheService}. Tests storage and retrieval,

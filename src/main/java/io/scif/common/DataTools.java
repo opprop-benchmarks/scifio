@@ -37,8 +37,8 @@ import java.text.DecimalFormatSymbols;
 import org.scijava.Context;
 import org.scijava.io.DataHandle;
 import org.scijava.io.DataHandleService;
-import org.scijava.io.FileLocation;
 import org.scijava.io.Location;
+import org.scijava.io.handles.FileLocation;
 
 /**
  * A utility class with convenience methods for reading, writing and decoding

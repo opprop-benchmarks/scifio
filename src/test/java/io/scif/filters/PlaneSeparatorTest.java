@@ -40,7 +40,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.scijava.InstantiableException;
-import org.scijava.io.FileLocation;
+import org.scijava.io.handles.FileLocation;
 
 /**
  * Tests for {@link PlaneSeparator}.

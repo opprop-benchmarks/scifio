@@ -41,7 +41,6 @@ import java.util.HashMap;
  * Contains methods for mapping files and ids, and generating
  * {@link io.scif.io.IRandomAccess} handles for reading from these locations.
  *
- * @see io.scif.io.Location
  * @see io.scif.io.IRandomAccess
  * @author Mark Hiner
  */

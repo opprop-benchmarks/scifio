@@ -40,8 +40,8 @@ import io.scif.SCIFIO;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.scijava.io.FileLocation;
 import org.scijava.io.Location;
+import org.scijava.io.handles.FileLocation;
 
 /**
  * Unit tests for {@link FormatTools}.

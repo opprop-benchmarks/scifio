@@ -48,9 +48,6 @@ import io.scif.common.DataTools;
 import io.scif.config.SCIFIOConfig;
 import io.scif.gui.AWTImageTools;
 import io.scif.gui.BufferedImageReader;
-import io.scif.io.RandomAccessInputStream;
-import io.scif.io.RandomAccessOutputStream;
-import io.scif.io.StreamTools;
 import io.scif.util.FormatTools;
 import io.scif.util.SCIFIOMetadataTools;
 
@@ -73,6 +70,12 @@ import net.imglib2.display.ColorTable;
 import net.imglib2.display.ColorTable8;
 
 import org.scijava.Priority;
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleInputStream;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
+import org.scijava.io.handles.BytesLocation;
+import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.util.Bytes;
 
@@ -362,11 +365,11 @@ public class APNGFormat extends AbstractFormat {
 		}
 
 		@Override
-		public boolean isFormat(final RandomAccessInputStream stream)
+		public boolean isFormat(final DataHandle<Location> stream)
 			throws IOException
 		{
 			final int blockLen = 8;
-			if (!StreamTools.validStream(stream, blockLen, false)) return false;
+			if (!FormatTools.validStream(stream, blockLen, false)) return false;
 
 			final byte[] signature = new byte[blockLen];
 			stream.read(signature);
@@ -390,13 +393,13 @@ public class APNGFormat extends AbstractFormat {
 		// -- Parser API Methods --
 
 		@Override
-		protected void typedParse(final RandomAccessInputStream stream,
+		protected void typedParse(final DataHandle<Location> handle,
 			final Metadata meta, final SCIFIOConfig config) throws IOException,
 			FormatException
 		{
 			// check that this is a valid PNG file
 			final byte[] signature = new byte[8];
-			stream.read(signature);
+			handle.read(signature);
 
 			if (signature[0] != (byte) 0x89 || signature[1] != 0x50 ||
 				signature[2] != 0x4e || signature[3] != 0x47 || signature[4] != 0x0d ||
@@ -414,58 +417,58 @@ public class APNGFormat extends AbstractFormat {
 			// 3) 'length' bytes of data
 			// 4) 32 bit CRC
 
-			while (stream.getFilePointer() < stream.length()) {
-				final int length = stream.readInt();
-				final String type = stream.readString(4);
-				final long offset = stream.getFilePointer();
+			while (handle.offset() < handle.length()) {
+				final int length = handle.readInt();
+				final String type = handle.readString(4);
+				final long offset = handle.offset();
 
 				APNGChunk chunk = null;
 
 				if (type.equals("acTL")) {
 					chunk = new ACTLChunk();
 					final ACTLChunk actl = (ACTLChunk) chunk;
-					actl.setNumFrames(stream.readInt());
-					actl.setNumPlays(stream.readInt());
+					actl.setNumFrames(handle.readInt());
+					actl.setNumPlays(handle.readInt());
 					meta.setActl(actl);
 				}
 				else if (type.equals("fcTL")) {
 					sawFctl = true;
 					chunk = new FCTLChunk();
 					final FCTLChunk fctl = (FCTLChunk) chunk;
-					fctl.setSequenceNumber(stream.readInt());
-					fctl.setWidth(stream.readInt());
-					fctl.setHeight(stream.readInt());
-					fctl.setxOffset(stream.readInt());
-					fctl.setyOffset(stream.readInt());
-					fctl.setDelayNum(stream.readShort());
-					fctl.setDelayDen(stream.readShort());
-					fctl.setDisposeOp(stream.readByte());
-					fctl.setBlendOp(stream.readByte());
+					fctl.setSequenceNumber(handle.readInt());
+					fctl.setWidth(handle.readInt());
+					fctl.setHeight(handle.readInt());
+					fctl.setxOffset(handle.readInt());
+					fctl.setyOffset(handle.readInt());
+					fctl.setDelayNum(handle.readShort());
+					fctl.setDelayDen(handle.readShort());
+					fctl.setDisposeOp(handle.readByte());
+					fctl.setBlendOp(handle.readByte());
 					meta.getFctl().add(fctl);
 				}
 				else if (type.equals("IDAT")) {
 					meta.setSeparateDefault(!sawFctl);
 					chunk = new IDATChunk();
 					meta.addIdat((IDATChunk) chunk);
-					stream.skipBytes(length);
+					handle.skipBytes(length);
 				}
 				else if (type.equals("fdAT")) {
 					chunk = new FDATChunk();
-					((FDATChunk) chunk).setSequenceNumber(stream.readInt());
+					((FDATChunk) chunk).setSequenceNumber(handle.readInt());
 					meta.getFctl().get(meta.getFctl().size() - 1).addChunk(
 						((FDATChunk) chunk));
-					stream.skipBytes(length - 4);
+					handle.skipBytes(length - 4);
 				}
 				else if (type.equals("IHDR")) {
 					chunk = new IHDRChunk();
 					final IHDRChunk ihdr = (IHDRChunk) chunk;
-					ihdr.setWidth(stream.readInt());
-					ihdr.setHeight(stream.readInt());
-					ihdr.setBitDepth(stream.readByte());
-					ihdr.setColourType(stream.readByte());
-					ihdr.setCompressionMethod(stream.readByte());
-					ihdr.setFilterMethod(stream.readByte());
-					ihdr.setInterlaceMethod(stream.readByte());
+					ihdr.setWidth(handle.readInt());
+					ihdr.setHeight(handle.readInt());
+					ihdr.setBitDepth(handle.readByte());
+					ihdr.setColourType(handle.readByte());
+					ihdr.setCompressionMethod(handle.readByte());
+					ihdr.setFilterMethod(handle.readByte());
+					ihdr.setInterlaceMethod(handle.readByte());
 					meta.setIhdr(ihdr);
 				}
 				else if (type.equals("PLTE")) {
@@ -477,9 +480,9 @@ public class APNGFormat extends AbstractFormat {
 					final byte[] green = new byte[length / 3];
 
 					for (int i = 0; i < length / 3; i++) {
-						red[i] = stream.readByte();
-						green[i] = stream.readByte();
-						blue[i] = stream.readByte();
+						red[i] = handle.readByte();
+						green[i] = handle.readByte();
+						blue[i] = handle.readByte();
 					}
 
 					plte.setRed(red);
@@ -490,18 +493,18 @@ public class APNGFormat extends AbstractFormat {
 				}
 				else if (type.equals("IEND")) {
 					chunk = new IENDChunk();
-					stream.skipBytes((int) (stream.length() - stream.getFilePointer()));
+					handle.skipBytes((int) (handle.length() - handle.offset()));
 					meta.setIend((IENDChunk) chunk);
 				}
-				else stream.skipBytes(length);
+				else handle.skipBytes(length);
 
 				if (chunk != null) {
 					chunk.setOffset(offset);
 					chunk.setLength(length);
 				}
 
-				if (stream.getFilePointer() < stream.length() - 4) {
-					stream.skipBytes(4); // skip the CRC
+				if (handle.offset() < handle.length() - 4) {
+					handle.skipBytes(4); // skip the CRC
 				}
 			}
 		}
@@ -512,6 +515,9 @@ public class APNGFormat extends AbstractFormat {
 	 * images.
 	 */
 	public static class Reader extends BufferedImageReader<Metadata> {
+
+		@Parameter
+		private DataHandleService dataHandleService;
 
 		// -- Fields --
 
@@ -573,9 +579,9 @@ public class APNGFormat extends AbstractFormat {
 			// The default frame is requested and we can use the standard
 			// Java ImageIO to extract it
 			if (planeIndex == 0) {
-				getStream().seek(0);
+				getHandle().seek(0);
 				final DataInputStream dis = new DataInputStream(new BufferedInputStream(
-					getStream(), 4096));
+					new DataHandleInputStream<>(getHandle()), 4096));
 				BufferedImage subImg = ImageIO.read(dis);
 				lastPlane.populate(meta.get(imageIndex), subImg, planeMin, planeMax);
 
@@ -619,7 +625,7 @@ public class APNGFormat extends AbstractFormat {
 			// fdAT chunks are converted to IDAT chunks, as we are essentially
 			// building a standalone single-frame image
 			for (final FDATChunk fdat : fctl.getFdatChunks()) {
-				getStream().seek(fdat.getOffset() + 4);
+				getHandle().seek(fdat.getOffset() + 4);
 				byte[] b = new byte[fdat.getLength() + 8];
 				Bytes.unpack(fdat.getLength() - 4, b, 0, 4, getMetadata().get(
 					imageIndex).isLittleEndian());
@@ -627,7 +633,7 @@ public class APNGFormat extends AbstractFormat {
 				b[5] = 'D';
 				b[6] = 'A';
 				b[7] = 'T';
-				getStream().read(b, 8, b.length - 12);
+				getHandle().read(b, 8, b.length - 12);
 				final int crc = (int) computeCRC(b, b.length - 4);
 				Bytes.unpack(crc, b, b.length - 4, 4, getMetadata().get(imageIndex)
 					.isLittleEndian());
@@ -641,10 +647,11 @@ public class APNGFormat extends AbstractFormat {
 				processChunk(imageIndex, plte.getLength(), plte.getOffset(), coords,
 					stream, false);
 			}
-			final RandomAccessInputStream s = new RandomAccessInputStream(
-				getContext(), stream.toByteArray());
-			final DataInputStream dis = new DataInputStream(new BufferedInputStream(s,
-				4096));
+			// FIXME: This is a bit too complicated
+			final Location loc = new BytesLocation(stream.toByteArray());
+			final DataHandle<Location> s = dataHandleService.create(loc);
+			final DataInputStream dis = new DataInputStream(new BufferedInputStream(
+				new DataHandleInputStream<>(s), 4096));
 			final BufferedImage bi = ImageIO.read(dis);
 			dis.close();
 
@@ -698,8 +705,8 @@ public class APNGFormat extends AbstractFormat {
 				.isLittleEndian());
 			final byte[] typeBytes = (isIHDR ? "IHDR".getBytes() : "PLTE".getBytes());
 			System.arraycopy(typeBytes, 0, b, 4, 4);
-			getStream().seek(offset);
-			getStream().read(b, 8, b.length - 12);
+			getHandle().seek(offset);
+			getHandle().read(b, 8, b.length - 12);
 			if (isIHDR) {
 				Bytes.unpack(coords[2], b, 8, 4, getMetadata().get(imageIndex)
 					.isLittleEndian());
@@ -761,9 +768,8 @@ public class APNGFormat extends AbstractFormat {
 		// -- Writer API Methods --
 
 		@Override
-		public void setDest(final RandomAccessOutputStream out,
-			final int imageIndex, final SCIFIOConfig config) throws IOException,
-			FormatException
+		public void setDest(final DataHandle<Location> out, final int imageIndex,
+			final SCIFIOConfig config) throws IOException, FormatException
 		{
 			super.setDest(out, imageIndex, config);
 			if (out.length() == 0) {
@@ -811,7 +817,7 @@ public class APNGFormat extends AbstractFormat {
 
 				out.writeInt(8);
 				out.writeBytes("acTL");
-				numFramesPointer = out.getFilePointer();
+				numFramesPointer = out.offset();
 				out.writeInt(actl == null ? 0 : actl.getNumFrames());
 				out.writeInt(actl == null ? 0 : actl.getNumPlays());
 				out.writeInt(0); // save a place for the CRC
@@ -859,7 +865,7 @@ public class APNGFormat extends AbstractFormat {
 
 		@Override
 		public void close(final boolean fileOnly) throws IOException {
-			if (getStream() != null) {
+			if (getHandle() != null) {
 				writeFooter();
 			}
 			super.close(fileOnly);
@@ -881,7 +887,7 @@ public class APNGFormat extends AbstractFormat {
 		}
 
 		private void writeFCTL(final long planeIndex) throws IOException {
-			getStream().writeInt(26);
+			getHandle().writeInt(26);
 			final FCTLChunk fctl = getMetadata().getFctl().get((int) (getMetadata()
 				.isSeparateDefault() ? planeIndex - 1 : planeIndex));
 			final byte[] b = new byte[30];
@@ -902,8 +908,8 @@ public class APNGFormat extends AbstractFormat {
 			b[28] = fctl.getDisposeOp();
 			b[29] = fctl.getBlendOp();
 
-			getStream().write(b);
-			getStream().writeInt(crc(b));
+			getHandle().write(b);
+			getHandle().writeInt(crc(b));
 		}
 
 		private void writePLTE() throws IOException {
@@ -915,7 +921,7 @@ public class APNGFormat extends AbstractFormat {
 			model.getGreens(lut[1]);
 			model.getBlues(lut[2]);
 
-			getStream().writeInt(768);
+			getHandle().writeInt(768);
 			final byte[] b = new byte[772];
 			b[0] = 'P';
 			b[1] = 'L';
@@ -928,8 +934,8 @@ public class APNGFormat extends AbstractFormat {
 				}
 			}
 
-			getStream().write(b);
-			getStream().writeInt(crc(b));
+			getHandle().write(b);
+			getHandle().writeInt(crc(b));
 		}
 
 		private void writePixels(final int imageIndex, final String chunk,
@@ -1007,23 +1013,23 @@ public class APNGFormat extends AbstractFormat {
 			final byte[] b = s.toByteArray();
 
 			// write chunk length
-			getStream().writeInt(b.length - 4);
-			getStream().write(b);
+			getHandle().writeInt(b.length - 4);
+			getHandle().write(b);
 
 			// write checksum
-			getStream().writeInt(crc(b));
+			getHandle().writeInt(crc(b));
 		}
 
 		private void writeFooter() throws IOException {
 			// write IEND chunk
-			getStream().writeInt(0);
-			getStream().writeBytes("IEND");
-			getStream().writeInt(crc("IEND".getBytes()));
+			getHandle().writeInt(0);
+			getHandle().writeBytes("IEND");
+			getHandle().writeInt(crc("IEND".getBytes()));
 
 			// update frame count
-			getStream().seek(numFramesPointer);
-			getStream().writeInt(numFrames);
-			getStream().skipBytes(4);
+			getHandle().seek(numFramesPointer);
+			getHandle().writeInt(numFrames);
+			getHandle().skipBytes(4);
 			final byte[] b = new byte[12];
 			b[0] = 'a';
 			b[1] = 'c';
@@ -1032,7 +1038,7 @@ public class APNGFormat extends AbstractFormat {
 			Bytes.unpack(numFrames, b, 4, 4, false);
 			Bytes.unpack(getMetadata().getActl() == null ? 0 : getMetadata().getActl()
 				.getNumPlays(), b, 8, 4, false);
-			getStream().writeInt(crc(b));
+			getHandle().writeInt(crc(b));
 		}
 	}
 

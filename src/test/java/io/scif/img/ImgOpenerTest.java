@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -43,7 +43,6 @@ import io.scif.SCIFIO;
 import io.scif.config.SCIFIOConfig;
 import io.scif.formats.FakeFormat;
 import io.scif.img.cell.SCIFIOCellImgFactory;
-import io.scif.io.RandomAccessInputStream;
 
 import java.io.IOException;
 import java.util.List;
@@ -63,7 +62,10 @@ import net.imglib2.type.numeric.real.FloatType;
 
 import org.junit.Test;
 import org.scijava.Context;
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
 import org.scijava.io.Location;
+import org.scijava.io.handles.BytesLocation;
 import org.scijava.io.handles.FileLocation;
 
 /**
@@ -214,8 +216,8 @@ public class ImgOpenerTest {
 			(byte) 0xA8, (byte) 0xDE, 0x60, (byte) 0x8C, 0x04, (byte) 0x91, 0x4C,
 			0x01, 0x00, 0x3B };
 
-		final RandomAccessInputStream stream = new RandomAccessInputStream(c,
-			bytes);
+		final DataHandle<Location> stream = c.getService(DataHandleService.class)
+			.create(new BytesLocation(bytes));
 
 		// Get the appropriate format
 		final Format format = scifio.format().getFormat(stream);
@@ -225,7 +227,7 @@ public class ImgOpenerTest {
 		r.setSource(stream);
 
 		// Open an ImgPlus from the reader
-		final ImgPlus<?> img = imgOpener.openImgs(r).get(0);
+		ImgPlus<?> img = imgOpener.openImgs(r).get(0);
 
 		assertNotNull(img);
 	}

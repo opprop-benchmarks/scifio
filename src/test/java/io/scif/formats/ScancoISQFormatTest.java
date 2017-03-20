@@ -23,10 +23,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.scijava.Context;
-import org.scijava.io.BytesLocation;
 import org.scijava.io.DataHandle;
 import org.scijava.io.DataHandleService;
 import org.scijava.io.Location;
+import org.scijava.io.handles.BytesLocation;
 
 /**
  * Tests {@link ScancoISQFormat} and its subclasses

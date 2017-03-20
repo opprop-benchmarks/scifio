@@ -40,8 +40,8 @@ import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
 
-import org.scijava.io.FileLocation;
 import org.scijava.io.Location;
+import org.scijava.io.handles.FileLocation;
 
 /**
  * A simple test for {@link ImgOpener}.

@@ -60,10 +60,10 @@ import net.imagej.axis.DefaultLinearAxis;
 import net.imglib2.display.ColorTable;
 import net.imglib2.display.ColorTable8;
 
-import org.scijava.io.BytesLocation;
 import org.scijava.io.DataHandle;
 import org.scijava.io.DataHandleService;
 import org.scijava.io.Location;
+import org.scijava.io.handles.BytesLocation;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.util.Bytes;
