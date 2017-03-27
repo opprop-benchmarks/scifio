@@ -39,6 +39,7 @@ import net.imagej.Dataset;
 import org.scijava.Priority;
 import org.scijava.io.AbstractIOPlugin;
 import org.scijava.io.IOPlugin;
+import org.scijava.io.handles.FileLocation;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
@@ -62,23 +63,23 @@ public class DatasetIOPlugin extends AbstractIOPlugin<Dataset> {
 
 	@Override
 	public boolean supportsOpen(final String source) {
-		return datasetIOService.canOpen(source);
+		return datasetIOService.canOpen(new FileLocation(source));
 	}
 
 	@Override
 	public boolean supportsSave(final String destination) {
-		return datasetIOService.canOpen(destination);
+		return datasetIOService.canOpen(new FileLocation(destination));
 	}
 
 	@Override
 	public Dataset open(final String source) throws IOException {
-		return datasetIOService.open(source);
+		return datasetIOService.open(new FileLocation(source));
 	}
 
 	@Override
 	public void save(final Dataset dataset, final String destination)
 		throws IOException
 	{
-		datasetIOService.save(dataset, destination);
+		datasetIOService.save(dataset, new FileLocation(destination));
 	}
 }
