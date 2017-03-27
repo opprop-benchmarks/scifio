@@ -32,10 +32,15 @@ package io.scif.codec;
 
 import io.scif.AbstractSCIFIOPlugin;
 import io.scif.FormatException;
-import io.scif.io.RandomAccessInputStream;
 
 import java.io.IOException;
 import java.util.Random;
+
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
+import org.scijava.io.handles.BytesLocation;
+import org.scijava.plugin.Parameter;
 
 /**
  * BaseCodec contains default implementation and testing for classes
@@ -49,6 +54,9 @@ import java.util.Random;
 public abstract class AbstractCodec extends AbstractSCIFIOPlugin implements
 	Codec
 {
+
+	@Parameter
+	private DataHandleService handles;
 
 	// -- BaseCodec API methods --
 
@@ -162,12 +170,9 @@ public abstract class AbstractCodec extends AbstractSCIFIOPlugin implements
 	public byte[] decompress(final byte[] data, final CodecOptions options)
 		throws FormatException
 	{
-		try {
-			final RandomAccessInputStream r = new RandomAccessInputStream(
-				getContext(), data);
-			final byte[] t = decompress(r, options);
-			r.close();
-			return t;
+		final BytesLocation loc = new BytesLocation(data);
+		try (DataHandle<Location> handle = handles.find(loc)) {
+			return decompress(handle, options);
 		}
 		catch (final IOException e) {
 			throw new FormatException(e);
@@ -175,7 +180,7 @@ public abstract class AbstractCodec extends AbstractSCIFIOPlugin implements
 	}
 
 	@Override
-	public abstract byte[] decompress(RandomAccessInputStream in,
+	public abstract byte[] decompress(DataHandle<Location> in,
 		CodecOptions options) throws FormatException, IOException;
 
 	/**

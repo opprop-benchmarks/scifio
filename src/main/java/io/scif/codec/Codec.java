@@ -32,10 +32,11 @@ package io.scif.codec;
 
 import io.scif.FormatException;
 import io.scif.SCIFIOPlugin;
-import io.scif.io.RandomAccessInputStream;
 
 import java.io.IOException;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 import org.scijava.plugin.SingletonPlugin;
 
 /**
@@ -117,7 +118,7 @@ public interface Codec extends SCIFIOPlugin, SingletonPlugin {
 	byte[] decompress(byte[][] data) throws FormatException;
 
 	/**
-	 * Decompresses data from the given RandomAccessInputStream.
+	 * Decompresses data from the given DataHandle.
 	 *
 	 * @param in The stream from which to read compressed data.
 	 * @param options Options to be used during decompression.
@@ -125,7 +126,7 @@ public interface Codec extends SCIFIOPlugin, SingletonPlugin {
 	 * @throws FormatException If data is not valid compressed data for this
 	 *           decompressor.
 	 */
-	byte[] decompress(RandomAccessInputStream in, CodecOptions options)
+	byte[] decompress(DataHandle<Location> in, CodecOptions options)
 		throws FormatException, IOException;
 
 }
