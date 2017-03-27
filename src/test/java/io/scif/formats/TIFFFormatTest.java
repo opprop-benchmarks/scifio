@@ -40,7 +40,7 @@ import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 
 import org.junit.Test;
-import org.scijava.io.FileLocation;
+import org.scijava.io.handles.FileLocation;
 
 /**
  * Tests reading of TIFF files without (dimensional) metainformation.
