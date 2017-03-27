@@ -30,13 +30,14 @@
 
 package io.scif;
 
-import io.scif.io.RandomAccessInputStream;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 
 /**
  * Abstract superclass of all SCIFIO {@link io.scif.Metadata} implementations.
@@ -53,7 +54,7 @@ public abstract class AbstractMetadata extends AbstractHasSource implements
 	// -- Fields --
 
 	/* The image source associated with this Metadata. */
-	private RandomAccessInputStream source;
+	private DataHandle<Location> source;
 
 	/* Whether the Metadata should be filtered or not. */
 	private boolean filtered;
@@ -94,14 +95,14 @@ public abstract class AbstractMetadata extends AbstractHasSource implements
 	// -- Metadata API Methods --
 
 	@Override
-	public void setSource(final RandomAccessInputStream source) {
+	public void setSource(final DataHandle<Location> source) {
 		this.source = source;
 
-		if (source != null) setDatasetName(source.getFileName());
+		if (source != null) setDatasetName(source.get().getName());
 	}
 
 	@Override
-	public RandomAccessInputStream getSource() {
+	public DataHandle<Location> getSource() {
 		return source;
 	}
 

@@ -32,16 +32,18 @@ package io.scif;
 
 import io.scif.codec.CodecOptions;
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.RandomAccessOutputStream;
 import io.scif.util.FormatTools;
 import io.scif.util.SCIFIOMetadataTools;
 
 import java.awt.image.ColorModel;
-import java.io.File;
 import java.io.IOException;
 
 import net.imagej.axis.Axes;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
+import org.scijava.plugin.Parameter;
 import org.scijava.util.ArrayUtils;
 
 /**
@@ -87,10 +89,13 @@ public abstract class AbstractWriter<M extends TypedMetadata> extends
 	private boolean sequential;
 
 	/** Where the image should be written. */
-	private RandomAccessOutputStream out;
+	private DataHandle<Location> out;
 
 	/** ColorModel for this Writer. */
 	private ColorModel model;
+
+	@Parameter
+	private DataHandleService handles;
 
 	// -- AbstractWriter API Methods --
 
@@ -185,84 +190,57 @@ public abstract class AbstractWriter<M extends TypedMetadata> extends
 	}
 
 	@Override
-	public void setDest(final String fileName) throws FormatException,
+	public void setDest(final Location fileName) throws FormatException,
 		IOException
 	{
 		setDest(fileName, 0);
 	}
 
 	@Override
-	public void setDest(final File file) throws FormatException, IOException {
-		setDest(file.getName(), 0);
-	}
-
-	@Override
-	public void setDest(final RandomAccessOutputStream out)
-		throws FormatException, IOException
+	public void setDest(final DataHandle<Location> out) throws FormatException,
+		IOException
 	{
 		setDest(out, 0);
 	}
 
 	@Override
-	public void setDest(final String fileName, final int imageIndex)
+	public void setDest(final Location loc, final int imageIndex)
 		throws FormatException, IOException
 	{
-		setDest(fileName, imageIndex, new SCIFIOConfig());
+		setDest(loc, imageIndex, new SCIFIOConfig());
 	}
 
 	@Override
-	public void setDest(final File file, final int imageIndex)
-		throws FormatException, IOException
-	{
-		setDest(file.getName(), imageIndex, new SCIFIOConfig());
-	}
-
-	@Override
-	public void setDest(final RandomAccessOutputStream out, final int imageIndex)
+	public void setDest(final DataHandle<Location> out, final int imageIndex)
 		throws FormatException, IOException
 	{
 		setDest(out, imageIndex, new SCIFIOConfig());
 	}
 
 	@Override
-	public void setDest(final String fileName, final SCIFIOConfig config)
+	public void setDest(final Location loc, final SCIFIOConfig config)
 		throws FormatException, IOException
 	{
-		setDest(fileName, 0, config);
+		setDest(loc, 0, config);
 	}
 
 	@Override
-	public void setDest(final File file, final SCIFIOConfig config)
+	public void setDest(final DataHandle<Location> out, final SCIFIOConfig config)
 		throws FormatException, IOException
-	{
-		setDest(file.getName(), 0, config);
-	}
-
-	@Override
-	public void setDest(final RandomAccessOutputStream out,
-		final SCIFIOConfig config) throws FormatException, IOException
 	{
 		setDest(out, 0, config);
 	}
 
 	@Override
-	public void setDest(final String fileName, final int imageIndex,
+	public void setDest(final Location loc, final int imageIndex,
 		final SCIFIOConfig config) throws FormatException, IOException
 	{
-		getMetadata().setDatasetName(fileName);
-		setDest(new RandomAccessOutputStream(getContext(), fileName), imageIndex,
-			config);
+		getMetadata().setDatasetName(loc.getName());
+		setDest(handles.create(loc));
 	}
 
 	@Override
-	public void setDest(final File file, final int imageIndex,
-		final SCIFIOConfig config) throws FormatException, IOException
-	{
-		setDest(file.getName(), imageIndex, config);
-	}
-
-	@Override
-	public void setDest(final RandomAccessOutputStream out, final int imageIndex,
+	public void setDest(final DataHandle<Location> out, final int imageIndex,
 		final SCIFIOConfig config) throws FormatException, IOException
 	{
 		if (metadata == null) throw new FormatException(
@@ -286,7 +264,7 @@ public abstract class AbstractWriter<M extends TypedMetadata> extends
 	}
 
 	@Override
-	public RandomAccessOutputStream getStream() {
+	public DataHandle<Location> getHandle() {
 		return out;
 	}
 
