@@ -32,6 +32,7 @@ package io.scif.codec;
 
 import io.scif.FormatException;
 import io.scif.UnsupportedCompressionException;
+import io.scif.io.RandomAccessInputStream;
 
 import java.io.IOException;
 import java.nio.ByteOrder;

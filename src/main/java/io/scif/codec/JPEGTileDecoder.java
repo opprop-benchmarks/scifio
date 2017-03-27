@@ -31,7 +31,6 @@
 package io.scif.codec;
 
 import io.scif.FormatException;
-import io.scif.io.RandomAccessInputStream;
 
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -39,10 +38,13 @@ import java.awt.image.ColorModel;
 import java.awt.image.ImageConsumer;
 import java.awt.image.ImageProducer;
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.Hashtable;
 
 import org.scijava.AbstractContextual;
 import org.scijava.Context;
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
 import org.scijava.util.IntRect;
@@ -63,7 +65,7 @@ public class JPEGTileDecoder extends AbstractContextual {
 
 	private TileCache tiles;
 
-	private RandomAccessInputStream in;
+	private DataHandle<Location> in;
 
 	public JPEGTileDecoder(final Context ctx) {
 		setContext(ctx);
@@ -71,22 +73,11 @@ public class JPEGTileDecoder extends AbstractContextual {
 
 	// -- JPEGTileDecoder API methods --
 
-	public void initialize(final String id, final int imageWidth) {
-		try {
-			initialize(new RandomAccessInputStream(getContext(), id), imageWidth);
-		}
-		catch (final IOException e) {
-			log.debug("", e);
-		}
-	}
-
-	public void initialize(final RandomAccessInputStream in,
-		final int imageWidth)
-	{
+	public void initialize(final DataHandle<Location> in, final int imageWidth) {
 		initialize(in, 0, imageWidth);
 	}
 
-	public void initialize(final RandomAccessInputStream in, final int y,
+	public void initialize(final DataHandle<Location> in, final int y,
 		final int h)
 	{
 		this.in = in;
@@ -96,14 +87,14 @@ public class JPEGTileDecoder extends AbstractContextual {
 		// image width and height are non-zero
 
 		try {
-			final long fp = in.getFilePointer();
+			final long fp = in.offset();
 			final boolean littleEndian = in.isLittleEndian();
-			in.order(false);
+			in.setOrder(ByteOrder.BIG_ENDIAN);
 
-			while (in.getFilePointer() < in.length() - 1) {
+			while (in.offset() < in.length() - 1) {
 				final int code = in.readShort() & 0xffff;
 				final int length = in.readShort() & 0xffff;
-				final long pointer = in.getFilePointer();
+				final long pointer = in.offset();
 				if (length > 0xff00 || code < 0xff00) {
 					in.seek(pointer - 3);
 					continue;
@@ -127,13 +118,15 @@ public class JPEGTileDecoder extends AbstractContextual {
 			}
 
 			in.seek(fp);
-			in.order(littleEndian);
+			in.setOrder(littleEndian ? ByteOrder.LITTLE_ENDIAN
+				: ByteOrder.BIG_ENDIAN);
 		}
 		catch (final IOException e) {}
 
 		try {
 			final Toolkit toolkit = Toolkit.getDefaultToolkit();
-			final byte[] data = new byte[this.in.available()];
+			final byte[] data = new byte[(int) this.in.length()]; // FIXME potentially
+																														// wrong
 			this.in.readFully(data);
 			final Image image = toolkit.createImage(data);
 			final ImageProducer producer = image.getSource();

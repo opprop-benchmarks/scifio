@@ -33,10 +33,11 @@ package io.scif.codec;
 import io.scif.FormatException;
 import io.scif.UnsupportedCompressionException;
 import io.scif.io.ByteArrayHandle;
-import io.scif.io.RandomAccessInputStream;
 
 import java.io.IOException;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 import org.scijava.plugin.Plugin;
 
 /**
@@ -54,12 +55,12 @@ public class QTRLECodec extends AbstractCodec {
 	}
 
 	@Override
-	public byte[] decompress(final RandomAccessInputStream in,
+	public byte[] decompress(final DataHandle<Location> in,
 		final CodecOptions options) throws FormatException, IOException
 	{
 		if (in == null) throw new IllegalArgumentException(
 			"No data to decompress.");
-		final byte[] b = new byte[(int) (in.length() - in.getFilePointer())];
+		final byte[] b = new byte[(int) (in.length() - in.offset())];
 		in.read(b);
 		return decompress(b, options);
 	}

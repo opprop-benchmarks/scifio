@@ -36,6 +36,8 @@ import io.scif.io.RandomAccessInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 import org.scijava.plugin.Plugin;
 
 /**
@@ -263,8 +265,8 @@ public class LZWCodec extends AbstractCodec {
 	 * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
 	 */
 	@Override
-	public byte[] decompress(final RandomAccessInputStream in,
-		CodecOptions options) throws FormatException, IOException
+	public byte[] decompress(final DataHandle<Location> in, CodecOptions options)
+		throws FormatException, IOException
 	{
 		if (in == null || in.length() == 0) return null;
 		if (options == null) options = CodecOptions.getDefaultOptions();
@@ -407,7 +409,7 @@ public class LZWCodec extends AbstractCodec {
 						break;
 				}
 			}
-			while (currOutPos < output.length && in.getFilePointer() < in.length());
+			while (currOutPos < output.length && in.offset() < in.length());
 		}
 		catch (final ArrayIndexOutOfBoundsException e) {
 			throw new FormatException("Invalid LZW data", e);

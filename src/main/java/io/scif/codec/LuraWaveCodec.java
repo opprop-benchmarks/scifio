@@ -34,7 +34,6 @@ import io.scif.DependencyException;
 import io.scif.FormatException;
 import io.scif.MissingLibraryException;
 import io.scif.UnsupportedCompressionException;
-import io.scif.io.RandomAccessInputStream;
 import io.scif.services.LuraWaveService;
 import io.scif.services.ServiceException;
 
@@ -42,6 +41,8 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.util.Bytes;
@@ -73,7 +74,7 @@ public class LuraWaveCodec extends AbstractCodec {
 	}
 
 	@Override
-	public byte[] decompress(final RandomAccessInputStream in,
+	public byte[] decompress(final DataHandle<Location> in,
 		final CodecOptions options) throws FormatException, IOException
 	{
 		final byte[] buf = new byte[(int) in.length()];

@@ -37,6 +37,8 @@ import io.scif.io.RandomAccessInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 import org.scijava.plugin.Plugin;
 
 /**
@@ -76,7 +78,7 @@ public class HuffmanCodec extends AbstractCodec {
 	 * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
 	 */
 	@Override
-	public byte[] decompress(final RandomAccessInputStream in,
+	public byte[] decompress(final DataHandle<Location> in,
 		final CodecOptions options) throws FormatException, IOException
 	{
 		if (in == null) throw new IllegalArgumentException(

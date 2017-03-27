@@ -31,13 +31,15 @@
 package io.scif.codec;
 
 import io.scif.FormatException;
-import io.scif.io.RandomAccessInputStream;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleInputStream;
+import org.scijava.io.Location;
 import org.scijava.plugin.Plugin;
 
 /**
@@ -68,10 +70,11 @@ public class ZlibCodec extends AbstractCodec {
 	}
 
 	@Override
-	public byte[] decompress(final RandomAccessInputStream in,
+	public byte[] decompress(final DataHandle<Location> in,
 		final CodecOptions options) throws FormatException, IOException
 	{
-		final InflaterInputStream i = new InflaterInputStream(in);
+		final InflaterInputStream i = new InflaterInputStream(
+			new DataHandleInputStream<>(in));
 		final ByteVector bytes = new ByteVector();
 		final byte[] buf = new byte[8192];
 		int r = 0;
