@@ -42,6 +42,7 @@ import io.scif.config.SCIFIOConfig;
 import io.scif.io.RandomAccessInputStream;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.List;
 import java.util.Vector;
 
@@ -50,6 +51,9 @@ import net.imagej.axis.AxisType;
 import net.imagej.axis.CalibratedAxis;
 import net.imagej.axis.DefaultLinearAxis;
 import net.imagej.axis.LinearAxis;
+
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 
 /**
  * A collection of constants and utility methods applicable for all cycles of
@@ -709,12 +713,13 @@ public final class FormatTools {
 	 * Returns true if the given RandomAccessInputStream conatins at least 'len'
 	 * bytes.
 	 */
-	public static boolean validStream(final RandomAccessInputStream stream,
+	public static boolean validStream(final DataHandle<Location> handle,
 		final int len, final boolean littleEndian) throws IOException
 	{
-		stream.seek(0);
-		stream.order(littleEndian);
-		return stream.length() >= len;
+		handle.seek(0);
+		handle.setOrder(littleEndian ? ByteOrder.LITTLE_ENDIAN
+			: ByteOrder.BIG_ENDIAN);
+		return handle.length() >= len;
 	}
 
 	/** Returns the size in bytes of a single plane read by the given Reader. */
@@ -927,8 +932,9 @@ public final class FormatTools {
 		String filename = pattern.replaceAll(SERIES_NUM, String.valueOf(
 			imageIndex));
 
-		String imageName = r.getCurrentFile();
-		if (imageName == null) imageName = "Image#" + imageIndex;
+		String imageName = r.getCurrentFile().getName();
+		if (imageName == null || "".equals(imageName)) imageName = "Image#" +
+			imageIndex;
 		imageName = imageName.replaceAll("/", "_");
 		imageName = imageName.replaceAll("\\\\", "_");
 
