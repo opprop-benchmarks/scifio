@@ -42,6 +42,7 @@ import java.util.Arrays;
 import net.imagej.axis.Axes;
 import net.imglib2.display.ColorTable;
 
+import org.scijava.io.Location;
 import org.scijava.plugin.Plugin;
 import org.scijava.util.Bytes;
 
@@ -239,7 +240,7 @@ public class ChannelFiller extends AbstractReaderFilter {
 
 	/* lutLength is 0 until a plane is opened */
 	@Override
-	protected void setSourceHelper(final String source,
+	protected void setSourceHelper(final Location source,
 		final SCIFIOConfig config)
 	{
 		try {
