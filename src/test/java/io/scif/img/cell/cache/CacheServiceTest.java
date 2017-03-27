@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -124,8 +124,8 @@ public class CacheServiceTest {
 		final SCIFIOCellCache<ByteArray> cache1 = makeCache(128l * 128l);
 
 		// load the first cell in that cache
-		final SCIFIOCell<ByteArray> cell =
-			cache1.load(0, new int[] { 128, 128 }, new long[] { 0l, 0l });
+		final SCIFIOCell<ByteArray> cell = cache1.load(0, new int[] { 128, 128 },
+			new long[] { 0l, 0l });
 
 		// Cell is unmodified so this shouldn't cache
 		assertEquals(CacheResult.NOT_DIRTY, cs.cache(cache1.toString(), 0, cell));
@@ -170,8 +170,8 @@ public class CacheServiceTest {
 	@Test
 	public void testCacheAllToggle() throws FormatException, IOException {
 		final SCIFIOCellCache<ByteArray> cache1 = makeCache(128l * 128l);
-		final SCIFIOCell<ByteArray> cell =
-			cache1.load(0, new int[] { 128, 128 }, new long[] { 0l, 0l });
+		final SCIFIOCell<ByteArray> cell = cache1.load(0, new int[] { 128, 128 },
+			new long[] { 0l, 0l });
 
 		// Enable caching non-dirty data
 		cs.cacheAll(true);
@@ -189,8 +189,8 @@ public class CacheServiceTest {
 	@Test
 	public void testEnabledToggle() throws FormatException, IOException {
 		final SCIFIOCellCache<ByteArray> cache1 = makeCache(128l * 128l);
-		final SCIFIOCell<ByteArray> cell =
-			cache1.load(0, new int[] { 128, 128 }, new long[] { 0l, 0l });
+		final SCIFIOCell<ByteArray> cell = cache1.load(0, new int[] { 128, 128 },
+			new long[] { 0l, 0l });
 
 		cs.cacheAll(true);
 		cs.enable(false);
@@ -223,10 +223,9 @@ public class CacheServiceTest {
 
 		final TestCellCache<ByteArray> cache = makeTestCache(256l * 256l);
 
-		SCIFIOCell<ByteArray> cell =
-			cache.load(0, new int[] { 128, 128 }, new long[] { 0l, 0l });
-		WeakReference<SCIFIOCell<ByteArray>> ref =
-			new WeakReference<>(cell);
+		SCIFIOCell<ByteArray> cell = cache.load(0, new int[] { 128, 128 },
+			new long[] { 0l, 0l });
+		WeakReference<SCIFIOCell<ByteArray>> ref = new WeakReference<>(cell);
 		// First, test with no modifications to the cell
 		cell = null;
 
@@ -258,8 +257,8 @@ public class CacheServiceTest {
 
 		// Wait for caching
 		time = System.currentTimeMillis();
-		while ((cell = (SCIFIOCell<ByteArray>) cs.retrieve(cache.toString(), 0)) == null &&
-			System.currentTimeMillis() - time < TIMEOUT)
+		while ((cell = (SCIFIOCell<ByteArray>) cs.retrieve(cache.toString(),
+			0)) == null && System.currentTimeMillis() - time < TIMEOUT)
 		{
 			// wait until serialization/deserialization completes
 		}
@@ -271,8 +270,8 @@ public class CacheServiceTest {
 		cs.cleanRetrieved(cache.toString());
 
 		time = System.currentTimeMillis();
-		while (cs.retrieveNoRecache(cache.toString(), 0) != null &&
-			System.currentTimeMillis() - time < TIMEOUT)
+		while (cs.retrieveNoRecache(cache.toString(), 0) != null && System
+			.currentTimeMillis() - time < TIMEOUT)
 		{
 			// Wait for the entry to be removed from the cache
 		}
@@ -295,8 +294,8 @@ public class CacheServiceTest {
 
 		// Wait for finalization
 		time = System.currentTimeMillis();
-		while ((cell = (SCIFIOCell<ByteArray>) cs.retrieve(cache.toString(), 0)) == null &&
-			System.currentTimeMillis() - time < TIMEOUT)
+		while ((cell = (SCIFIOCell<ByteArray>) cs.retrieve(cache.toString(),
+			0)) == null && System.currentTimeMillis() - time < TIMEOUT)
 		{
 			// wait until serialization/deserialization completes
 			clearMem();
@@ -321,16 +320,16 @@ public class CacheServiceTest {
 		cs.setMaxBytesOnDisk(1024l * 1024l * 6l);
 
 		// load 4MB of the dataset
-		final SCIFIOCell<ByteArray> cell1 =
-			cache1.load(0, new int[] { 2048, 2048 }, new long[] { 0l, 0l });
+		final SCIFIOCell<ByteArray> cell1 = cache1.load(0, new int[] { 2048, 2048 },
+			new long[] { 0l, 0l });
 
 		// Dirty and cache the cell
 		cell1.getData().setValue(130, (byte) 0xace);
 		assertEquals(CacheResult.SUCCESS, cs.cache(cache1.toString(), 0, cell1));
 
 		// Grab another 4MB chunk of the dataset
-		final SCIFIOCell<ByteArray> cell2 =
-			cache1.load(1, new int[] { 2048, 2048 }, new long[] { 2048l, 0l });
+		final SCIFIOCell<ByteArray> cell2 = cache1.load(1, new int[] { 2048, 2048 },
+			new long[] { 2048l, 0l });
 
 		// dirty the new cell
 		cell2.getData().setValue(130, (byte) 0xace);
@@ -344,8 +343,8 @@ public class CacheServiceTest {
 
 		cs.cleanRetrieved(cache1.toString());
 		long time = System.currentTimeMillis();
-		while (cs.retrieveNoRecache(cache1.toString(), 0) != null &&
-			System.currentTimeMillis() - time < TIMEOUT)
+		while (cs.retrieveNoRecache(cache1.toString(), 0) != null && System
+			.currentTimeMillis() - time < TIMEOUT)
 		{
 			// Wait for the entry to be removed from the cache
 		}
@@ -354,8 +353,8 @@ public class CacheServiceTest {
 		assertEquals(CacheResult.SUCCESS, cs.cache(cache1.toString(), 0, cell1));
 
 		time = System.currentTimeMillis();
-		while (cs.retrieveNoRecache(cache1.toString(), 0) == null &&
-			System.currentTimeMillis() - time < TIMEOUT)
+		while (cs.retrieveNoRecache(cache1.toString(), 0) == null && System
+			.currentTimeMillis() - time < TIMEOUT)
 		{
 			// Wait for the cell to hit the disk cache
 		}
@@ -366,8 +365,8 @@ public class CacheServiceTest {
 		cs.clearCache(cache1.toString());
 
 		time = System.currentTimeMillis();
-		while (cs.retrieveNoRecache(cache1.toString(), 0) != null &&
-			System.currentTimeMillis() - time < TIMEOUT)
+		while (cs.retrieveNoRecache(cache1.toString(), 0) != null && System
+			.currentTimeMillis() - time < TIMEOUT)
 		{
 			// Wait for the cell to clear disk cache
 		}
@@ -381,8 +380,8 @@ public class CacheServiceTest {
 
 		cs.cleanRetrieved(cache1.toString());
 		time = System.currentTimeMillis();
-		while (cs.retrieveNoRecache(cache1.toString(), 1) != null &&
-			System.currentTimeMillis() - time < TIMEOUT)
+		while (cs.retrieveNoRecache(cache1.toString(), 1) != null && System
+			.currentTimeMillis() - time < TIMEOUT)
 		{
 			// Wait for the entry to be removed from the cache
 		}
@@ -391,10 +390,10 @@ public class CacheServiceTest {
 		cs.setMaxBytesOnDisk(Long.MAX_VALUE);
 		assertEquals(CacheResult.SUCCESS, cs.cache(cache1.toString(), 0, cell1));
 		assertEquals(CacheResult.SUCCESS, cs.cache(cache1.toString(), 1, cell2));
-		final SCIFIOCell<ByteArray> cell1b =
-			(SCIFIOCell<ByteArray>) cs.retrieveNoRecache(cache1.toString(), 0);
-		final SCIFIOCell<ByteArray> cell2b =
-			(SCIFIOCell<ByteArray>) cs.retrieveNoRecache(cache1.toString(), 1);
+		final SCIFIOCell<ByteArray> cell1b = (SCIFIOCell<ByteArray>) cs
+			.retrieveNoRecache(cache1.toString(), 0);
+		final SCIFIOCell<ByteArray> cell2b = (SCIFIOCell<ByteArray>) cs
+			.retrieveNoRecache(cache1.toString(), 1);
 		assertTrue(cell1.equals(cell1b));
 		assertTrue(cell2.equals(cell2b));
 
@@ -417,10 +416,10 @@ public class CacheServiceTest {
 		final SCIFIOCellCache<ByteArray> cache1 = makeCache(100l * 1024l * 1024l);
 
 		// Open the same chunk twice
-		final SCIFIOCell<ByteArray> cell1a =
-			cache1.load(0, new int[] { 2048, 2048 }, new long[] { 0l, 0l });
-		final SCIFIOCell<ByteArray> cell2a =
-			cache1.load(1, new int[] { 2048, 2048 }, new long[] { 0l, 0l });
+		final SCIFIOCell<ByteArray> cell1a = cache1.load(0, new int[] { 2048,
+			2048 }, new long[] { 0l, 0l });
+		final SCIFIOCell<ByteArray> cell2a = cache1.load(1, new int[] { 2048,
+			2048 }, new long[] { 0l, 0l });
 
 		// Verify the arrays are equal
 		assertTrue(Arrays.equals(cell1a.getData().getCurrentStorageArray(), cell2a
@@ -436,11 +435,11 @@ public class CacheServiceTest {
 
 		// RetrieveSCIFIOCell<ByteArray> cell1a the cells
 		@SuppressWarnings("unchecked")
-		final SCIFIOCell<ByteArray> cell1b =
-			(SCIFIOCell<ByteArray>) cs.retrieve(cache1.toString(), 0);
+		final SCIFIOCell<ByteArray> cell1b = (SCIFIOCell<ByteArray>) cs.retrieve(
+			cache1.toString(), 0);
 		@SuppressWarnings("unchecked")
-		final SCIFIOCell<ByteArray> cell2b =
-			(SCIFIOCell<ByteArray>) cs.retrieve(cache1.toString(), 1);
+		final SCIFIOCell<ByteArray> cell2b = (SCIFIOCell<ByteArray>) cs.retrieve(
+			cache1.toString(), 1);
 
 		// The b cells should == the a cells, and be unequal to each other since
 		// they were modified differently
@@ -487,12 +486,11 @@ public class CacheServiceTest {
 	private SCIFIOCellCache<ByteArray> makeCache(final String id)
 		throws FormatException, IOException
 	{
-		final ReaderFilter rf =
-			scifio.initializer().initializeReader(id,
-				new SCIFIOConfig().checkerSetOpen(true));
+		final ReaderFilter rf = scifio.initializer().initializeReader(id,
+			new SCIFIOConfig().checkerSetOpen(true));
 		final ByteArrayLoader loader = new ByteArrayLoader(rf, null);
-		final SCIFIOCellCache<ByteArray> cellCache =
-			new SCIFIOCellCache<>(cs.getContext(), loader);
+		final SCIFIOCellCache<ByteArray> cellCache = new SCIFIOCellCache<>(cs
+			.getContext(), loader);
 		return cellCache;
 	}
 
@@ -501,16 +499,16 @@ public class CacheServiceTest {
 		throws FormatException, IOException
 	{
 		final String id = makeFakeFile(bytes);
-		final ReaderFilter rf =
-			scifio.initializer().initializeReader(id,
-				new SCIFIOConfig().checkerSetOpen(true));
+		final ReaderFilter rf = scifio.initializer().initializeReader(id,
+			new SCIFIOConfig().checkerSetOpen(true));
 		final ByteArrayLoader loader = new ByteArrayLoader(rf, null);
-		final TestCellCache<ByteArray> cellCache =
-			new TestCellCache<>(cs.getContext(), loader);
+		final TestCellCache<ByteArray> cellCache = new TestCellCache<>(cs
+			.getContext(), loader);
 		return cellCache;
 	}
 
-	private void enableCells(final boolean enabled, final SCIFIOCell<?>... cells)
+	private void enableCells(final boolean enabled,
+		final SCIFIOCell<?>... cells)
 	{
 		for (final SCIFIOCell<?> cell : cells) {
 			if (cell != null) cell.cacheOnFinalize(enabled);

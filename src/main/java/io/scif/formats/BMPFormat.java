@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -58,8 +58,8 @@ import net.imglib2.display.ColorTable8;
 import org.scijava.plugin.Plugin;
 
 /**
- * BMPReader is the file format reader for <a
- * href="https://en.wikipedia.org/wiki/BMP_file_format">Microsoft Bitmap
+ * BMPReader is the file format reader for
+ * <a href="https://en.wikipedia.org/wiki/BMP_file_format">Microsoft Bitmap
  * (BMP)</a> files.
  *
  * @author Mark Hiner
@@ -197,8 +197,8 @@ public class BMPFormat extends AbstractFormat {
 		// -- HasColorTable API Methods --
 
 		@Override
-		public ColorTable
-			getColorTable(final int imageIndex, final long planeIndex)
+		public ColorTable getColorTable(final int imageIndex,
+			final long planeIndex)
 		{
 			return palette;
 		}
@@ -337,10 +337,9 @@ public class BMPFormat extends AbstractFormat {
 		// -- Reader API Methods --
 
 		@Override
-		public ByteArrayPlane openPlane(final int imageIndex,
-			final long planeIndex, final ByteArrayPlane plane, final long[] planeMin,
-			final long[] planeMax, final SCIFIOConfig config) throws FormatException,
-			IOException
+		public ByteArrayPlane openPlane(final int imageIndex, final long planeIndex,
+			final ByteArrayPlane plane, final long[] planeMin, final long[] planeMax,
+			final SCIFIOConfig config) throws FormatException, IOException
 		{
 			final Metadata meta = getMetadata();
 			final int xIndex = meta.get(imageIndex).getAxisIndex(Axes.X);
@@ -355,19 +354,19 @@ public class BMPFormat extends AbstractFormat {
 			final int sizeY = (int) meta.get(imageIndex).getAxisLength(Axes.Y);
 			final int sizeC = (int) meta.get(imageIndex).getAxisLength(Axes.CHANNEL);
 
-			FormatTools.checkPlaneForReading(meta, imageIndex, planeIndex,
-				buf.length, planeMin, planeMax);
+			FormatTools.checkPlaneForReading(meta, imageIndex, planeIndex, buf.length,
+				planeMin, planeMax);
 
-			if (compression != RAW &&
-				getStream().length() < FormatTools.getPlaneSize(this, imageIndex))
+			if (compression != RAW && getStream().length() < FormatTools.getPlaneSize(
+				this, imageIndex))
 			{
 				throw new UnsupportedCompressionException(compression +
 					" not supported");
 			}
 
 			final int rowsToSkip = meta.isInvertY() ? y : sizeY - (h + y);
-			final int rowLength =
-				sizeX * (meta.get(imageIndex).isIndexed() ? 1 : sizeC);
+			final int rowLength = sizeX * (meta.get(imageIndex).isIndexed() ? 1
+				: sizeC);
 			getStream().seek(meta.getGlobal() + rowsToSkip * rowLength);
 
 			int pad = ((rowLength * bpp) / 8) % 2;
@@ -402,20 +401,20 @@ public class BMPFormat extends AbstractFormat {
 			final ColorTable palette = meta.getColorTable(0, 0);
 			plane.setColorTable(palette);
 
-			final int effectiveC =
-				palette != null && palette.getLength() > 0 ? 1 : sizeC;
+			final int effectiveC = palette != null && palette.getLength() > 0 ? 1
+				: sizeC;
 			for (int row = h - 1; row >= 0; row--) {
 				final int rowIndex = meta.isInvertY() ? h - 1 - row : row;
 				bb.skipBits(x * bpp * effectiveC);
 				for (int i = 0; i < w * effectiveC; i++) {
 					if (bpp <= 8) {
-						buf[rowIndex * w * effectiveC + i] =
-							(byte) (bb.getBits(bpp) & 0xff);
+						buf[rowIndex * w * effectiveC + i] = (byte) (bb.getBits(bpp) &
+							0xff);
 					}
 					else {
 						for (int b = 0; b < bpp / 8; b++) {
-							buf[(bpp / 8) * (rowIndex * w * effectiveC + i) + b] =
-								(byte) (bb.getBits(8) & 0xff);
+							buf[(bpp / 8) * (rowIndex * w * effectiveC + i) + b] = (byte) (bb
+								.getBits(8) & 0xff);
 						}
 					}
 				}
@@ -425,9 +424,9 @@ public class BMPFormat extends AbstractFormat {
 			}
 
 			if (meta.get(imageIndex).getAxisLength(Axes.CHANNEL) > 1) {
-				ImageTools.bgrToRgb(buf,
-					meta.get(imageIndex).getInterleavedAxisCount() > 0, 1, (int) meta
-						.get(imageIndex).getAxisLength(Axes.CHANNEL));
+				ImageTools.bgrToRgb(buf, meta.get(imageIndex)
+					.getInterleavedAxisCount() > 0, 1, (int) meta.get(imageIndex)
+						.getAxisLength(Axes.CHANNEL));
 			}
 			return plane;
 		}

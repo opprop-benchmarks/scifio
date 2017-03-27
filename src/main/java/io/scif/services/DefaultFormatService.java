@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -166,7 +166,7 @@ public class DefaultFormatService extends AbstractService implements
 		// already have an entry for this format
 		if (formatMap().get(format.getClass()) != null) return false;
 
-		synchronized(formats) {
+		synchronized (formats) {
 			// synchronized lock to protect format adding
 			if (formatMap().get(format.getClass()) == null) {
 				formats().add(format);
@@ -338,8 +338,8 @@ public class DefaultFormatService extends AbstractService implements
 		boolean found = false;
 
 		for (final Format format : formats()) {
-			if (!found && format.isEnabled() &&
-				format.createChecker().isFormat(id, config))
+			if (!found && format.isEnabled() && format.createChecker().isFormat(id,
+				config))
 			{
 				// if greedy is true, we can end after finding the first format
 				found = greedy;
@@ -362,8 +362,8 @@ public class DefaultFormatService extends AbstractService implements
 	}
 
 	@Override
-	public Format getFormat(final RandomAccessInputStream source, final SCIFIOConfig config)
-		throws FormatException
+	public Format getFormat(final RandomAccessInputStream source,
+		final SCIFIOConfig config) throws FormatException
 	{
 		return getFormatList(source, config, true).get(0);
 	}
@@ -372,7 +372,8 @@ public class DefaultFormatService extends AbstractService implements
 	public List<Format> getFormatList(final RandomAccessInputStream source)
 		throws FormatException
 	{
-		return getFormatList(source, new SCIFIOConfig().checkerSetOpen(true), false);
+		return getFormatList(source, new SCIFIOConfig().checkerSetOpen(true),
+			false);
 	}
 
 	@Override
@@ -385,8 +386,8 @@ public class DefaultFormatService extends AbstractService implements
 
 		for (final Format format : formats()) {
 			try {
-				if (!found && format.isEnabled() &&
-					format.createChecker().isFormat(source))
+				if (!found && format.isEnabled() && format.createChecker().isFormat(
+					source))
 				{
 					// if greedy is true, we can end after finding the first format
 					found = greedy;
@@ -447,8 +448,8 @@ public class DefaultFormatService extends AbstractService implements
 				formatCache = new WeakHashMap<>();
 
 				// Initialize format information
-				for (final Format format : pluginService
-					.createInstancesOfType(Format.class))
+				for (final Format format : pluginService.createInstancesOfType(
+					Format.class))
 				{
 					addFormat(format);
 				}
@@ -528,7 +529,7 @@ public class DefaultFormatService extends AbstractService implements
 						// Limit excessive polling
 						Thread.sleep(100);
 					}
-					catch (InterruptedException e) {
+					catch (final InterruptedException e) {
 						logService.error("DefaultFormatService: " +
 							"Interrupted while waiting for format initialization.", e);
 					}

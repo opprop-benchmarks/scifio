@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -154,25 +154,25 @@ public class MicromanagerFormat extends AbstractFormat {
 			{
 				final int blockSize = 1048576;
 				try {
-					final RandomAccessInputStream stream =
-						new RandomAccessInputStream(getContext(), name);
+					final RandomAccessInputStream stream = new RandomAccessInputStream(
+						getContext(), name);
 					final long length = stream.length();
-					final String data =
-						stream.readString((int) Math.min(blockSize, length));
+					final String data = stream.readString((int) Math.min(blockSize,
+						length));
 					stream.close();
-					return length > 0 &&
-						(data.contains("Micro-Manager") || data.contains("micromanager"));
+					return length > 0 && (data.contains("Micro-Manager") || data.contains(
+						"micromanager"));
 				}
 				catch (final IOException e) {
 					return false;
 				}
 			}
 			try {
-				final Location parent =
-					new Location(getContext(), name).getAbsoluteFile().getParentFile();
+				final Location parent = new Location(getContext(), name)
+					.getAbsoluteFile().getParentFile();
 				final Location metaFile = new Location(getContext(), parent, METADATA);
-				final RandomAccessInputStream s =
-					new RandomAccessInputStream(getContext(), name);
+				final RandomAccessInputStream s = new RandomAccessInputStream(
+					getContext(), name);
 				boolean validTIFF = isFormat(s);
 				final io.scif.Checker checker;
 				try {
@@ -217,9 +217,8 @@ public class MicromanagerFormat extends AbstractFormat {
 
 		// -- MicromanagerParser API methods --
 
-		public void populateMetadata(final String[] jsonData,
-			final Metadata source, final io.scif.Metadata dest)
-			throws FormatException, IOException
+		public void populateMetadata(final String[] jsonData, final Metadata source,
+			final io.scif.Metadata dest) throws FormatException, IOException
 		{
 			source.createImageMetadata(jsonData.length);
 			final Vector<Position> positions = new Vector<>();
@@ -247,15 +246,15 @@ public class MicromanagerFormat extends AbstractFormat {
 
 			// find metadata.txt
 
-			final Location file =
-				new Location(getContext(), stream.getFileName()).getAbsoluteFile();
+			final Location file = new Location(getContext(), stream.getFileName())
+				.getAbsoluteFile();
 			Location parentFile = file.getParentFile();
 			String metadataFile = METADATA;
 			if (!file.exists()) throw new IllegalStateException(
-					"MicromanagerFormat: No companion metadata file");
+				"MicromanagerFormat: No companion metadata file");
 
-			metadataFile =
-					new Location(getContext(), parentFile, METADATA).getAbsolutePath();
+			metadataFile = new Location(getContext(), parentFile, METADATA)
+				.getAbsolutePath();
 
 			// look for other positions
 
@@ -266,10 +265,9 @@ public class MicromanagerFormat extends AbstractFormat {
 				for (final String dir : dirs) {
 					if (dir.contains("Pos_")) {
 						final Position pos = new Position();
-						final Location posDir =
-								new Location(getContext(), parentFile, dir);
-						pos.metadataFile =
-								new Location(getContext(), posDir, METADATA).getAbsolutePath();
+						final Location posDir = new Location(getContext(), parentFile, dir);
+						pos.metadataFile = new Location(getContext(), posDir, METADATA)
+							.getAbsolutePath();
 						positions.add(pos);
 					}
 				}
@@ -345,8 +343,8 @@ public class MicromanagerFormat extends AbstractFormat {
 		{
 			final Position p = meta.getPositions().get(posIndex);
 			final ImageMetadata ms = meta.get(posIndex);
-			final String parent =
-				new Location(getContext(), p.metadataFile).getParent();
+			final String parent = new Location(getContext(), p.metadataFile)
+				.getParent();
 
 			log().info("Finding image file names");
 
@@ -362,14 +360,13 @@ public class MicromanagerFormat extends AbstractFormat {
 				final Vector<String> uniqueC = new Vector<>();
 				final Vector<String> uniqueT = new Vector<>();
 
-				final Location dir =
-					new Location(getContext(), p.metadataFile).getAbsoluteFile()
-						.getParentFile();
+				final Location dir = new Location(getContext(), p.metadataFile)
+					.getAbsoluteFile().getParentFile();
 				final String[] files = dir.list(true);
 				Arrays.sort(files);
 				for (final String f : files) {
-					if (FormatTools.checkSuffix(f, "tif") ||
-						FormatTools.checkSuffix(f, "tiff"))
+					if (FormatTools.checkSuffix(f, "tif") || FormatTools.checkSuffix(f,
+						"tiff"))
 					{
 						final String[] blocks = f.split("_");
 						if (!uniqueT.contains(blocks[1])) uniqueT.add(blocks[1]);
@@ -395,8 +392,8 @@ public class MicromanagerFormat extends AbstractFormat {
 		{
 			final Position p = meta.getPositions().get(posIndex);
 			final ImageMetadata ms = meta.get(posIndex);
-			final String parent =
-				new Location(getContext(), p.metadataFile).getParent();
+			final String parent = new Location(getContext(), p.metadataFile)
+				.getParent();
 
 			// now parse the rest of the metadata
 
@@ -423,8 +420,8 @@ public class MicromanagerFormat extends AbstractFormat {
 				String token = st.nextToken().trim();
 				final boolean open = token.contains("[");
 				boolean closed = token.contains("]");
-				if (open ||
-					(!open && !closed && !token.equals("{") && !token.startsWith("}")))
+				if (open || (!open && !closed && !token.equals("{") && !token
+					.startsWith("}")))
 				{
 					final int quote = token.indexOf("\"") + 1;
 					final String key = token.substring(quote, token.indexOf("\"", quote));
@@ -455,8 +452,8 @@ public class MicromanagerFormat extends AbstractFormat {
 					}
 					value = value.substring(0, value.length() - 1);
 					value = value.replaceAll("\"", "");
-					if (value.endsWith(",")) value =
-						value.substring(0, value.length() - 1);
+					if (value.endsWith(",")) value = value.substring(0, value.length() -
+						1);
 					meta.getTable().put(key, value);
 					if (key.equals("Channels")) {
 						ms.setAxisLength(Axes.CHANNEL, Integer.parseInt(value));
@@ -521,8 +518,8 @@ public class MicromanagerFormat extends AbstractFormat {
 					nextDash = token.indexOf("-", dash);
 					slice[1] = Integer.parseInt(token.substring(dash, nextDash));
 					dash = nextDash + 1;
-					slice[0] =
-						Integer.parseInt(token.substring(dash, token.indexOf("\"", dash)));
+					slice[0] = Integer.parseInt(token.substring(dash, token.indexOf("\"",
+						dash)));
 
 					token = st.nextToken().trim();
 					String key = "", value = "";
@@ -635,22 +632,23 @@ public class MicromanagerFormat extends AbstractFormat {
 			final Position p = meta.getPositions().get(posIndex);
 			String prefix = "";
 			if (baseTiff.contains(File.separator)) {
-				prefix =
-					baseTiff.substring(0, baseTiff.lastIndexOf(File.separator) + 1);
+				prefix = baseTiff.substring(0, baseTiff.lastIndexOf(File.separator) +
+					1);
 				baseTiff = baseTiff.substring(baseTiff.lastIndexOf(File.separator) + 1);
 			}
 
 			final String[] blocks = baseTiff.split("_");
 			final StringBuilder filename = new StringBuilder();
 			for (int t = 0; t < meta.get(posIndex).getAxisLength(Axes.TIME); t++) {
-				for (int c = 0; c < meta.get(posIndex).getAxisLength(Axes.CHANNEL); c++)
+				for (int c = 0; c < meta.get(posIndex).getAxisLength(
+					Axes.CHANNEL); c++)
 				{
 					for (int z = 0; z < meta.get(posIndex).getAxisLength(Axes.Z); z++) {
 						// file names are of format:
 						// img_<T>_<channel name>_<T>.tif
 						filename.append(prefix);
-						if (!prefix.endsWith(File.separator) &&
-							!blocks[0].startsWith(File.separator))
+						if (!prefix.endsWith(File.separator) && !blocks[0].startsWith(
+							File.separator))
 						{
 							filename.append(File.separator);
 						}
@@ -748,26 +746,24 @@ public class MicromanagerFormat extends AbstractFormat {
 		}
 
 		@Override
-		public ByteArrayPlane openPlane(final int imageIndex,
-			final long planeIndex, final ByteArrayPlane plane, final long[] planeMin,
-			final long[] planeMax, final SCIFIOConfig config) throws FormatException,
-			IOException
+		public ByteArrayPlane openPlane(final int imageIndex, final long planeIndex,
+			final ByteArrayPlane plane, final long[] planeMin, final long[] planeMax,
+			final SCIFIOConfig config) throws FormatException, IOException
 		{
 			final Metadata meta = getMetadata();
 			final byte[] buf = plane.getBytes();
-			FormatTools.checkPlaneForReading(meta, imageIndex, planeIndex,
-				buf.length, planeMin, planeMax);
+			FormatTools.checkPlaneForReading(meta, imageIndex, planeIndex, buf.length,
+				planeMin, planeMax);
 
-			final String file =
-				meta.getPositions().get(imageIndex).getFile(meta, imageIndex,
-					planeIndex);
+			final String file = meta.getPositions().get(imageIndex).getFile(meta,
+				imageIndex, planeIndex);
 
 			if (file != null && new Location(getContext(), file).exists()) {
 				tiffReader.setSource(file, config);
 				return tiffReader.openPlane(imageIndex, 0, plane, planeMin, planeMax);
 			}
-			log().warn(
-				"File for image #" + planeIndex + " (" + file + ") is missing.");
+			log().warn("File for image #" + planeIndex + " (" + file +
+				") is missing.");
 			return plane;
 		}
 
@@ -804,14 +800,12 @@ public class MicromanagerFormat extends AbstractFormat {
 
 		private void setupReader(final int imageIndex) {
 			try {
-				final String file =
-					getMetadata().getPositions().get(imageIndex).getFile(getMetadata(),
-						imageIndex, 0);
+				final String file = getMetadata().getPositions().get(imageIndex)
+					.getFile(getMetadata(), imageIndex, 0);
 
 				if (tiffReader == null) {
-					tiffReader =
-						(MinimalTIFFFormat.Reader<?>) formatService.getFormatFromClass(
-							MinimalTIFFFormat.class).createReader();
+					tiffReader = (MinimalTIFFFormat.Reader<?>) formatService
+						.getFormatFromClass(MinimalTIFFFormat.class).createReader();
 				}
 
 				tiffReader.setSource(file);
@@ -878,8 +872,8 @@ public class MicromanagerFormat extends AbstractFormat {
 		public String getFile(final Metadata meta, final int imageIndex,
 			final long planeIndex)
 		{
-			final long[] zct =
-				FormatTools.rasterToPosition(imageIndex, planeIndex, meta);
+			final long[] zct = FormatTools.rasterToPosition(imageIndex, planeIndex,
+				meta);
 			for (final Index key : fileNameMap.keySet()) {
 				if (key.z == zct[0] && key.c == zct[1] && key.t == zct[2]) {
 					final String file = fileNameMap.get(key);

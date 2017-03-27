@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -73,37 +73,34 @@ public class LocationTest {
 	@Before
 	public void setup() throws IOException, InterruptedException {
 		context = new Context();
-		final File tmpDirectory =
-			new File(System.getProperty("java.io.tmpdir"),
-				System.currentTimeMillis() + "-location-test");
+		final File tmpDirectory = new File(System.getProperty("java.io.tmpdir"),
+			System.currentTimeMillis() + "-location-test");
 		tmpDirectory.mkdirs();
 		tmpDirectory.deleteOnExit();
 
-		final File hiddenFile =
-			File.createTempFile(".hiddenTest", null, tmpDirectory);
+		final File hiddenFile = File.createTempFile(".hiddenTest", null,
+			tmpDirectory);
 		hiddenFile.deleteOnExit();
 
 		if (isWindows) {
-			final Process p =
-				Runtime.getRuntime().exec("attrib +h " + hiddenFile.getAbsolutePath());
+			final Process p = Runtime.getRuntime().exec("attrib +h " + hiddenFile
+				.getAbsolutePath());
 			p.waitFor();
 		}
 
-		final File invalidFile =
-			File.createTempFile("invalidTest", null, tmpDirectory);
+		final File invalidFile = File.createTempFile("invalidTest", null,
+			tmpDirectory);
 		final String invalidPath = invalidFile.getAbsolutePath();
 		invalidFile.delete();
 
 		final File validFile = File.createTempFile("validTest", null, tmpDirectory);
 		validFile.deleteOnExit();
 
-		files =
-			new Location[] { new Location(context, validFile.getAbsolutePath()),
-				new Location(context, invalidPath),
-				new Location(context, tmpDirectory),
-				new Location(context, "http://loci.wisc.edu/software/scifio"),
-				new Location(context, "http://www.openmicroscopy.org/software/scifio"),
-				new Location(context, hiddenFile) };
+		files = new Location[] { new Location(context, validFile.getAbsolutePath()),
+			new Location(context, invalidPath), new Location(context, tmpDirectory),
+			new Location(context, "http://loci.wisc.edu/software/scifio"),
+			new Location(context, "http://www.openmicroscopy.org/software/scifio"),
+			new Location(context, hiddenFile) };
 
 		exists = new boolean[] { true, false, true, true, false, true };
 

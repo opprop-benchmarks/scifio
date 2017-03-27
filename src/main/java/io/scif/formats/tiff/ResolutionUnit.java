@@ -39,8 +39,8 @@ import java.util.Map;
 
 /**
  * Utility class for working with TIFF resolution units. From the TIFF
- * specification, a resolution unit is
- * "the unit of measurement for XResolution and YResolution."
+ * specification, a resolution unit is "the unit of measurement for XResolution
+ * and YResolution."
  *
  * @author Curtis Rueden
  */

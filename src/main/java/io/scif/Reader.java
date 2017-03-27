@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -101,8 +101,8 @@ public interface Reader extends HasFormat, HasSource, Groupable {
 	 * @throws IllegalArgumentException If the provided {@code Plane} type is not
 	 *           compatible with this {@code Reader}.
 	 */
-	Plane openPlane(int imageIndex, long planeIndex, Plane plane,
-		long[] planeMin, long[] planeMax) throws FormatException, IOException;
+	Plane openPlane(int imageIndex, long planeIndex, Plane plane, long[] planeMin,
+		long[] planeMax) throws FormatException, IOException;
 
 	/**
 	 * As {@link #openPlane(int, long)} with configuration options.
@@ -148,9 +148,8 @@ public interface Reader extends HasFormat, HasSource, Groupable {
 	 * @throws IllegalArgumentException If the provided {@code Plane} type is not
 	 *           compatible with this {@code Reader}.
 	 */
-	Plane openPlane(int imageIndex, long planeIndex, Plane plane,
-		long[] planeMin, long[] planeMax, SCIFIOConfig config)
-		throws FormatException, IOException;
+	Plane openPlane(int imageIndex, long planeIndex, Plane plane, long[] planeMin,
+		long[] planeMax, SCIFIOConfig config) throws FormatException, IOException;
 
 	/**
 	 * Obtains a thumbnail version of the {@code Plane} at the specified image and
@@ -315,8 +314,8 @@ public interface Reader extends HasFormat, HasSource, Groupable {
 	 * @param planeBounds maximum values of the planar axes
 	 * @return The created plane
 	 */
-	Plane
-		createPlane(ImageMetadata meta, long[] planeOffsets, long[] planeBounds);
+	Plane createPlane(ImageMetadata meta, long[] planeOffsets,
+		long[] planeBounds);
 
 	/**
 	 * Convenience method for casting {@code Plane} implementations to the type

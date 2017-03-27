@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -91,9 +91,8 @@ public final class DataTools {
 		if (bytes.length - off < len) len = bytes.length - off;
 		short total = 0;
 		for (int i = 0, ndx = off; i < len; i++, ndx++) {
-			total |=
-				(bytes[ndx] < 0 ? 256 + bytes[ndx] : (int) bytes[ndx]) << ((little ? i
-					: len - i - 1) * 8);
+			total |= (bytes[ndx] < 0 ? 256 + bytes[ndx]
+				: (int) bytes[ndx]) << ((little ? i : len - i - 1) * 8);
 		}
 		return total;
 	}
@@ -165,9 +164,8 @@ public final class DataTools {
 		if (bytes.length - off < len) len = bytes.length - off;
 		int total = 0;
 		for (int i = 0, ndx = off; i < len; i++, ndx++) {
-			total |=
-				(bytes[ndx] < 0 ? 256 + bytes[ndx] : (int) bytes[ndx]) << ((little ? i
-					: len - i - 1) * 8);
+			total |= (bytes[ndx] < 0 ? 256 + bytes[ndx]
+				: (int) bytes[ndx]) << ((little ? i : len - i - 1) * 8);
 		}
 		return total;
 	}
@@ -301,9 +299,8 @@ public final class DataTools {
 		if (bytes.length - off < len) len = bytes.length - off;
 		long total = 0;
 		for (int i = 0, ndx = off; i < len; i++, ndx++) {
-			total |=
-				(bytes[ndx] < 0 ? 256L + bytes[ndx] : (long) bytes[ndx]) << ((little
-					? i : len - i - 1) * 8);
+			total |= (bytes[ndx] < 0 ? 256L + bytes[ndx]
+				: (long) bytes[ndx]) << ((little ? i : len - i - 1) * 8);
 		}
 		return total;
 	}
@@ -422,7 +419,8 @@ public final class DataTools {
 	 * are fewer than 8 bytes available, the MSBs are all assumed to be zero
 	 * (regardless of endianness).
 	 */
-	public static double bytesToDouble(final short[] bytes, final boolean little)
+	public static double bytesToDouble(final short[] bytes,
+		final boolean little)
 	{
 		return bytesToDouble(bytes, 0, 8, little);
 	}
@@ -491,8 +489,8 @@ public final class DataTools {
 	}
 
 	/** Translates an array of short values into an array of byte values. */
-	public static byte[]
-		shortsToBytes(final short[] values, final boolean little)
+	public static byte[] shortsToBytes(final short[] values,
+		final boolean little)
 	{
 		final byte[] v = new byte[values.length * 2];
 		for (int i = 0; i < values.length; i++) {
@@ -511,8 +509,8 @@ public final class DataTools {
 	}
 
 	/** Translates an array of float values into an array of byte values. */
-	public static byte[]
-		floatsToBytes(final float[] values, final boolean little)
+	public static byte[] floatsToBytes(final float[] values,
+		final boolean little)
 	{
 		final byte[] v = new byte[values.length * 4];
 		for (int i = 0; i < values.length; i++) {

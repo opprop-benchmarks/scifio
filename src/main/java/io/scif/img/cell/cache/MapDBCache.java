@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -51,8 +51,8 @@ import org.scijava.service.Service;
 import org.scijava.thread.ThreadService;
 
 /**
- * {@link CacheService} implementation using <a
- * href="http://www.mapdb.org/">MapDB</a> to store and retrieve
+ * {@link CacheService} implementation using
+ * <a href="http://www.mapdb.org/">MapDB</a> to store and retrieve
  * {@link SCIFIOCell}s on disk.
  *
  * @author Mark Hiner
@@ -80,8 +80,7 @@ public class MapDBCache extends AbstractCacheService<SCIFIOCell<?>> {
 	private final Set<String> caches = new TreeSet<>();
 
 	/** Map of keys stored in this cache to the last hash stored on disk. */
-	private final Map<Integer, Integer> knownKeys =
-		new ConcurrentHashMap<>();
+	private final Map<Integer, Integer> knownKeys = new ConcurrentHashMap<>();
 
 	/**
 	 * List of all keys that have been retrieved so far. These keys are OK to
@@ -95,8 +94,7 @@ public class MapDBCache extends AbstractCacheService<SCIFIOCell<?>> {
 	/** Flag for cleaning entries from disk. */
 	private final boolean[] cleaning = { false };
 
-	private final Queue<Set<Integer>> cleaningQueue =
-		new LinkedList<>();
+	private final Queue<Set<Integer>> cleaningQueue = new LinkedList<>();
 
 	// -- CacheService API Methods --
 
@@ -219,8 +217,8 @@ public class MapDBCache extends AbstractCacheService<SCIFIOCell<?>> {
 							Thread.sleep(50);
 						}
 						catch (final InterruptedException e) {
-							logService
-								.warn("Interrupted while waiting for cache to clean", e);
+							logService.warn("Interrupted while waiting for cache to clean",
+								e);
 						}
 						synchronized (knownKeys) {
 							knownSize = knownKeys.keySet().size() + 1;
@@ -274,7 +272,8 @@ public class MapDBCache extends AbstractCacheService<SCIFIOCell<?>> {
 	}
 
 	@Override
-	public SCIFIOCell<?> retrieveNoRecache(final String cacheId, final int index)
+	public SCIFIOCell<?> retrieveNoRecache(final String cacheId,
+		final int index)
 	{
 		final SCIFIOCell<?> cell = getCell(cacheId, index);
 
@@ -387,8 +386,7 @@ public class MapDBCache extends AbstractCacheService<SCIFIOCell<?>> {
 
 	private synchronized void createDB() {
 		if (db != null) return;
-		db =
-			DBMaker.newTempFileDB().closeOnJvmShutdown().cacheDisable()
-				.transactionDisable().deleteFilesAfterClose().make();
+		db = DBMaker.newTempFileDB().closeOnJvmShutdown().cacheDisable()
+			.transactionDisable().deleteFilesAfterClose().make();
 	}
 }

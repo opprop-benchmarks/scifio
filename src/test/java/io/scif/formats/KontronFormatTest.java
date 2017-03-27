@@ -111,8 +111,8 @@ public class KontronFormatTest {
 		buffer.putShort((short) width);
 		buffer.putShort((short) height);
 		buffer.position(HEADER_BYTES);
-		RandomAccessInputStream stream = new RandomAccessInputStream(context, buffer
-			.array());
+		final RandomAccessInputStream stream = new RandomAccessInputStream(context,
+			buffer.array());
 		reader.setSource(stream);
 
 		// EXERCISE

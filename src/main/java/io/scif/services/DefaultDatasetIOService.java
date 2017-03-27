@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -80,8 +80,8 @@ public class DefaultDatasetIOService extends AbstractService implements
 	@Override
 	public boolean canOpen(final String source) {
 		try {
-			return formatService.getFormat(source, new SCIFIOConfig()
-				.checkerSetOpen(true)) != null;
+			return formatService.getFormat(source, new SCIFIOConfig().checkerSetOpen(
+				true)) != null;
 		}
 		catch (final FormatException exc) {
 			log.error(exc);
@@ -122,8 +122,8 @@ public class DefaultDatasetIOService extends AbstractService implements
 			// first ImgPlus in the list returned by the ImgOpener. See
 			// https://github.com/scifio/scifio/issues/259
 
-			final SCIFIOImgPlus<?> imgPlus =
-				imageOpener.openImgs(source, config).get(0);
+			final SCIFIOImgPlus<?> imgPlus = imageOpener.openImgs(source, config).get(
+				0);
 
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			final Dataset dataset = datasetService.create((ImgPlus) imgPlus);
@@ -137,43 +137,43 @@ public class DefaultDatasetIOService extends AbstractService implements
 		}
 	}
 
-        
-    @Override
-    public List<net.imagej.Dataset> openAll(String source)
-            throws IOException
-    {
-            final SCIFIOConfig config = new SCIFIOConfig();
-            config.imgOpenerSetImgModes(ImgMode.PLANAR);
-            return openAll(source, config);
-    }
+	@Override
+	public List<net.imagej.Dataset> openAll(final String source)
+		throws IOException
+	{
+		final SCIFIOConfig config = new SCIFIOConfig();
+		config.imgOpenerSetImgModes(ImgMode.PLANAR);
+		return openAll(source, config);
+	}
 
-    @Override
-    public List<net.imagej.Dataset> openAll(String source, SCIFIOConfig config)
-            throws IOException
-    {
-            final ArrayList<Dataset> datasetList = new ArrayList<>();
+	@Override
+	public List<net.imagej.Dataset> openAll(final String source,
+		final SCIFIOConfig config) throws IOException
+	{
+		final ArrayList<Dataset> datasetList = new ArrayList<>();
 
-            final ImgOpener imageOpener = new ImgOpener(getContext());
-            try {
-                final List<SCIFIOImgPlus<?>> openImgs = imageOpener.openImgs(source, config);
-                for (int imgId = 0; imgId != openImgs.size(); imgId++) {
-                    
-                    final SCIFIOImgPlus<?> imgPlus = openImgs.get(imgId);
-                    
-                    @SuppressWarnings({"rawtypes", "unchecked"})
-                    final Dataset dataset = datasetService.create((ImgPlus) imgPlus);
+		final ImgOpener imageOpener = new ImgOpener(getContext());
+		try {
+			final List<SCIFIOImgPlus<?>> openImgs = imageOpener.openImgs(source,
+				config);
+			for (int imgId = 0; imgId != openImgs.size(); imgId++) {
 
-                    final ImageMetadata imageMeta = imgPlus.getImageMetadata();
-                    updateDataset(dataset, imageMeta);
-                    datasetList.add(dataset);
-                }
+				final SCIFIOImgPlus<?> imgPlus = openImgs.get(imgId);
 
-            } catch (final ImgIOException exc) {
-                throw new IOException(exc);
-            }
-            return datasetList;
-    }
+				@SuppressWarnings({ "rawtypes", "unchecked" })
+				final Dataset dataset = datasetService.create((ImgPlus) imgPlus);
 
+				final ImageMetadata imageMeta = imgPlus.getImageMetadata();
+				updateDataset(dataset, imageMeta);
+				datasetList.add(dataset);
+			}
+
+		}
+		catch (final ImgIOException exc) {
+			throw new IOException(exc);
+		}
+		return datasetList;
+	}
 
 	@Override
 	public Metadata save(final Dataset dataset, final String destination)
@@ -248,5 +248,4 @@ public class DefaultDatasetIOService extends AbstractService implements
 		dataset.setRGBMerged(rgbMerged);
 	}
 
-    
 }

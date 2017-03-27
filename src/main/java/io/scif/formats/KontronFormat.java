@@ -120,7 +120,7 @@ public class KontronFormat extends AbstractFormat {
 		public boolean isFormat(final RandomAccessInputStream stream)
 			throws IOException
 		{
-			byte[] fileStart = new byte[KONTRON_ID.length];
+			final byte[] fileStart = new byte[KONTRON_ID.length];
 			final int read = stream.read(fileStart);
 			if (read != KONTRON_ID.length) {
 				return false;

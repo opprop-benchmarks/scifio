@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -137,14 +137,12 @@ public abstract class AbstractReader<M extends TypedMetadata, P extends DataPlan
 			plane = createPlane(planeMin, planeMax);
 		}
 		catch (final IllegalArgumentException e) {
-			throw new FormatException(
-				"Image plane too large. Only 2GB of data can "
-					+ "be extracted at one time. You can workaround the problem by opening "
-					+ "the plane in tiles; for further details, see: "
-					+ "http://www.openmicroscopy.org/site/support/faq/bio-formats/"
-					+ "i-see-an-outofmemory-or-negativearraysize-error-message-when-"
-					+ "attempting-to-open-an-svs-or-jpeg-2000-file.-what-does-this-mean",
-				e);
+			throw new FormatException("Image plane too large. Only 2GB of data can " +
+				"be extracted at one time. You can workaround the problem by opening " +
+				"the plane in tiles; for further details, see: " +
+				"http://www.openmicroscopy.org/site/support/faq/bio-formats/" +
+				"i-see-an-outofmemory-or-negativearraysize-error-message-when-" +
+				"attempting-to-open-an-svs-or-jpeg-2000-file.-what-does-this-mean", e);
 		}
 
 		return openPlane(imageIndex, planeIndex, plane, planeMin, planeMax, config);
@@ -199,8 +197,8 @@ public abstract class AbstractReader<M extends TypedMetadata, P extends DataPlan
 
 	@Override
 	public long getOptimalTileHeight(final int imageIndex) {
-		final int bpp =
-			FormatTools.getBytesPerPixel(metadata.get(imageIndex).getPixelType());
+		final int bpp = FormatTools.getBytesPerPixel(metadata.get(imageIndex)
+			.getPixelType());
 
 		final long width = metadata.get(imageIndex).getAxisLength(Axes.X);
 		final long rgbcCount = metadata.get(imageIndex).getAxisLength(Axes.CHANNEL);
@@ -256,16 +254,16 @@ public abstract class AbstractReader<M extends TypedMetadata, P extends DataPlan
 		throws IOException
 	{
 
-		if (getStream() != null && getStream().getFileName() != null &&
-			getStream().getFileName().equals(fileName))
+		if (getStream() != null && getStream().getFileName() != null && getStream()
+			.getFileName().equals(fileName))
 		{
 			getStream().seek(0);
 			return;
 		}
 
 		close();
-		final RandomAccessInputStream stream =
-			new RandomAccessInputStream(getContext(), fileName);
+		final RandomAccessInputStream stream = new RandomAccessInputStream(
+			getContext(), fileName);
 		try {
 			setMetadata(getFormat().createParser().parse(stream, config));
 		}
@@ -287,11 +285,11 @@ public abstract class AbstractReader<M extends TypedMetadata, P extends DataPlan
 	public void setSource(final RandomAccessInputStream stream,
 		final SCIFIOConfig config) throws IOException
 	{
-		final String currentSource = getStream() == null ? null : getStream().getFileName();
+		final String currentSource = getStream() == null ? null : getStream()
+			.getFileName();
 		final String newSource = stream.getFileName();
-		if (metadata != null &&
-			(currentSource == null || newSource == null || !getStream().getFileName()
-				.equals(stream.getFileName()))) close();
+		if (metadata != null && (currentSource == null || newSource == null ||
+			!getStream().getFileName().equals(stream.getFileName()))) close();
 
 		if (metadata == null) {
 			try {
@@ -348,26 +346,24 @@ public abstract class AbstractReader<M extends TypedMetadata, P extends DataPlan
 	// -- TypedReader API --
 
 	@Override
-	public P
-		openPlane(final int imageIndex, final long planeIndex, final P plane)
-			throws FormatException, IOException
+	public P openPlane(final int imageIndex, final long planeIndex, final P plane)
+		throws FormatException, IOException
 	{
 		return openPlane(imageIndex, planeIndex, plane, new SCIFIOConfig());
 	}
 
 	@Override
-	public P openPlane(final int imageIndex, final long planeIndex,
-		final P plane, final SCIFIOConfig config) throws FormatException,
-		IOException
+	public P openPlane(final int imageIndex, final long planeIndex, final P plane,
+		final SCIFIOConfig config) throws FormatException, IOException
 	{
 		return openPlane(imageIndex, planeIndex, plane, plane.getOffsets(), plane
 			.getLengths(), config);
 	}
 
 	@Override
-	public P openPlane(final int imageIndex, final long planeIndex,
-		final P plane, final long[] planeMin, final long[] planeMax)
-		throws FormatException, IOException
+	public P openPlane(final int imageIndex, final long planeIndex, final P plane,
+		final long[] planeMin, final long[] planeMax) throws FormatException,
+		IOException
 	{
 		return openPlane(imageIndex, planeIndex, plane, plane.getOffsets(), plane
 			.getLengths(), new SCIFIOConfig());
@@ -395,21 +391,19 @@ public abstract class AbstractReader<M extends TypedMetadata, P extends DataPlan
 		final long[] planeMin, final long[] planeMax, final int scanlinePad,
 		final P plane) throws IOException
 	{
-		final int bpp =
-			FormatTools.getBytesPerPixel(metadata.get(imageIndex).getPixelType());
+		final int bpp = FormatTools.getBytesPerPixel(metadata.get(imageIndex)
+			.getPixelType());
 
 		final byte[] bytes = plane.getBytes();
 		final int xIndex = metadata.get(imageIndex).getAxisIndex(Axes.X);
 		final int yIndex = metadata.get(imageIndex).getAxisIndex(Axes.Y);
-		if (SCIFIOMetadataTools
-			.wholePlane(imageIndex, metadata, planeMin, planeMax) &&
-			scanlinePad == 0)
+		if (SCIFIOMetadataTools.wholePlane(imageIndex, metadata, planeMin,
+			planeMax) && scanlinePad == 0)
 		{
 			s.read(bytes);
 		}
 		else if (SCIFIOMetadataTools.wholeRow(imageIndex, metadata, planeMin,
-			planeMax) &&
-			scanlinePad == 0)
+			planeMax) && scanlinePad == 0)
 		{
 			if (metadata.get(imageIndex).getInterleavedAxisCount() > 0) {
 				int bytesToSkip = bpp;
@@ -442,20 +436,19 @@ public abstract class AbstractReader<M extends TypedMetadata, P extends DataPlan
 					if (channel < c - 1) {
 						// no need to skip bytes after reading final channel
 						s.skipBytes((int) (metadata.get(imageIndex).getAxisLength(Axes.Y) -
-							y - h) *
-							rowLen);
+							y - h) * rowLen);
 					}
 				}
 			}
 		}
 		else {
-			final int scanlineWidth =
-				(int) metadata.get(imageIndex).getAxisLength(Axes.X) + scanlinePad;
+			final int scanlineWidth = (int) metadata.get(imageIndex).getAxisLength(
+				Axes.X) + scanlinePad;
 			if (metadata.get(imageIndex).getInterleavedAxisCount() > 0) {
 				long planeProduct = bpp;
 				for (int i = 0; i < planeMin.length; i++) {
-					if (i != xIndex && i != yIndex) planeProduct *=
-						metadata.get(imageIndex).getAxisLength(i);
+					if (i != xIndex && i != yIndex) planeProduct *= metadata.get(
+						imageIndex).getAxisLength(i);
 				}
 				int bytesToSkip = scanlineWidth * (int) planeProduct;
 				s.skipBytes((int) planeMin[yIndex] * bytesToSkip);
@@ -472,7 +465,8 @@ public abstract class AbstractReader<M extends TypedMetadata, P extends DataPlan
 					s.read(bytes, row * bytesToRead, bytesToRead);
 					if (row < planeMax[yIndex] - 1) {
 						// no need to skip bytes after reading final row
-						s.skipBytes((int) (planeProduct * (scanlineWidth - planeMax[xIndex] - planeMin[xIndex])));
+						s.skipBytes((int) (planeProduct * (scanlineWidth -
+							planeMax[xIndex] - planeMin[xIndex])));
 					}
 				}
 			}
@@ -496,8 +490,8 @@ public abstract class AbstractReader<M extends TypedMetadata, P extends DataPlan
 					}
 					if (channel < c - 1) {
 						// no need to skip bytes after reading final channel
-						s.skipBytes(scanlineWidth * bpp *
-							(int) (metadata.get(imageIndex).getAxisLength(Axes.Y) - y - h));
+						s.skipBytes(scanlineWidth * bpp * (int) (metadata.get(imageIndex)
+							.getAxisLength(Axes.Y) - y - h));
 					}
 				}
 			}
