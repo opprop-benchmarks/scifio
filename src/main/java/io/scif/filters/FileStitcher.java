@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -192,8 +192,8 @@ public class FileStitcher extends AbstractReaderFilter {
 			return new String[] { id };
 		}
 		patternIds = false;
-		String[] patterns =
-			findPatterns(new FilePattern(getContext(), id).getFiles()[0]);
+		String[] patterns = findPatterns(new FilePattern(getContext(), id)
+			.getFiles()[0]);
 		if (patterns.length == 0) patterns = new String[] { id };
 		else {
 			final FilePattern test = new FilePattern(getContext(), patterns[0]);
@@ -206,8 +206,8 @@ public class FileStitcher extends AbstractReaderFilter {
 	// -- AbstractReaderFilter API Methods --
 
 	@Override
-	protected void
-		setSourceHelper(final String source, final SCIFIOConfig config)
+	protected void setSourceHelper(final String source,
+		final SCIFIOConfig config)
 	{
 		try {
 			cleanUp();
@@ -219,21 +219,19 @@ public class FileStitcher extends AbstractReaderFilter {
 				patternIds = fp.isValid() && fp.getFiles().length > 1;
 			}
 			else {
-				patternIds =
-					!new Location(getContext(), source).exists() &&
-						locationService.getMappedId(source).equals(source);
+				patternIds = !new Location(getContext(), source).exists() &&
+					locationService.getMappedId(source).equals(source);
 			}
 
 			// Determine if the wrapped reader should handle the stitching
 			boolean mustGroup = false;
 			if (patternIds) {
-				mustGroup =
-					fp.isValid() &&
-						getParent().fileGroupOption(fp.getFiles()[0]) == FormatTools.MUST_GROUP;
+				mustGroup = fp.isValid() && getParent().fileGroupOption(fp
+					.getFiles()[0]) == FormatTools.MUST_GROUP;
 			}
 			else {
-				mustGroup =
-					getParent().fileGroupOption(source) == FormatTools.MUST_GROUP;
+				mustGroup = getParent().fileGroupOption(
+					source) == FormatTools.MUST_GROUP;
 			}
 
 			// If the wrapped reader will handle the stitching, we can set its
@@ -280,15 +278,14 @@ public class FileStitcher extends AbstractReaderFilter {
 
 			// verify that file pattern is valid and matches existing files
 			if (!fp.isValid()) {
-				throw new FormatException("Invalid " +
-					(patternIds ? "file pattern" : "filename") + " (" + source + "): " +
-					fp.getErrorMessage() + msg);
+				throw new FormatException("Invalid " + (patternIds ? "file pattern"
+					: "filename") + " (" + source + "): " + fp.getErrorMessage() + msg);
 			}
 			final String[] files = fp.getFiles();
 
 			if (files == null) {
-				throw new FormatException("No files matching pattern (" +
-					fp.getPattern() + "). " + msg);
+				throw new FormatException("No files matching pattern (" + fp
+					.getPattern() + "). " + msg);
 			}
 
 			for (int i = 0; i < files.length; i++) {
@@ -383,8 +380,8 @@ public class FileStitcher extends AbstractReaderFilter {
 
 		// return a blank image to cover for the fact that
 		// this file does not contain enough image planes
-		final long[] thumbPlaneOffsets =
-			new long[getParentMeta().get(0).getAxesPlanar().size()];
+		final long[] thumbPlaneOffsets = new long[getParentMeta().get(0)
+			.getAxesPlanar().size()];
 		final long[] thumbPlaneBounds = getParentMeta().get(0).getAxesLengths();
 		thumbPlaneBounds[getParentMeta().get(0).getAxisIndex(Axes.X)] =
 			getParentMeta().get(0).getThumbSizeX();

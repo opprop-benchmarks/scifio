@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -98,8 +98,8 @@ public class JPEGTileFormat extends AbstractFormat {
 			iMeta.setLittleEndian(false);
 			iMeta.setAxisLength(Axes.X, decoder.getWidth());
 			iMeta.setAxisLength(Axes.Y, decoder.getHeight());
-			iMeta.setAxisLength(Axes.CHANNEL, decoder.getScanline(0).length /
-				iMeta.getAxisLength(Axes.X));
+			iMeta.setAxisLength(Axes.CHANNEL, decoder.getScanline(0).length / iMeta
+				.getAxisLength(Axes.X));
 			iMeta.setPixelType(FormatTools.UINT8);
 			iMeta.setMetadataComplete(true);
 			iMeta.setIndexed(false);
@@ -145,10 +145,9 @@ public class JPEGTileFormat extends AbstractFormat {
 		// -- Reader API methods --
 
 		@Override
-		public ByteArrayPlane openPlane(final int imageIndex,
-			final long planeIndex, final ByteArrayPlane plane, final long[] planeMin,
-			final long[] planeMax, final SCIFIOConfig config) throws FormatException,
-			IOException
+		public ByteArrayPlane openPlane(final int imageIndex, final long planeIndex,
+			final ByteArrayPlane plane, final long[] planeMin, final long[] planeMax,
+			final SCIFIOConfig config) throws FormatException, IOException
 		{
 			final Metadata meta = getMetadata();
 			final byte[] buf = plane.getBytes();
@@ -156,8 +155,8 @@ public class JPEGTileFormat extends AbstractFormat {
 			final int yAxis = meta.get(imageIndex).getAxisIndex(Axes.Y);
 			final int x = (int) planeMin[xAxis], y = (int) planeMin[yAxis], w =
 				(int) planeMax[xAxis], h = (int) planeMax[yAxis];
-			FormatTools.checkPlaneForReading(meta, imageIndex, planeIndex,
-				buf.length, planeMin, planeMax);
+			FormatTools.checkPlaneForReading(meta, imageIndex, planeIndex, buf.length,
+				planeMin, planeMax);
 
 			final int c = (int) meta.get(imageIndex).getAxisLength(Axes.CHANNEL);
 

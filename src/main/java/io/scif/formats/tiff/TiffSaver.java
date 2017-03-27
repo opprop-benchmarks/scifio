@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -91,7 +91,8 @@ public class TiffSaver extends AbstractContextual {
 	 * @param filename Filename of the output stream that we may use to create
 	 *          extra input or output streams as required.
 	 */
-	public TiffSaver(final Context ctx, final String filename) throws IOException
+	public TiffSaver(final Context ctx, final String filename)
+		throws IOException
 	{
 		this(ctx, new RandomAccessOutputStream(ctx, filename), filename);
 	}
@@ -221,7 +222,7 @@ public class TiffSaver extends AbstractContextual {
 	}
 
 	/**
-   */
+	 */
 	public void writeImage(final byte[][] buf, final IFDList ifds,
 		final int pixelType) throws FormatException, IOException
 	{
@@ -239,7 +240,7 @@ public class TiffSaver extends AbstractContextual {
 	}
 
 	/**
-   */
+	 */
 	public void writeImage(final byte[] buf, final IFD ifd, final int no,
 		final int pixelType, final boolean last) throws FormatException,
 		IOException
@@ -268,18 +269,17 @@ public class TiffSaver extends AbstractContextual {
 	 * @throws FormatException
 	 * @throws IOException
 	 */
-	public void writeImage(final byte[] buf, final IFD ifd,
-		final long planeIndex, final int pixelType, final int x, final int y,
-		final int w, final int h, final boolean last) throws FormatException,
-		IOException
+	public void writeImage(final byte[] buf, final IFD ifd, final long planeIndex,
+		final int pixelType, final int x, final int y, final int w, final int h,
+		final boolean last) throws FormatException, IOException
 	{
 		writeImage(buf, ifd, planeIndex, pixelType, x, y, w, h, last, null, false);
 	}
 
-	public void writeImage(final byte[] buf, final IFD ifd,
-		final long planeIndex, final int pixelType, final int x, final int y,
-		final int w, final int h, final boolean last, Integer nChannels,
-		final boolean copyDirectly) throws FormatException, IOException
+	public void writeImage(final byte[] buf, final IFD ifd, final long planeIndex,
+		final int pixelType, final int x, final int y, final int w, final int h,
+		final boolean last, Integer nChannels, final boolean copyDirectly)
+		throws FormatException, IOException
 	{
 		log.debug("Attempting to write image.");
 		// b/c method is public should check parameters again
@@ -314,8 +314,8 @@ public class TiffSaver extends AbstractContextual {
 			final int tilesPerRow = (int) ifd.getTilesPerRow();
 			final int rowsPerStrip = (int) ifd.getRowsPerStrip()[0];
 			int stripSize = rowsPerStrip * tileWidth * bytesPerPixel;
-			nStrips =
-				((w + tileWidth - 1) / tileWidth) * ((h + tileHeight - 1) / tileHeight);
+			nStrips = ((w + tileWidth - 1) / tileWidth) * ((h + tileHeight - 1) /
+				tileHeight);
 
 			if (interleaved) stripSize *= nChannels;
 			else nStrips *= nChannels;
@@ -340,8 +340,8 @@ public class TiffSaver extends AbstractContextual {
 					final int yOffset = (strip / tilesPerRow) * tileHeight;
 					for (int row = 0; row < tileHeight; row++) {
 						for (int col = 0; col < tileWidth; col++) {
-							final int ndx =
-								((row + yOffset) * w + col + xOffset) * bytesPerPixel;
+							final int ndx = ((row + yOffset) * w + col + xOffset) *
+								bytesPerPixel;
 							for (int c = 0; c < nChannels; c++) {
 								for (int n = 0; n < bps[c] / 8; n++) {
 									if (interleaved) {
@@ -359,8 +359,8 @@ public class TiffSaver extends AbstractContextual {
 											stripOut[strip].writeByte(0);
 										}
 										else {
-											stripOut[c * (nStrips / nChannels) + strip]
-												.writeByte(buf[off]);
+											stripOut[c * (nStrips / nChannels) + strip].writeByte(
+												buf[off]);
 										}
 									}
 								}
@@ -380,14 +380,14 @@ public class TiffSaver extends AbstractContextual {
 		for (int strip = 0; strip < nStrips; strip++) {
 			strips[strip] = stripBuf[strip].toByteArray();
 			scifio.tiff().difference(strips[strip], ifd);
-			final CodecOptions codecOptions =
-				compression.getCompressionCodecOptions(ifd, options);
+			final CodecOptions codecOptions = compression.getCompressionCodecOptions(
+				ifd, options);
 			codecOptions.height = tileHeight;
 			codecOptions.width = tileWidth;
 			codecOptions.channels = interleaved ? nChannels : 1;
 
-			strips[strip] =
-				compression.compress(scifio.codec(), strips[strip], codecOptions);
+			strips[strip] = compression.compress(scifio.codec(), strips[strip],
+				codecOptions);
 			if (log.isDebug()) {
 				log.debug(String.format("Compressed strip %d/%d length %d", strip + 1,
 					nStrips, strips[strip].length));
@@ -415,8 +415,8 @@ public class TiffSaver extends AbstractContextual {
 	 * @throws IOException
 	 */
 	private void writeImageIFD(IFD ifd, final long planeIndex,
-		final byte[][] strips, final int nChannels, final boolean last,
-		final int x, final int y) throws FormatException, IOException
+		final byte[][] strips, final int nChannels, final boolean last, final int x,
+		final int y) throws FormatException, IOException
 	{
 		log.debug("Attempting to write image IFD.");
 		final int tilesPerRow = (int) ifd.getTilesPerRow();
@@ -462,12 +462,11 @@ public class TiffSaver extends AbstractContextual {
 			totalTiles *= nChannels;
 		}
 
-		if (ifd.containsKey(IFD.STRIP_BYTE_COUNTS) ||
-			ifd.containsKey(IFD.TILE_BYTE_COUNTS))
+		if (ifd.containsKey(IFD.STRIP_BYTE_COUNTS) || ifd.containsKey(
+			IFD.TILE_BYTE_COUNTS))
 		{
-			final long[] ifdByteCounts =
-				isTiled ? ifd.getIFDLongArray(IFD.TILE_BYTE_COUNTS) : ifd
-					.getStripByteCounts();
+			final long[] ifdByteCounts = isTiled ? ifd.getIFDLongArray(
+				IFD.TILE_BYTE_COUNTS) : ifd.getStripByteCounts();
 			for (final long stripByteCount : ifdByteCounts) {
 				byteCounts.add(stripByteCount);
 			}
@@ -479,12 +478,13 @@ public class TiffSaver extends AbstractContextual {
 		}
 		final int tileOrStripOffsetX = x / (int) ifd.getTileWidth();
 		final int tileOrStripOffsetY = y / (int) ifd.getTileLength();
-		final int firstOffset =
-			(tileOrStripOffsetY * tilesPerRow) + tileOrStripOffsetX;
-		if (ifd.containsKey(IFD.STRIP_OFFSETS) || ifd.containsKey(IFD.TILE_OFFSETS))
+		final int firstOffset = (tileOrStripOffsetY * tilesPerRow) +
+			tileOrStripOffsetX;
+		if (ifd.containsKey(IFD.STRIP_OFFSETS) || ifd.containsKey(
+			IFD.TILE_OFFSETS))
 		{
-			final long[] ifdOffsets =
-				isTiled ? ifd.getIFDLongArray(IFD.TILE_OFFSETS) : ifd.getStripOffsets();
+			final long[] ifdOffsets = isTiled ? ifd.getIFDLongArray(IFD.TILE_OFFSETS)
+				: ifd.getStripOffsets();
 			for (final long ifdOffset : ifdOffsets) {
 				offsets.add(ifdOffset);
 			}
@@ -514,8 +514,8 @@ public class TiffSaver extends AbstractContextual {
 			byteCounts.set(thisOffset, new Long(strips[i].length));
 			if (log.isDebug()) {
 				log.debug(String.format("Writing tile/strip %d/%d size: %d offset: %d",
-					thisOffset + 1, totalTiles, byteCounts.get(thisOffset), offsets
-						.get(thisOffset)));
+					thisOffset + 1, totalTiles, byteCounts.get(thisOffset), offsets.get(
+						thisOffset)));
 			}
 			out.write(strips[i]);
 		}
@@ -535,10 +535,10 @@ public class TiffSaver extends AbstractContextual {
 		out.seek(fp);
 
 		if (log.isDebug()) {
-			log.debug("Writing tile/strip offsets: " +
-				Arrays.toString(toPrimitiveArray(offsets)));
-			log.debug("Writing tile/strip byte counts: " +
-				Arrays.toString(toPrimitiveArray(byteCounts)));
+			log.debug("Writing tile/strip offsets: " + Arrays.toString(
+				toPrimitiveArray(offsets)));
+			log.debug("Writing tile/strip byte counts: " + Arrays.toString(
+				toPrimitiveArray(byteCounts)));
 		}
 		writeIFD(ifd, last ? 0 : endFP);
 		if (log.isDebug()) {
@@ -557,21 +557,20 @@ public class TiffSaver extends AbstractContextual {
 		if (ifd.containsKey(new Integer(IFD.REUSE))) keyCount--;
 
 		final long fp = out.getFilePointer();
-		final int bytesPerEntry =
-			bigTiff ? TiffConstants.BIG_TIFF_BYTES_PER_ENTRY
-				: TiffConstants.BYTES_PER_ENTRY;
+		final int bytesPerEntry = bigTiff ? TiffConstants.BIG_TIFF_BYTES_PER_ENTRY
+			: TiffConstants.BYTES_PER_ENTRY;
 		final int ifdBytes = (bigTiff ? 16 : 6) + bytesPerEntry * keyCount;
 
 		if (bigTiff) out.writeLong(keyCount);
 		else out.writeShort(keyCount);
 
 		final ByteArrayHandle extra = new ByteArrayHandle();
-		final RandomAccessOutputStream extraStream =
-			new RandomAccessOutputStream(extra);
+		final RandomAccessOutputStream extraStream = new RandomAccessOutputStream(
+			extra);
 
 		for (final Integer key : keys) {
-			if (key.equals(IFD.LITTLE_ENDIAN) || key.equals(IFD.BIG_TIFF) ||
-				key.equals(IFD.REUSE)) continue;
+			if (key.equals(IFD.LITTLE_ENDIAN) || key.equals(IFD.BIG_TIFF) || key
+				.equals(IFD.REUSE)) continue;
 
 			final Object value = ifd.get(key);
 			writeIFDValue(extraStream, ifdBytes + fp, key.intValue(), value);
@@ -674,8 +673,8 @@ public class TiffSaver extends AbstractContextual {
 		else if (value instanceof long[]) { // LONG
 			final long[] q = (long[]) value;
 
-			final int type =
-				bigTiff ? IFDType.LONG8.getCode() : IFDType.LONG.getCode();
+			final int type = bigTiff ? IFDType.LONG8.getCode() : IFDType.LONG
+				.getCode();
 			out.writeShort(type);
 			writeIntValue(out, q.length);
 
@@ -741,8 +740,8 @@ public class TiffSaver extends AbstractContextual {
 			}
 		}
 		else {
-			throw new FormatException("Unknown IFD value type (" +
-				value.getClass().getName() + "): " + value);
+			throw new FormatException("Unknown IFD value type (" + value.getClass()
+				.getName() + "): " + value);
 		}
 	}
 
@@ -787,9 +786,8 @@ public class TiffSaver extends AbstractContextual {
 
 		final long offset = bigTiff ? 8 : 4; // offset to the IFD
 
-		final int bytesPerEntry =
-			bigTiff ? TiffConstants.BIG_TIFF_BYTES_PER_ENTRY
-				: TiffConstants.BYTES_PER_ENTRY;
+		final int bytesPerEntry = bigTiff ? TiffConstants.BIG_TIFF_BYTES_PER_ENTRY
+			: TiffConstants.BYTES_PER_ENTRY;
 
 		raf.seek(offset);
 
@@ -812,11 +810,11 @@ public class TiffSaver extends AbstractContextual {
 			if (entry.getTag() == tag) {
 				// write new value to buffers
 				final ByteArrayHandle ifdBuf = new ByteArrayHandle(bytesPerEntry);
-				final RandomAccessOutputStream ifdOut =
-					new RandomAccessOutputStream(ifdBuf);
+				final RandomAccessOutputStream ifdOut = new RandomAccessOutputStream(
+					ifdBuf);
 				final ByteArrayHandle extraBuf = new ByteArrayHandle();
-				final RandomAccessOutputStream extraOut =
-					new RandomAccessOutputStream(extraBuf);
+				final RandomAccessOutputStream extraOut = new RandomAccessOutputStream(
+					extraBuf);
 				extraOut.order(little);
 				final TiffSaver saver = new TiffSaver(ifdOut, ifdBuf);
 				saver.setLittleEndian(isLittleEndian());
@@ -849,8 +847,8 @@ public class TiffSaver extends AbstractContextual {
 					// do not override new offset value since data is inline
 					log.debug("overwriteIFDValue: new entry is inline");
 				}
-				else if (entry.getValueOffset() + entry.getValueCount() *
-					entry.getType().getBytesPerElement() == raf.length())
+				else if (entry.getValueOffset() + entry.getValueCount() * entry
+					.getType().getBytesPerElement() == raf.length())
 				{
 					// old entry was already at EOF; overwrite it
 					newOffset = entry.getValueOffset();
@@ -948,11 +946,10 @@ public class TiffSaver extends AbstractContextual {
 			ifd.putIFDValue(IFD.COMPRESSION, TiffCompression.UNCOMPRESSED.getCode());
 		}
 
-		final boolean indexed =
-			nChannels == 1 && ifd.getIFDValue(IFD.COLOR_MAP) != null;
-		final PhotoInterp pi =
-			indexed ? PhotoInterp.RGB_PALETTE : nChannels == 1
-				? PhotoInterp.BLACK_IS_ZERO : PhotoInterp.RGB;
+		final boolean indexed = nChannels == 1 && ifd.getIFDValue(
+			IFD.COLOR_MAP) != null;
+		final PhotoInterp pi = indexed ? PhotoInterp.RGB_PALETTE : nChannels == 1
+			? PhotoInterp.BLACK_IS_ZERO : PhotoInterp.RGB;
 		ifd.putIFDValue(IFD.PHOTOMETRIC_INTERPRETATION, pi.getCode());
 
 		ifd.putIFDValue(IFD.SAMPLES_PER_PIXEL, nChannels);

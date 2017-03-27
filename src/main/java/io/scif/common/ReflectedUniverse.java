@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -47,7 +47,7 @@ import org.scijava.log.StderrLogService;
 
 /**
  * A general-purpose reflection wrapper class.
- * 
+ *
  * @deprecated Use {@link org.scijava.util.ReflectedUniverse} instead.
  */
 @Deprecated
@@ -105,14 +105,12 @@ public class ReflectedUniverse {
 	 * the purposes of reflection.
 	 */
 	public static boolean isInstance(final Class<?> c, final Object o) {
-		return (o == null || c.isInstance(o) ||
-			(c == byte.class && o instanceof Byte) ||
-			(c == short.class && o instanceof Short) ||
-			(c == int.class && o instanceof Integer) ||
-			(c == long.class && o instanceof Long) ||
-			(c == float.class && o instanceof Float) ||
-			(c == double.class && o instanceof Double) ||
-			(c == boolean.class && o instanceof Boolean) || (c == char.class && o instanceof Character));
+		return (o == null || c.isInstance(o) || (c == byte.class &&
+			o instanceof Byte) || (c == short.class && o instanceof Short) ||
+			(c == int.class && o instanceof Integer) || (c == long.class &&
+				o instanceof Long) || (c == float.class && o instanceof Float) ||
+			(c == double.class && o instanceof Double) || (c == boolean.class &&
+				o instanceof Boolean) || (c == char.class && o instanceof Character));
 	}
 
 	// -- ReflectedUniverse API methods --
@@ -195,8 +193,8 @@ public class ReflectedUniverse {
 			if (target != null) setVar(target, result);
 			return result;
 		}
-		else if (leftParen != command.lastIndexOf("(") ||
-			command.indexOf(")") != command.length() - 1)
+		else if (leftParen != command.lastIndexOf("(") || command.indexOf(
+			")") != command.length() - 1)
 		{
 			throw new ReflectException("Invalid parentheses");
 		}
@@ -290,8 +288,8 @@ public class ReflectedUniverse {
 			if (var == null) {
 				throw new ReflectException("No such variable: " + varName);
 			}
-			final Class<?> varClass =
-				var instanceof Class<?> ? (Class<?>) var : var.getClass();
+			final Class<?> varClass = var instanceof Class<?> ? (Class<?>) var : var
+				.getClass();
 
 			// Search for a method that matches the arguments. Unfortunately,
 			// calling varClass.getMethod(methodName, argClasses) does not work,
@@ -436,8 +434,8 @@ public class ReflectedUniverse {
 			if (var == null) {
 				throw new ReflectException("No such class: " + className);
 			}
-			final Class<?> varClass =
-				var instanceof Class<?> ? (Class<?>) var : var.getClass();
+			final Class<?> varClass = var instanceof Class<?> ? (Class<?>) var : var
+				.getClass();
 			final String fieldName = varName.substring(dot + 1).trim();
 			Field field;
 			try {
@@ -480,14 +478,14 @@ public class ReflectedUniverse {
 	 */
 	public static void main(final String[] args) throws IOException {
 		final ReflectedUniverse r = new ReflectedUniverse();
-		System.out.println("Reflected universe test environment. "
-			+ "Type commands, or press ^D to quit.");
+		System.out.println("Reflected universe test environment. " +
+			"Type commands, or press ^D to quit.");
 		if (args.length > 0) {
 			r.setAccessibilityIgnored(true);
 			System.out.println("Ignoring accessibility modifiers.");
 		}
-		final BufferedReader in =
-			new BufferedReader(new InputStreamReader(System.in, Constants.ENCODING));
+		final BufferedReader in = new BufferedReader(new InputStreamReader(
+			System.in, Constants.ENCODING));
 		while (true) {
 			System.out.print("> ");
 			final String line = in.readLine();

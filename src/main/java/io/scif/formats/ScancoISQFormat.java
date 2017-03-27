@@ -1,7 +1,16 @@
 
 package io.scif.formats;
 
-import io.scif.*;
+import io.scif.AbstractChecker;
+import io.scif.AbstractFormat;
+import io.scif.AbstractMetadata;
+import io.scif.AbstractParser;
+import io.scif.ByteArrayPlane;
+import io.scif.ByteArrayReader;
+import io.scif.Field;
+import io.scif.Format;
+import io.scif.FormatException;
+import io.scif.ImageMetadata;
 import io.scif.config.SCIFIOConfig;
 import io.scif.io.RandomAccessInputStream;
 import io.scif.util.FormatTools;
@@ -31,7 +40,7 @@ import org.scijava.plugin.Plugin;
  * memory position)</li>
  * </ul>
  * <p>
- * 
+ *
  * <pre>
  * BYTE
  * 00   char    check[16]; // CTDATA-HEADER_V1
@@ -96,7 +105,7 @@ public class ScancoISQFormat extends AbstractFormat {
 		public boolean isFormat(final RandomAccessInputStream stream)
 			throws IOException
 		{
-			byte[] firstBytes = new byte[ISQ_ID.length()];
+			final byte[] firstBytes = new byte[ISQ_ID.length()];
 			stream.read(firstBytes);
 			final String fileStart = new String(firstBytes);
 			return ISQ_ID.equals(fileStart);
@@ -295,7 +304,9 @@ public class ScancoISQFormat extends AbstractFormat {
 			return width;
 		}
 
-		public int getSliceBytes() { return sliceBytes; }
+		public int getSliceBytes() {
+			return sliceBytes;
+		}
 
 		/**
 		 * Converts the given timestamp to a creation date
@@ -312,7 +323,7 @@ public class ScancoISQFormat extends AbstractFormat {
 			 * of the VMS timestamp to the Unix epoch. Then you divide the result
 			 * with 10 000 000 (100 ns to seconds)
 			 */
-			long unixTimestamp = (vmsTimestamp - UNIX_EPOCH) / 10_000_000;
+			final long unixTimestamp = (vmsTimestamp - UNIX_EPOCH) / 10_000_000;
 			this.creationDate = Instant.ofEpochSecond(unixTimestamp).atZone(ZoneId
 				.ofOffset("", ZoneOffset.UTC)).toLocalDate();
 		}
@@ -526,7 +537,8 @@ public class ScancoISQFormat extends AbstractFormat {
 		{
 			final RandomAccessInputStream stream = getStream();
 			final Metadata metadata = getMetadata();
-			final int offset = (int) (metadata.dataOffset + metadata.sliceBytes * planeIndex);
+			final int offset = (int) (metadata.dataOffset + metadata.sliceBytes *
+				planeIndex);
 			stream.seek(offset);
 			return readPlane(stream, imageIndex, planeMin, planeMax, plane);
 		}

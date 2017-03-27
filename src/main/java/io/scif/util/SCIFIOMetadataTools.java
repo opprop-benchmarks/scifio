@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -66,8 +66,8 @@ public class SCIFIOMetadataTools {
 	{
 		final boolean wholePlane = wholeRow(imageIndex, meta, planeMin, planeMax);
 		final int yIndex = meta.get(imageIndex).getAxisIndex(Axes.Y);
-		return wholePlane && planeMin[yIndex] == 0 &&
-			planeMax[yIndex] == meta.get(imageIndex).getAxisLength(Axes.Y);
+		return wholePlane && planeMin[yIndex] == 0 && planeMax[yIndex] == meta.get(
+			imageIndex).getAxisLength(Axes.Y);
 	}
 
 	/**
@@ -81,8 +81,8 @@ public class SCIFIOMetadataTools {
 
 		for (int i = 0; wholeRow && i < planeMin.length; i++) {
 			if (i == yIndex) continue;
-			if (planeMin[i] != 0 ||
-				planeMax[i] != meta.get(imageIndex).getAxisLength(i)) wholeRow = false;
+			if (planeMin[i] != 0 || planeMax[i] != meta.get(imageIndex).getAxisLength(
+				i)) wholeRow = false;
 		}
 
 		return wholeRow;
@@ -115,8 +115,8 @@ public class SCIFIOMetadataTools {
 		final long[] planarAxes = meta.get(imageIndex).getAxesLengthsPlanar();
 
 		for (final AxisValue v : axes) {
-			planarAxes[meta.get(imageIndex).getAxisIndex(v.getType())] =
-				v.getLength();
+			planarAxes[meta.get(imageIndex).getAxisIndex(v.getType())] = v
+				.getLength();
 		}
 
 		return planarAxes;
@@ -180,13 +180,13 @@ public class SCIFIOMetadataTools {
 		throws FormatException
 	{
 		if (src == null) {
-			throw new FormatException("Metadata object is null; "
-				+ "call Writer.setMetadata() first");
+			throw new FormatException("Metadata object is null; " +
+				"call Writer.setMetadata() first");
 		}
 
 		if (out == null) {
-			throw new FormatException("RandomAccessOutputStream object is null; "
-				+ "call Writer.setSource(<String/File/RandomAccessOutputStream>) first");
+			throw new FormatException("RandomAccessOutputStream object is null; " +
+				"call Writer.setSource(<String/File/RandomAccessOutputStream>) first");
 		}
 
 		if (src.get(imageIndex).getAxes().size() == 0) {

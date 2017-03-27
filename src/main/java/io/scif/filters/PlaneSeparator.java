@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -105,10 +105,11 @@ public class PlaneSeparator extends AbstractReaderFilter {
 		final long originalCount = getParent().getPlaneCount(imageIndex);
 
 		if (planeCount == originalCount) return planeIndex;
-		final long[] coords =
-			FormatTools.rasterToPosition(imageIndex, planeIndex, this);
+		final long[] coords = FormatTools.rasterToPosition(imageIndex, planeIndex,
+			this);
 		int offset = 0;
-		if (PlaneSeparatorMetadata.class.isAssignableFrom(getMetadata().getClass()))
+		if (PlaneSeparatorMetadata.class.isAssignableFrom(getMetadata()
+			.getClass()))
 		{
 			offset = ((PlaneSeparatorMetadata) getMetadata()).offset();
 		}
@@ -116,8 +117,8 @@ public class PlaneSeparator extends AbstractReaderFilter {
 		final long[] lengths = new long[coords.length - offset];
 		for (int i = 0; i < originalCoords.length; i++) {
 			originalCoords[i] = coords[i + offset];
-			lengths[i] =
-				getMetadata().get(imageIndex).getAxesLengthsNonPlanar()[i + offset];
+			lengths[i] = getMetadata().get(imageIndex).getAxesLengthsNonPlanar()[i +
+				offset];
 		}
 		return FormatTools.positionToRaster(lengths, originalCoords);
 	}
@@ -186,8 +187,8 @@ public class PlaneSeparator extends AbstractReaderFilter {
 		final SCIFIOConfig config) throws FormatException, IOException
 	{
 		final int planarAxes = getMetadata().get(imageIndex).getPlanarAxisCount();
-		return openPlane(imageIndex, planeIndex, new long[planarAxes],
-			getMetadata().get(imageIndex).getAxesLengthsPlanar(), config);
+		return openPlane(imageIndex, planeIndex, new long[planarAxes], getMetadata()
+			.get(imageIndex).getAxesLengthsPlanar(), config);
 	}
 
 	@Override
@@ -222,10 +223,10 @@ public class PlaneSeparator extends AbstractReaderFilter {
 		// Get the original index
 		final long source = getOriginalIndex(imageIndex, planeIndex);
 		// Get the position in the the current separated metadata
-		final int splitOffset =
-			metaCheck() ? ((PlaneSeparatorMetadata) meta).offset() : 0;
-		final boolean interleaved =
-			parentMeta.get(imageIndex).getInterleavedAxisCount() > 0;
+		final int splitOffset = metaCheck() ? ((PlaneSeparatorMetadata) meta)
+			.offset() : 0;
+		final boolean interleaved = parentMeta.get(imageIndex)
+			.getInterleavedAxisCount() > 0;
 
 		synchronized (this) {
 			if (!parentMeta.get(imageIndex).isIndexed()) {
@@ -239,24 +240,22 @@ public class PlaneSeparator extends AbstractReaderFilter {
 				// just be raster to position on just the converted lengths
 
 				// Get the position of the current plane
-				final long[] completePosition =
-					FormatTools.rasterToPosition(imageIndex, planeIndex, meta);
+				final long[] completePosition = FormatTools.rasterToPosition(imageIndex,
+					planeIndex, meta);
 				// Isolate the position and lengths of the axis (axes) that have
 				// been
 				// split
-				final long[] separatedPosition =
-					Arrays.copyOf(completePosition, splitOffset);
-				final long[] separatedLengths =
-					Arrays.copyOf(meta.get(imageIndex).getAxesLengthsNonPlanar(),
-						splitOffset);
-				final int bpp =
-					FormatTools.getBytesPerPixel(meta.get(imageIndex).getPixelType());
+				final long[] separatedPosition = Arrays.copyOf(completePosition,
+					splitOffset);
+				final long[] separatedLengths = Arrays.copyOf(meta.get(imageIndex)
+					.getAxesLengthsNonPlanar(), splitOffset);
+				final int bpp = FormatTools.getBytesPerPixel(meta.get(imageIndex)
+					.getPixelType());
 
 				// Need a byte array plane to copy data into
 				if (!ByteArrayPlane.class.isAssignableFrom(plane.getClass())) {
-					plane =
-						new ByteArrayPlane(getContext(), meta.get(imageIndex), offsets,
-							lengths);
+					plane = new ByteArrayPlane(getContext(), meta.get(imageIndex),
+						offsets, lengths);
 				}
 
 				if (!haveCached(source, imageIndex, offsets, lengths)) {
@@ -281,41 +280,39 @@ public class PlaneSeparator extends AbstractReaderFilter {
 					// (in case the
 					// plane is not evenly divisible).
 					final long stripHeight = h / strips;
-					final long lastStripHeight =
-						stripHeight + (h - (stripHeight * strips));
-					byte[] strip =
-						strips == 1 ? plane.getBytes() : new byte[(int) (stripHeight *
-							ArrayUtils.safeMultiply32(Arrays.copyOf(lengths,
-								lengths.length - 1)) * bpp)];
-					updateLastPlaneInfo(source, imageIndex, splitOffset, offsets, lengths);
-					final int parentYIndex =
-						parentMeta.get(imageIndex).getAxisIndex(Axes.Y);
+					final long lastStripHeight = stripHeight + (h - (stripHeight *
+						strips));
+					byte[] strip = strips == 1 ? plane.getBytes()
+						: new byte[(int) (stripHeight * ArrayUtils.safeMultiply32(Arrays
+							.copyOf(lengths, lengths.length - 1)) * bpp)];
+					updateLastPlaneInfo(source, imageIndex, splitOffset, offsets,
+						lengths);
+					final int parentYIndex = parentMeta.get(imageIndex).getAxisIndex(
+						Axes.Y);
 					final int yIndex = meta.get(imageIndex).getAxisIndex(Axes.Y);
 
 					// Populate the strips
 					for (int i = 0; i < strips; i++) {
 						// Update length and offset for current strip
-						lastPlaneOffsets[parentYIndex] =
-							offsets[yIndex] + (i * stripHeight);
-						lastPlaneLengths[parentYIndex] =
-							i == strips - 1 ? lastStripHeight : stripHeight;
+						lastPlaneOffsets[parentYIndex] = offsets[yIndex] + (i *
+							stripHeight);
+						lastPlaneLengths[parentYIndex] = i == strips - 1 ? lastStripHeight
+							: stripHeight;
 
 						// Open the plane
-						lastPlane =
-							getParent().openPlane(imageIndex, (int) source, lastPlaneOffsets,
-								lastPlaneLengths, config);
+						lastPlane = getParent().openPlane(imageIndex, (int) source,
+							lastPlaneOffsets, lastPlaneLengths, config);
 						// store the color table
 						plane.setColorTable(lastPlane.getColorTable());
 
 						// Adjust the strip array if this is the last strip, if
 						// needed
-						if (strips != 1 && lastStripHeight != stripHeight &&
-							i == strips - 1)
+						if (strips != 1 && lastStripHeight != stripHeight && i == strips -
+							1)
 						{
-							strip =
-								new byte[(int) (lastStripHeight *
-									ArrayUtils.safeMultiply32(Arrays.copyOf(lengths,
-										lengths.length - 1)) * bpp)];
+							strip = new byte[(int) (lastStripHeight * ArrayUtils
+								.safeMultiply32(Arrays.copyOf(lengths, lengths.length - 1)) *
+								bpp)];
 						}
 
 						// Extract the requested channel from the plane
@@ -326,8 +323,7 @@ public class PlaneSeparator extends AbstractReaderFilter {
 						if (strips != 1) {
 							System.arraycopy(strip, 0, plane.getBytes(), (int) (i *
 								stripHeight * ArrayUtils.safeMultiply32(Arrays.copyOf(lengths,
-								lengths.length - 1))) *
-								bpp, strip.length);
+									lengths.length - 1))) * bpp, strip.length);
 						}
 					}
 				}
@@ -348,9 +344,8 @@ public class PlaneSeparator extends AbstractReaderFilter {
 				// parent
 				updateLastPlaneInfo(source, imageIndex, splitOffset, offsets, lengths);
 				// Delegate directly to the parent
-				lastPlane =
-					getParent().openPlane(imageIndex, planeIndex, plane,
-						lastPlaneOffsets, lastPlaneLengths, config);
+				lastPlane = getParent().openPlane(imageIndex, planeIndex, plane,
+					lastPlaneOffsets, lastPlaneLengths, config);
 			}
 		}
 		return lastPlane;
@@ -376,20 +371,18 @@ public class PlaneSeparator extends AbstractReaderFilter {
 		}
 
 		final int splitOffset = ((PlaneSeparatorMetadata) getMetadata()).offset();
-		final long[] completePosition =
-			FormatTools.rasterToPosition(getMetadata().get(imageIndex)
-				.getAxesLengths(), planeIndex);
-		final long[] maxLengths =
-			Arrays.copyOf(getMetadata().get(imageIndex).getAxesLengthsNonPlanar(),
-				((PlaneSeparatorMetadata) getMetadata()).offset());
+		final long[] completePosition = FormatTools.rasterToPosition(getMetadata()
+			.get(imageIndex).getAxesLengths(), planeIndex);
+		final long[] maxLengths = Arrays.copyOf(getMetadata().get(imageIndex)
+			.getAxesLengthsNonPlanar(), ((PlaneSeparatorMetadata) getMetadata())
+				.offset());
 		final long[] pos = Arrays.copyOf(completePosition, splitOffset);
 
-		final int bpp =
-			FormatTools
-				.getBytesPerPixel(getMetadata().get(imageIndex).getPixelType());
+		final int bpp = FormatTools.getBytesPerPixel(getMetadata().get(imageIndex)
+			.getPixelType());
 
-		ret.setData(ImageTools.splitChannels(thumb.getBytes(), pos, maxLengths,
-			bpp, false, false));
+		ret.setData(ImageTools.splitChannels(thumb.getBytes(), pos, maxLengths, bpp,
+			false, false));
 		return ret;
 	}
 
@@ -420,15 +413,16 @@ public class PlaneSeparator extends AbstractReaderFilter {
 		// Create the offset and length arrays to match the underlying,
 		// unsplit dimensions. This is required to pass to the wrapped reader.
 		// The unsplit plane will then have the appropriate region extracted.
-		for (final CalibratedAxis axis : parentMeta.get(imageIndex).getAxesPlanar())
+		for (final CalibratedAxis axis : parentMeta.get(imageIndex)
+			.getAxesPlanar())
 		{
-			final int parentIndex =
-				parentMeta.get(imageIndex).getAxisIndex(axis.type());
+			final int parentIndex = parentMeta.get(imageIndex).getAxisIndex(axis
+				.type());
 			final int currentIndex = meta.get(imageIndex).getAxisIndex(axis.type());
 			// This axis is still a planar axis, so we can read it from the
 			// current plane offsets/lengths
-			if (currentIndex >= 0 &&
-				currentIndex < meta.get(imageIndex).getPlanarAxisCount())
+			if (currentIndex >= 0 && currentIndex < meta.get(imageIndex)
+				.getPlanarAxisCount())
 			{
 				lastPlaneOffsets[parentIndex] = offsets[currentIndex];
 				lastPlaneLengths[parentIndex] = lengths[currentIndex];
@@ -439,8 +433,8 @@ public class PlaneSeparator extends AbstractReaderFilter {
 				.get(imageIndex).getPlanarAxisCount())
 			{
 				lastPlaneOffsets[parentIndex] = 0;
-				lastPlaneLengths[parentIndex] =
-					parentMeta.get(imageIndex).getAxisLength(axis.type());
+				lastPlaneLengths[parentIndex] = parentMeta.get(imageIndex)
+					.getAxisLength(axis.type());
 			}
 		}
 	}
@@ -466,10 +460,8 @@ public class PlaneSeparator extends AbstractReaderFilter {
 				// Make sure we have the starting point in each axis
 				matches = matches && offsets[i] == lastPlaneOffsets[i];
 				// make sure we have the last positions in each axis
-				matches =
-					matches &&
-						offsets[i] + lengths[i] == lastPlaneOffsets[i] +
-							lastPlaneLengths[i];
+				matches = matches && offsets[i] + lengths[i] == lastPlaneOffsets[i] +
+					lastPlaneLengths[i];
 			}
 		}
 		else {

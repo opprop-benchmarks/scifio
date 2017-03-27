@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -96,8 +96,8 @@ public class LZWCodec extends AbstractCodec {
 	private static final int FIRST_CODE = 258;
 
 	/** Masks for writing bits in compressor. */
-	private static final int[] COMPR_MASKS = { 0xff, 0x7f, 0x3f, 0x1f, 0x0f,
-		0x07, 0x03, 0x01 };
+	private static final int[] COMPR_MASKS = { 0xff, 0x7f, 0x3f, 0x1f, 0x0f, 0x07,
+		0x03, 0x01 };
 
 	/** Masks for reading bits in decompressor. */
 	private static final int[] DECOMPR_MASKS = { 0x00, 0x01, 0x03, 0x07, 0x0f,
@@ -164,8 +164,8 @@ public class LZWCodec extends AbstractCodec {
 					htValues[hashCode] = nextCode++;
 					// 2) output last code
 					int shift = currCodeLength - freeBits;
-					output[outSize++] =
-						(byte) ((currOutByte << freeBits) | (tiffOmega >> shift));
+					output[outSize++] = (byte) ((currOutByte << freeBits) |
+						(tiffOmega >> shift));
 					if (shift > 8) {
 						output[outSize++] = (byte) (tiffOmega >> (shift - 8));
 						shift -= 8;
@@ -195,8 +195,8 @@ public class LZWCodec extends AbstractCodec {
 					break;
 				case 4096: // write CLEAR code and reinitialize hash table
 					int shift = currCodeLength - freeBits;
-					output[outSize++] =
-						(byte) ((currOutByte << freeBits) | (CLEAR_CODE >> shift));
+					output[outSize++] = (byte) ((currOutByte << freeBits) |
+						(CLEAR_CODE >> shift));
 					if (shift > 8) {
 						output[outSize++] = (byte) (CLEAR_CODE >> (shift - 8));
 						shift -= 8;
@@ -214,8 +214,8 @@ public class LZWCodec extends AbstractCodec {
 		// 1) write code from tiff_Omega
 		{
 			int shift = currCodeLength - freeBits;
-			output[outSize++] =
-				(byte) ((currOutByte << freeBits) | (tiffOmega >> shift));
+			output[outSize++] = (byte) ((currOutByte << freeBits) |
+				(tiffOmega >> shift));
 			if (shift > 8) {
 				output[outSize++] = (byte) (tiffOmega >> (shift - 8));
 				shift -= 8;
@@ -240,8 +240,8 @@ public class LZWCodec extends AbstractCodec {
 
 		{
 			int shift = currCodeLength - freeBits;
-			output[outSize++] =
-				(byte) ((currOutByte << freeBits) | (EOI_CODE >> shift));
+			output[outSize++] = (byte) ((currOutByte << freeBits) |
+				(EOI_CODE >> shift));
 			if (shift > 8) {
 				output[outSize++] = (byte) (EOI_CODE >> (shift - 8));
 				shift -= 8;

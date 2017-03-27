@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -53,7 +53,8 @@ public class URLHandle extends StreamHandle {
 
 	// -- Constants --
 
-	private static final String[] SUPPORTED_PROTOCOLS = { "http:", "https:", "file:" };
+	private static final String[] SUPPORTED_PROTOCOLS = { "http:", "https:",
+		"file:" };
 
 	// -- Fields --
 
@@ -99,7 +100,7 @@ public class URLHandle extends StreamHandle {
 		}
 
 		boolean hasSupportedProtocol = false;
-		for (String protocol : SUPPORTED_PROTOCOLS) {
+		for (final String protocol : SUPPORTED_PROTOCOLS) {
 			if (url.startsWith(protocol)) {
 				hasSupportedProtocol = true;
 				break;
@@ -130,7 +131,7 @@ public class URLHandle extends StreamHandle {
 
 	@Override
 	public boolean isConstructable(final String id) throws IOException {
-		for (String protocol : SUPPORTED_PROTOCOLS) {
+		for (final String protocol : SUPPORTED_PROTOCOLS) {
 			if (id.startsWith(protocol)) {
 				return true;
 			}
@@ -150,8 +151,8 @@ public class URLHandle extends StreamHandle {
 	@Override
 	public void resetStream() throws IOException {
 		conn = (new URL(url)).openConnection();
-		setStream(new DataInputStream(new BufferedInputStream(
-			conn.getInputStream(), RandomAccessInputStream.MAX_OVERHEAD)));
+		setStream(new DataInputStream(new BufferedInputStream(conn.getInputStream(),
+			RandomAccessInputStream.MAX_OVERHEAD)));
 		setFp(0);
 		setMark(0);
 		setLength(conn.getContentLength());

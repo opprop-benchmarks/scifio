@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -68,7 +68,8 @@ import net.imglib2.util.Fraction;
  * @author Mark Hiner
  * @author Tobias Pietzsch
  */
-public final class SCIFIOCellImgFactory<T extends NativeType<T>> extends NativeImgFactory<T>
+public final class SCIFIOCellImgFactory<T extends NativeType<T>> extends
+	NativeImgFactory<T>
 {
 
 	// -- Fields --
@@ -84,70 +85,67 @@ public final class SCIFIOCellImgFactory<T extends NativeType<T>> extends NativeI
 	private int[] defaultCellDimensions;
 
 	public SCIFIOCellImgFactory() {
-		this( 10 );
+		this(10);
 	}
 
 	public SCIFIOCellImgFactory(final int... cellDimensions) {
 		defaultCellDimensions = cellDimensions.clone();
-		verifyDimensions( defaultCellDimensions );
+		verifyDimensions(defaultCellDimensions);
 	}
 
 	// -- CellImgFactory API Methods --
 
 	@Override
-	public SCIFIOCellImg<T, ByteArray> createByteInstance(
-		final long[] dimensions, final Fraction entitiesPerPixel)
+	public SCIFIOCellImg<T, ByteArray> createByteInstance(final long[] dimensions,
+		final Fraction entitiesPerPixel)
 	{
 		return createInstance(new ByteArrayLoader(reader(), subregion), dimensions,
 			entitiesPerPixel);
 	}
 
 	@Override
-	public SCIFIOCellImg<T, CharArray> createCharInstance(
-		final long[] dimensions, final Fraction entitiesPerPixel)
+	public SCIFIOCellImg<T, CharArray> createCharInstance(final long[] dimensions,
+		final Fraction entitiesPerPixel)
 	{
 		return createInstance(new CharArrayLoader(reader(), subregion), dimensions,
 			entitiesPerPixel);
 	}
 
 	@Override
-	public
-		SCIFIOCellImg<T, ShortArray>
-		createShortInstance(final long[] dimensions, final Fraction entitiesPerPixel)
+	public SCIFIOCellImg<T, ShortArray> createShortInstance(
+		final long[] dimensions, final Fraction entitiesPerPixel)
 	{
-		return createInstance(new ShortArrayLoader(reader(), subregion),
-			dimensions, entitiesPerPixel);
+		return createInstance(new ShortArrayLoader(reader(), subregion), dimensions,
+			entitiesPerPixel);
 	}
 
 	@Override
-	public SCIFIOCellImg<T, IntArray> createIntInstance(
-		final long[] dimensions, final Fraction entitiesPerPixel)
+	public SCIFIOCellImg<T, IntArray> createIntInstance(final long[] dimensions,
+		final Fraction entitiesPerPixel)
 	{
 		return createInstance(new IntArrayLoader(reader(), subregion), dimensions,
 			entitiesPerPixel);
 	}
 
 	@Override
-	public SCIFIOCellImg<T, LongArray> createLongInstance(
-		final long[] dimensions, final Fraction entitiesPerPixel)
+	public SCIFIOCellImg<T, LongArray> createLongInstance(final long[] dimensions,
+		final Fraction entitiesPerPixel)
 	{
 		return createInstance(new LongArrayLoader(reader(), subregion), dimensions,
 			entitiesPerPixel);
 	}
 
 	@Override
-	public
-		SCIFIOCellImg<T, FloatArray>
-		createFloatInstance(final long[] dimensions, final Fraction entitiesPerPixel)
+	public SCIFIOCellImg<T, FloatArray> createFloatInstance(
+		final long[] dimensions, final Fraction entitiesPerPixel)
 	{
-		return createInstance(new FloatArrayLoader(reader(), subregion),
-			dimensions, entitiesPerPixel);
+		return createInstance(new FloatArrayLoader(reader(), subregion), dimensions,
+			entitiesPerPixel);
 	}
 
 	@Override
-	public SCIFIOCellImg<T, DoubleArray>
-		createDoubleInstance(final long[] dimensions,
-			final Fraction entitiesPerPixel)
+	public SCIFIOCellImg<T, DoubleArray> createDoubleInstance(
+		final long[] dimensions, final Fraction entitiesPerPixel)
 	{
 		return createInstance(new DoubleArrayLoader(reader(), subregion),
 			dimensions, entitiesPerPixel);
@@ -157,8 +155,8 @@ public final class SCIFIOCellImgFactory<T extends NativeType<T>> extends NativeI
 	public SCIFIOCellImg<T, ?> create(final long[] dim, final T type) {
 		if (reader == null) {
 			throw new IllegalStateException(
-				"Tried to create a new SCIFIOCellImg without a Reader to "
-					+ "use for opening planes.\nCall setReader(Reader) before invoking create()");
+				"Tried to create a new SCIFIOCellImg without a Reader to " +
+					"use for opening planes.\nCall setReader(Reader) before invoking create()");
 		}
 		return (SCIFIOCellImg<T, ?>) type.createSuitableNativeImg(this, dim);
 	}
@@ -171,8 +169,7 @@ public final class SCIFIOCellImgFactory<T extends NativeType<T>> extends NativeI
 		if (NativeType.class.isInstance(type)) return new SCIFIOCellImgFactory(
 			defaultCellDimensions);
 		throw new IncompatibleTypeException(this, type.getClass()
-			.getCanonicalName() +
-			" does not implement NativeType.");
+			.getCanonicalName() + " does not implement NativeType.");
 	}
 
 	/**
@@ -194,9 +191,8 @@ public final class SCIFIOCellImgFactory<T extends NativeType<T>> extends NativeI
 
 		if (r instanceof ReaderFilter) r = ((ReaderFilter) r).getTail();
 
-		defaultCellDimensions =
-			new int[] { (int) reader.getOptimalTileWidth(imageIndex),
-				(int) reader.getOptimalTileHeight(imageIndex), 1, 1, 1 };
+		defaultCellDimensions = new int[] { (int) reader.getOptimalTileWidth(
+			imageIndex), (int) reader.getOptimalTileHeight(imageIndex), 1, 1, 1 };
 	}
 
 	/**
@@ -210,24 +206,25 @@ public final class SCIFIOCellImgFactory<T extends NativeType<T>> extends NativeI
 	// -- Helper Methods --
 
 	private <A extends ArrayDataAccess<A>, L extends SCIFIOArrayLoader<A>>
-		SCIFIOCellImg<T, A> createInstance(final L loader,
-			final long[] dimensions, final Fraction entitiesPerPixel)
+		SCIFIOCellImg<T, A> createInstance(final L loader, final long[] dimensions,
+			final Fraction entitiesPerPixel)
 	{
-		verifyDimensions( dimensions );
+		verifyDimensions(dimensions);
 
 		final int n = dimensions.length;
-		final int[] cellDimensions = getCellDimensions( defaultCellDimensions, n, entitiesPerPixel );
+		final int[] cellDimensions = getCellDimensions(defaultCellDimensions, n,
+			entitiesPerPixel);
 
-		final CellGrid grid = new CellGrid( dimensions, cellDimensions );
+		final CellGrid grid = new CellGrid(dimensions, cellDimensions);
 
 		loader.setIndex(index);
 
-		final SCIFIOCellCache<A> cache =
-			new SCIFIOCellCache<>(reader.getContext(), loader);
+		final SCIFIOCellCache<A> cache = new SCIFIOCellCache<>(reader.getContext(),
+			loader);
 
 		final LazyCellImg.Get<SCIFIOCell<A>> getter =
 			new LazyCellImg.Get<SCIFIOCell<A>>()
-		{
+			{
 
 				@Override
 				public SCIFIOCell<A> get(final long index) {
@@ -242,7 +239,8 @@ public final class SCIFIOCellImgFactory<T extends NativeType<T>> extends NativeI
 				}
 			};
 
-		final SCIFIOCellImg<T, A> cellImg = new SCIFIOCellImg<>(this, grid, new LazyCells<>(grid.getGridDimensions(), getter), entitiesPerPixel);
+		final SCIFIOCellImg<T, A> cellImg = new SCIFIOCellImg<>(this, grid,
+			new LazyCells<>(grid.getGridDimensions(), getter), entitiesPerPixel);
 		cellImg.setLoader(loader);
 
 		return cellImg;

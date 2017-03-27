@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -366,8 +366,8 @@ public class IFD extends HashMap<Integer, Object> {
 		if (checkClass != null && value != null && !checkClass.isInstance(value)) {
 			// wrap object in array of length 1, if appropriate
 			final Class<?> cType = checkClass.getComponentType();
-			final Object array =
-				Array.newInstance(cType == null ? value.getClass() : cType, 1);
+			final Object array = Array.newInstance(cType == null ? value.getClass()
+				: cType, 1);
 			if (cType == value.getClass()) {
 				Array.set(array, 0, value);
 			}
@@ -408,8 +408,8 @@ public class IFD extends HashMap<Integer, Object> {
 				}
 
 				throw new FormatException(getIFDTagName(tag) +
-					" directory entry is the wrong type (got " +
-					value.getClass().getName() + ", expected " + checkClass.getName());
+					" directory entry is the wrong type (got " + value.getClass()
+						.getName() + ", expected " + checkClass.getName());
 			}
 
 			return array;
@@ -460,7 +460,8 @@ public class IFD extends HashMap<Integer, Object> {
 	 * Gets the given directory entry value in rational format from this IFD,
 	 * performing some error checking.
 	 */
-	public TiffRational getIFDRationalValue(final int tag) throws FormatException
+	public TiffRational getIFDRationalValue(final int tag)
+		throws FormatException
 	{
 		return (TiffRational) getIFDValue(tag, TiffRational.class);
 	}
@@ -532,9 +533,8 @@ public class IFD extends HashMap<Integer, Object> {
 		}
 		else if (value != null) {
 			throw new FormatException(getIFDTagName(tag) +
-				" directory entry is the wrong type (got " +
-				value.getClass().getName() +
-				", expected Number, long[], Number[] or int[])");
+				" directory entry is the wrong type (got " + value.getClass()
+					.getName() + ", expected Number, long[], Number[] or int[])");
 		}
 		return results;
 	}
@@ -565,8 +565,8 @@ public class IFD extends HashMap<Integer, Object> {
 		}
 		else if (value != null) {
 			throw new FormatException(getIFDTagName(tag) +
-				" directory entry is the wrong type (got " +
-				value.getClass().getName() + ", expected Number, int[] or Number[])");
+				" directory entry is the wrong type (got " + value.getClass()
+					.getName() + ", expected Number, int[] or Number[])");
 		}
 		return results;
 	}
@@ -598,8 +598,8 @@ public class IFD extends HashMap<Integer, Object> {
 		}
 		else if (value != null) {
 			throw new FormatException(getIFDTagName(tag) +
-				" directory entry is the wrong type (got " +
-				value.getClass().getName() + ", expected Number, short[] or Number[])");
+				" directory entry is the wrong type (got " + value.getClass()
+					.getName() + ", expected Number, short[] or Number[])");
 		}
 		return results;
 	}
@@ -725,11 +725,17 @@ public class IFD extends HashMap<Integer, Object> {
 	/**
 	 * Retrieves the image's pixel type based on the BitsPerSample tag.
 	 *
-	 * @return the pixel type. This is one of:<ul><li>FormatTools.INT8</li> <li>
-	 *         FormatTools.UINT8</li> <li>FormatTools.INT16</li> <li>
-	 *         FormatTools.UINT16</li> <li>FormatTools.INT32</li> <li>
-	 *         FormatTools.UINT32</li> <li>FormatTools.FLOAT</li> <li>
-	 *         FormatTools.DOUBLE</li></ul>
+	 * @return the pixel type. This is one of:
+	 *         <ul>
+	 *         <li>FormatTools.INT8</li>
+	 *         <li>FormatTools.UINT8</li>
+	 *         <li>FormatTools.INT16</li>
+	 *         <li>FormatTools.UINT16</li>
+	 *         <li>FormatTools.INT32</li>
+	 *         <li>FormatTools.UINT32</li>
+	 *         <li>FormatTools.FLOAT</li>
+	 *         <li>FormatTools.DOUBLE</li>
+	 *         </ul>
 	 * @throws FormatException if there is a problem parsing the IFD metadata.
 	 * @see #getBitsPerSample()
 	 */
@@ -842,9 +848,8 @@ public class IFD extends HashMap<Integer, Object> {
 		if (photo == null && getCompression() == TiffCompression.OLD_JPEG) {
 			return PhotoInterp.RGB;
 		}
-		final int pi =
-			photo instanceof Number ? ((Number) photo).intValue()
-				: ((int[]) photo)[0];
+		final int pi = photo instanceof Number ? ((Number) photo).intValue()
+			: ((int[]) photo)[0];
 		return PhotoInterp.get(pi);
 	}
 
@@ -961,17 +966,16 @@ public class IFD extends HashMap<Integer, Object> {
 			final long imageWidth = getImageWidth();
 			byteCounts = new long[offsets.length];
 			final int samples = getSamplesPerPixel();
-			final long imageSize =
-				imageWidth * imageLength * bytesPerSample *
-					(getPlanarConfiguration() == 2 ? 1 : samples);
+			final long imageSize = imageWidth * imageLength * bytesPerSample *
+				(getPlanarConfiguration() == 2 ? 1 : samples);
 			final long count = imageSize / byteCounts.length;
 			Arrays.fill(byteCounts, count);
 		}
 
 		final long[] counts = new long[byteCounts.length];
 
-		if (getCompression() == TiffCompression.LZW &&
-			(!containsKey(ROWS_PER_STRIP) || ((imageLength % getRowsPerStrip()[0])) != 0))
+		if (getCompression() == TiffCompression.LZW && (!containsKey(
+			ROWS_PER_STRIP) || ((imageLength % getRowsPerStrip()[0])) != 0))
 		{
 			for (int i = 0; i < byteCounts.length; i++) {
 				counts[i] = byteCounts[i] * 2;
@@ -1153,7 +1157,7 @@ public class IFD extends HashMap<Integer, Object> {
 	 * This method uses reflection to scan the values of this class's static
 	 * fields, returning the first matching field's name. It is probably not very
 	 * efficient, and is mainly intended for debugging.
-	 * 
+	 *
 	 * @deprecated Use {@link DebugUtils#getFieldName(Class, int)} instead.
 	 */
 	@Deprecated

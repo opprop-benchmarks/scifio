@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -96,38 +96,38 @@ public class ArrayDataAccessConverter extends AbstractPlaneConverter {
 		// types.
 
 		if (store instanceof ByteArray) {
-			final ByteArrayLoader loader =
-				new ByteArrayLoader(reader, config.imgOpenerGetRegion());
+			final ByteArrayLoader loader = new ByteArrayLoader(reader, config
+				.imgOpenerGetRegion());
 			loader.convertBytes((ByteArray) store, source, planeIndex);
 		}
 		else if (store instanceof ShortArray) {
-			final ShortArrayLoader loader =
-				new ShortArrayLoader(reader, config.imgOpenerGetRegion());
+			final ShortArrayLoader loader = new ShortArrayLoader(reader, config
+				.imgOpenerGetRegion());
 			loader.convertBytes((ShortArray) store, source, planeIndex);
 		}
 		else if (store instanceof LongArray) {
-			final LongArrayLoader loader =
-				new LongArrayLoader(reader, config.imgOpenerGetRegion());
+			final LongArrayLoader loader = new LongArrayLoader(reader, config
+				.imgOpenerGetRegion());
 			loader.convertBytes((LongArray) store, source, planeIndex);
 		}
 		else if (store instanceof CharArray) {
-			final CharArrayLoader loader =
-				new CharArrayLoader(reader, config.imgOpenerGetRegion());
+			final CharArrayLoader loader = new CharArrayLoader(reader, config
+				.imgOpenerGetRegion());
 			loader.convertBytes((CharArray) store, source, planeIndex);
 		}
 		else if (store instanceof DoubleArray) {
-			final DoubleArrayLoader loader =
-				new DoubleArrayLoader(reader, config.imgOpenerGetRegion());
+			final DoubleArrayLoader loader = new DoubleArrayLoader(reader, config
+				.imgOpenerGetRegion());
 			loader.convertBytes((DoubleArray) store, source, planeIndex);
 		}
 		else if (store instanceof FloatArray) {
-			final FloatArrayLoader loader =
-				new FloatArrayLoader(reader, config.imgOpenerGetRegion());
+			final FloatArrayLoader loader = new FloatArrayLoader(reader, config
+				.imgOpenerGetRegion());
 			loader.convertBytes((FloatArray) store, source, planeIndex);
 		}
 		else if (store instanceof IntArray) {
-			final IntArrayLoader loader =
-				new IntArrayLoader(reader, config.imgOpenerGetRegion());
+			final IntArrayLoader loader = new IntArrayLoader(reader, config
+				.imgOpenerGetRegion());
 			loader.convertBytes((IntArray) store, source, planeIndex);
 		}
 		else if ( store instanceof ByteAccess )

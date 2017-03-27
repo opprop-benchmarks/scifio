@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -410,30 +410,28 @@ public class NativeQTFormat extends AbstractFormat {
 				}
 				else {
 					log().debug("\tAbsent: " + f);
-					f =
-						new Location(getContext(), id.substring(0, id
-							.lastIndexOf(File.separator) + 1) +
-							"._" + id.substring(base.lastIndexOf(File.separator) + 1));
+					f = new Location(getContext(), id.substring(0, id.lastIndexOf(
+						File.separator) + 1) + "._" + id.substring(base.lastIndexOf(
+							File.separator) + 1));
 					if (f.exists()) {
 						log().debug("\t Found: " + f);
 						cachedStream = stream;
-						stream =
-							new RandomAccessInputStream(getContext(), f.getAbsolutePath());
+						stream = new RandomAccessInputStream(getContext(), f
+							.getAbsolutePath());
 						NativeQTUtils.stripHeader(stream);
-						NativeQTUtils.parse(stream, meta, 0, stream.getFilePointer(),
-							stream.length(), log());
+						NativeQTUtils.parse(stream, meta, 0, stream.getFilePointer(), stream
+							.length(), log());
 						meta.get(0).setAxisLength(Axes.TIME, offsets.size());
 					}
 					else {
 						log().debug("\tAbsent: " + f);
-						f =
-							new Location(getContext(), id + File.separator + ".." +
-								File.separator + "namedfork" + File.separator + "rsrc");
+						f = new Location(getContext(), id + File.separator + ".." +
+							File.separator + "namedfork" + File.separator + "rsrc");
 						if (f.exists()) {
 							log().debug("\t Found: " + f);
 							cachedStream = stream;
-							stream =
-								new RandomAccessInputStream(getContext(), f.getAbsolutePath());
+							stream = new RandomAccessInputStream(getContext(), f
+								.getAbsolutePath());
 							NativeQTUtils.stripHeader(stream);
 							NativeQTUtils.parse(stream, meta, 0, stream.getFilePointer(),
 								stream.length(), log());
@@ -441,9 +439,9 @@ public class NativeQTFormat extends AbstractFormat {
 						}
 						else {
 							log().debug("\tAbsent: " + f);
-							throw new FormatException("QuickTime resource fork not found. "
-								+ " To avoid this issue, please flatten your QuickTime movies "
-								+ "before importing with SCIFIO.");
+							throw new FormatException("QuickTime resource fork not found. " +
+								" To avoid this issue, please flatten your QuickTime movies " +
+								"before importing with SCIFIO.");
 						}
 					}
 				}
@@ -467,20 +465,19 @@ public class NativeQTFormat extends AbstractFormat {
 		// -- Reader API Methods --
 
 		@Override
-		public ByteArrayPlane openPlane(final int imageIndex,
-			final long planeIndex, final ByteArrayPlane plane, final long[] planeMin,
-			final long[] planeMax, final SCIFIOConfig config) throws FormatException,
-			IOException
+		public ByteArrayPlane openPlane(final int imageIndex, final long planeIndex,
+			final ByteArrayPlane plane, final long[] planeMin, final long[] planeMax,
+			final SCIFIOConfig config) throws FormatException, IOException
 		{
 
 			final Metadata meta = getMetadata();
 			final byte[] buf = plane.getData();
-			FormatTools.checkPlaneForReading(meta, imageIndex, planeIndex,
-				buf.length, planeMin, planeMax);
+			FormatTools.checkPlaneForReading(meta, imageIndex, planeIndex, buf.length,
+				planeMin, planeMax);
 
 			String code = meta.getCodec();
-			if (planeIndex >= meta.get(imageIndex).getPlaneCount() -
-				meta.getAltPlanes()) code = meta.altCodec;
+			if (planeIndex >= meta.get(imageIndex).getPlaneCount() - meta
+				.getAltPlanes()) code = meta.altCodec;
 
 			int offset = meta.getOffsets().get((int) planeIndex).intValue();
 			int nextOffset = (int) meta.getPixelBytes();
@@ -489,9 +486,8 @@ public class NativeQTFormat extends AbstractFormat {
 			offset -= meta.getScale();
 
 			if (planeIndex < meta.getOffsets().size() - 1) {
-				nextOffset =
-					meta.getOffsets().get((int) planeIndex + 1).intValue() -
-						meta.getScale();
+				nextOffset = meta.getOffsets().get((int) planeIndex + 1).intValue() -
+					meta.getScale();
 			}
 
 			if ((nextOffset - offset) < 0) {
@@ -505,14 +501,12 @@ public class NativeQTFormat extends AbstractFormat {
 			getStream().seek(meta.getPixelOffset() + offset);
 			getStream().read(pixs);
 
-			meta.setCanUsePrevious((meta.getPrevPixels() != null) &&
-				(meta.getPrevPlane() == planeIndex - 1) &&
-				!code.equals(meta.getAltCodec()));
+			meta.setCanUsePrevious((meta.getPrevPixels() != null) && (meta
+				.getPrevPlane() == planeIndex - 1) && !code.equals(meta.getAltCodec()));
 
-			byte[] t =
-				meta.getPrevPlane() == planeIndex && meta.getPrevPixels() != null &&
-					!code.equals(meta.getAltCodec()) ? meta.getPrevPixels()
-					: NativeQTUtils.uncompress(pixs, code, meta);
+			byte[] t = meta.getPrevPlane() == planeIndex && meta
+				.getPrevPixels() != null && !code.equals(meta.getAltCodec()) ? meta
+					.getPrevPixels() : NativeQTUtils.uncompress(pixs, code, meta);
 			if (code.equals("rpza")) {
 				for (int i = 0; i < t.length; i++) {
 					t[i] = (byte) (255 - t[i]);
@@ -533,58 +527,55 @@ public class NativeQTFormat extends AbstractFormat {
 
 			// determine whether we need to strip out any padding bytes
 
-			final int bytes =
-				meta.getBitsPerPixel() < 40 ? meta.getBitsPerPixel() / 8 : (meta
-					.getBitsPerPixel() - 32) / 8;
-			int pad =
-				(4 - (int) (meta.get(imageIndex).getAxisLength(Axes.X) % 4)) % 4;
+			final int bytes = meta.getBitsPerPixel() < 40 ? meta.getBitsPerPixel() / 8
+				: (meta.getBitsPerPixel() - 32) / 8;
+			int pad = (4 - (int) (meta.get(imageIndex).getAxisLength(Axes.X) % 4)) %
+				4;
 			if (meta.getCodec().equals("mjpb")) pad = 0;
 
 			final int expectedSize = (int) FormatTools.getPlaneSize(this, imageIndex);
 
-			if (meta.getPrevPixels().length == expectedSize ||
-				(meta.getBitsPerPixel() == 32 && (3 * (meta.getPrevPixels().length / 4)) == expectedSize))
+			if (meta.getPrevPixels().length == expectedSize || (meta
+				.getBitsPerPixel() == 32 && (3 * (meta.getPrevPixels().length /
+					4)) == expectedSize))
 			{
 				pad = 0;
 			}
 
 			if (pad > 0) {
-				t =
-					new byte[meta.getPrevPixels().length -
-						(int) meta.get(imageIndex).getAxisLength(Axes.Y) * pad];
+				t = new byte[meta.getPrevPixels().length - (int) meta.get(imageIndex)
+					.getAxisLength(Axes.Y) * pad];
 
-				for (int row = 0; row < meta.get(imageIndex).getAxisLength(Axes.Y); row++)
+				for (int row = 0; row < meta.get(imageIndex).getAxisLength(
+					Axes.Y); row++)
 				{
-					final int sourceIndex =
-						row *
-							(bytes * (int) meta.get(imageIndex).getAxisLength(Axes.X) + pad);
-					final int destIndex =
-						row * (int) meta.get(imageIndex).getAxisLength(Axes.X) * bytes;
-					final int length =
-						(int) meta.get(imageIndex).getAxisLength(Axes.X) * bytes;
+					final int sourceIndex = row * (bytes * (int) meta.get(imageIndex)
+						.getAxisLength(Axes.X) + pad);
+					final int destIndex = row * (int) meta.get(imageIndex).getAxisLength(
+						Axes.X) * bytes;
+					final int length = (int) meta.get(imageIndex).getAxisLength(Axes.X) *
+						bytes;
 					System.arraycopy(meta.getPrevPixels(), sourceIndex, t, destIndex,
 						length);
 				}
 			}
 
-			final int bpp =
-				FormatTools.getBytesPerPixel(meta.get(imageIndex).getPixelType());
+			final int bpp = FormatTools.getBytesPerPixel(meta.get(imageIndex)
+				.getPixelType());
 
 			final int xAxis = meta.get(imageIndex).getAxisIndex(Axes.X);
 			final int yAxis = meta.get(imageIndex).getAxisIndex(Axes.Y);
 			final int x = (int) planeMin[xAxis], y = (int) planeMin[yAxis], w =
 				(int) planeMax[xAxis], h = (int) planeMax[yAxis];
-			final int srcRowLen =
-				(int) (meta.get(imageIndex).getAxisLength(Axes.X) * bpp * meta.get(
-					imageIndex).getAxisLength(Axes.CHANNEL));
-			final int destRowLen =
-				w * bpp * (int) meta.get(imageIndex).getAxisLength(Axes.CHANNEL);
+			final int srcRowLen = (int) (meta.get(imageIndex).getAxisLength(Axes.X) *
+				bpp * meta.get(imageIndex).getAxisLength(Axes.CHANNEL));
+			final int destRowLen = w * bpp * (int) meta.get(imageIndex).getAxisLength(
+				Axes.CHANNEL);
 			for (int row = 0; row < h; row++) {
 				if (meta.getBitsPerPixel() == 32) {
 					for (int col = 0; col < w; col++) {
-						final int src =
-							(row + y) * (int) meta.get(imageIndex).getAxisLength(Axes.X) *
-								bpp * 4 + (x + col) * bpp * 4 + 1;
+						final int src = (row + y) * (int) meta.get(imageIndex)
+							.getAxisLength(Axes.X) * bpp * 4 + (x + col) * bpp * 4 + 1;
 						final int dst = row * destRowLen + col * bpp * 3;
 						if (src + 3 <= t.length && dst + 3 <= buf.length) {
 							System.arraycopy(t, src, buf, dst, 3);
@@ -592,14 +583,14 @@ public class NativeQTFormat extends AbstractFormat {
 					}
 				}
 				else {
-					System.arraycopy(t, row * srcRowLen + x * bpp *
-						(int) meta.get(imageIndex).getAxisLength(Axes.CHANNEL), buf, row *
-						destRowLen, destRowLen);
+					System.arraycopy(t, row * srcRowLen + x * bpp * (int) meta.get(
+						imageIndex).getAxisLength(Axes.CHANNEL), buf, row * destRowLen,
+						destRowLen);
 				}
 			}
 
-			if ((meta.getBitsPerPixel() == 40 || meta.getBitsPerPixel() == 8) &&
-				!code.equals("mjpb"))
+			if ((meta.getBitsPerPixel() == 40 || meta.getBitsPerPixel() == 8) && !code
+				.equals("mjpb"))
 			{
 				// invert the pixels
 				for (int i = 0; i < buf.length; i++) {
@@ -695,17 +686,14 @@ public class NativeQTFormat extends AbstractFormat {
 		@Override
 		protected String[] makeCompressionTypes() {
 			if (qtJavaService.canDoQT()) {
-				return new String[] {
-					CompressionType.UNCOMPRESSED.getCompression(),
+				return new String[] { CompressionType.UNCOMPRESSED.getCompression(),
 					// NB: Writing to Motion JPEG-B with QTJava seems to be
 					// broken.
 					/* "Motion JPEG-B", */
-					CompressionType.CINEPAK.getCompression(),
-					CompressionType.ANIMATION.getCompression(),
-					CompressionType.H_263.getCompression(),
-					CompressionType.SORENSON.getCompression(),
-					CompressionType.SORENSON_3.getCompression(),
-					CompressionType.MPEG_4.getCompression() };
+					CompressionType.CINEPAK.getCompression(), CompressionType.ANIMATION
+						.getCompression(), CompressionType.H_263.getCompression(),
+					CompressionType.SORENSON.getCompression(), CompressionType.SORENSON_3
+						.getCompression(), CompressionType.MPEG_4.getCompression() };
 			}
 			return new String[] { CompressionType.UNCOMPRESSED.getCompression() };
 		}
@@ -772,8 +760,8 @@ public class NativeQTFormat extends AbstractFormat {
 				if (!SCIFIOMetadataTools.wholePlane(imageIndex, meta, planeMin,
 					planeMax))
 				{
-					getStream().skipBytes(
-						(int) (meta.get(imageIndex).getPlaneSize() + pad * height));
+					getStream().skipBytes((int) (meta.get(imageIndex).getPlaneSize() +
+						pad * height));
 				}
 			}
 		}
@@ -793,24 +781,24 @@ public class NativeQTFormat extends AbstractFormat {
 			}
 
 			final Metadata meta = getMetadata();
-			final boolean interleaved =
-				plane.getImageMetadata().getInterleavedAxisCount() > 0;
+			final boolean interleaved = plane.getImageMetadata()
+				.getInterleavedAxisCount() > 0;
 			// get the width and height of the image
 			final int width = (int) meta.get(imageIndex).getAxisLength(Axes.X);
 			// need to check if the width is a multiple of 8
 			// if it is, great; if not, we need to pad each scanline with enough
 			// bytes to make the width a multiple of 8
 
-			final int nChannels =
-				(int) meta.get(imageIndex).getAxisLength(Axes.CHANNEL);
+			final int nChannels = (int) meta.get(imageIndex).getAxisLength(
+				Axes.CHANNEL);
 
 			final int xIndex = meta.get(imageIndex).getAxisIndex(Axes.X);
 			final int yIndex = meta.get(imageIndex).getAxisIndex(Axes.Y);
 			final int x = (int) planeMin[xIndex], y = (int) planeMin[yIndex], w =
 				(int) planeMax[xIndex], h = (int) planeMax[yIndex];
 
-			getStream().seek(
-				offsets.get((int) planeIndex) + y * (nChannels * width + pad));
+			getStream().seek(offsets.get((int) planeIndex) + y * (nChannels * width +
+				pad));
 
 			// invert each pixel
 			// this will makes the colors look right in other readers (e.g.
@@ -882,15 +870,15 @@ public class NativeQTFormat extends AbstractFormat {
 
 			final int width = (int) meta.get(imageIndex).getAxisLength(Axes.X);
 			final int height = (int) meta.get(imageIndex).getAxisLength(Axes.Y);
-			final int nChannels =
-				(int) meta.get(imageIndex).getAxisLength(Axes.CHANNEL);
+			final int nChannels = (int) meta.get(imageIndex).getAxisLength(
+				Axes.CHANNEL);
 			final int planeSize = width * height * nChannels;
 
 			pad = nChannels > 1 ? 0 : (4 - (width % 4)) % 4;
 
 			if (legacy == null) {
-				final LegacyQTFormat legacyFormat =
-					formatService.getFormatFromClass(LegacyQTFormat.class);
+				final LegacyQTFormat legacyFormat = formatService.getFormatFromClass(
+					LegacyQTFormat.class);
 				legacy = (LegacyQTFormat.Writer) legacyFormat.createWriter();
 				final io.scif.Metadata legacyMeta = legacyFormat.createMetadata();
 				translatorService.translate(meta, legacyMeta, false);
@@ -912,8 +900,8 @@ public class NativeQTFormat extends AbstractFormat {
 			else {
 				getStream().seek(BYTE_COUNT_OFFSET);
 
-				final RandomAccessInputStream in =
-					new RandomAccessInputStream(getContext(), meta.getDatasetName());
+				final RandomAccessInputStream in = new RandomAccessInputStream(
+					getContext(), meta.getDatasetName());
 				in.seek(BYTE_COUNT_OFFSET);
 				numBytes = in.readInt() - 8;
 				in.close();
@@ -948,8 +936,8 @@ public class NativeQTFormat extends AbstractFormat {
 			final int nChannels = (int) meta.get(0).getAxisLength(Axes.CHANNEL);
 
 			final int timeScale = 1000;
-			final int duration =
-				(int) (numWritten * ((double) timeScale / getFramesPerSecond()));
+			final int duration = (int) (numWritten * ((double) timeScale /
+				getFramesPerSecond()));
 			final int bitsPerPixel = (nChannels > 1) ? 24 : 40;
 			final int channels = (bitsPerPixel >= 40) ? 1 : 3;
 
@@ -1241,8 +1229,8 @@ public class NativeQTFormat extends AbstractFormat {
 			// matter if
 			// we're translating to this format.
 			// But it is used to determine RGB status.
-			final int bpp =
-				FormatTools.getBitsPerPixel(source.get(0).getPixelType()) == 8 ? 8 : 16;
+			final int bpp = FormatTools.getBitsPerPixel(source.get(0)
+				.getPixelType()) == 8 ? 8 : 16;
 
 			dest.setBitsPerPixel(source.get(0).isMultichannel() ? bpp : (bpp * 5));
 		}
@@ -1293,7 +1281,8 @@ public class NativeQTFormat extends AbstractFormat {
 						// "size" includes the size and offset bytes
 						meta.setPixelBytes(atomSize - 8);
 
-						if (meta.getPixelBytes() > (stream.length() - meta.getPixelOffset()))
+						if (meta.getPixelBytes() > (stream.length() - meta
+							.getPixelOffset()))
 						{
 							meta.setPixelBytes(stream.length() - meta.getPixelOffset());
 						}
@@ -1336,8 +1325,8 @@ public class NativeQTFormat extends AbstractFormat {
 							final byte[] b = new byte[(int) (atomSize - 12)];
 							stream.read(b);
 
-							final CodecService codecService =
-								meta.context().service(CodecService.class);
+							final CodecService codecService = meta.context().service(
+								CodecService.class);
 							final Codec codec = codecService.getCodec(ZlibCodec.class);
 							final byte[] output = codec.decompress(b, null);
 
@@ -1365,8 +1354,8 @@ public class NativeQTFormat extends AbstractFormat {
 							int off = stream.readInt();
 							meta.getOffsets().add(new Integer(off));
 							for (int i = 1; i < planeCount; i++) {
-								if ((meta.getChunkSizes().size() > 0) &&
-									(i < meta.getChunkSizes().size()))
+								if ((meta.getChunkSizes().size() > 0) && (i < meta
+									.getChunkSizes().size()))
 								{
 									meta.setRawSize(meta.getChunkSizes().get(i).intValue());
 								}
@@ -1392,11 +1381,9 @@ public class NativeQTFormat extends AbstractFormat {
 							if (i == 0) {
 								meta.setCodec(stream.readString(4));
 
-								if (!meta.getCodec().equals("raw ") &&
-									!meta.getCodec().equals("rle ") &&
-									!meta.getCodec().equals("rpza") &&
-									!meta.getCodec().equals("mjpb") &&
-									!meta.getCodec().equals("jpeg"))
+								if (!meta.getCodec().equals("raw ") && !meta.getCodec().equals(
+									"rle ") && !meta.getCodec().equals("rpza") && !meta.getCodec()
+										.equals("mjpb") && !meta.getCodec().equals("jpeg"))
 								{
 									throw new UnsupportedCompressionException(
 										"Unsupported codec: " + meta.getCodec());
@@ -1496,17 +1483,16 @@ public class NativeQTFormat extends AbstractFormat {
 		private static byte[] uncompress(final byte[] pixs, final String code,
 			final Metadata meta) throws FormatException
 		{
-			final CodecService codecService =
-				meta.context().service(CodecService.class);
+			final CodecService codecService = meta.context().service(
+				CodecService.class);
 			final CodecOptions options = new MJPBCodecOptions();
 			options.width = (int) meta.get(0).getAxisLength(Axes.X);
 			options.height = (int) meta.get(0).getAxisLength(Axes.Y);
 			options.bitsPerSample = meta.getBitsPerPixel();
-			options.channels =
-				meta.getBitsPerPixel() < 40 ? meta.getBitsPerPixel() / 8 : (meta
-					.getBitsPerPixel() - 32) / 8;
-			options.previousImage =
-				meta.isCanUsePrevious() ? meta.getPrevPixels() : null;
+			options.channels = meta.getBitsPerPixel() < 40 ? meta.getBitsPerPixel() /
+				8 : (meta.getBitsPerPixel() - 32) / 8;
+			options.previousImage = meta.isCanUsePrevious() ? meta.getPrevPixels()
+				: null;
 			options.littleEndian = meta.get(0).isLittleEndian();
 			options.interleaved = meta.get(0).isMultichannel();
 
@@ -1526,7 +1512,8 @@ public class NativeQTFormat extends AbstractFormat {
 				codec = codecService.getCodec(JPEGCodec.class);
 			}
 			else {
-				throw new UnsupportedCompressionException("Unsupported codec : " + code);
+				throw new UnsupportedCompressionException("Unsupported codec : " +
+					code);
 			}
 			return codec.decompress(pixs, options);
 		}

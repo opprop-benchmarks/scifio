@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -242,7 +242,8 @@ public interface FormatService extends SCIFIOService, Versioned {
 	 * @param config Configuration for this method execution.
 	 * @return A Format reference compatible with the provided source.
 	 */
-	Format getFormat(RandomAccessInputStream source, SCIFIOConfig config) throws FormatException;
+	Format getFormat(RandomAccessInputStream source, SCIFIOConfig config)
+		throws FormatException;
 
 	/**
 	 * As {@link #getFormatList(String)} but takes an initialized
@@ -251,11 +252,12 @@ public interface FormatService extends SCIFIOService, Versioned {
 	 * @param source the source
 	 * @return An List of Format references compatible with the provided source.
 	 */
-	List<Format> getFormatList(RandomAccessInputStream source) throws FormatException;
+	List<Format> getFormatList(RandomAccessInputStream source)
+		throws FormatException;
 
 	/**
-	 * As {@link #getFormatList(String, SCIFIOConfig, boolean)} but takes an initialized
-	 * {@link RandomAccessInputStream}.
+	 * As {@link #getFormatList(String, SCIFIOConfig, boolean)} but takes an
+	 * initialized {@link RandomAccessInputStream}.
 	 *
 	 * @param source the source
 	 * @param config Configuration for this method execution.
@@ -263,8 +265,8 @@ public interface FormatService extends SCIFIOService, Versioned {
 	 *          compatible format
 	 * @return A List of Format references compatible with the provided source.
 	 */
-	List<Format> getFormatList(RandomAccessInputStream source, SCIFIOConfig config, boolean greedy)
-		throws FormatException;
+	List<Format> getFormatList(RandomAccessInputStream source,
+		SCIFIOConfig config, boolean greedy) throws FormatException;
 
 	/**
 	 * Returns a list of all Formats within this context.

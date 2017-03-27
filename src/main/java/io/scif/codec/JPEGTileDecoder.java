@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -80,8 +80,8 @@ public class JPEGTileDecoder extends AbstractContextual {
 		}
 	}
 
-	public void
-		initialize(final RandomAccessInputStream in, final int imageWidth)
+	public void initialize(final RandomAccessInputStream in,
+		final int imageWidth)
 	{
 		initialize(in, 0, imageWidth);
 	}
@@ -190,7 +190,8 @@ public class JPEGTileDecoder extends AbstractContextual {
 			this.producer = producer;
 		}
 
-		public TileConsumer(final ImageProducer producer, final int y, final int h)
+		public TileConsumer(final ImageProducer producer, final int y,
+			final int h)
 		{
 			this(producer);
 			this.yy = y;
@@ -247,8 +248,8 @@ public class JPEGTileDecoder extends AbstractContextual {
 			final int scanSize)
 		{
 			final double percent = ((double) y / (yy + hh)) * 100.0;
-			log
-				.debug("Storing row " + y + " of " + (yy + hh) + " (" + percent + "%)");
+			log.debug("Storing row " + y + " of " + (yy + hh) + " (" + percent +
+				"%)");
 			if (y >= (yy + hh)) {
 				imageComplete(0);
 				return;
@@ -311,8 +312,8 @@ public class JPEGTileDecoder extends AbstractContextual {
 			toCompress.add(pixels);
 			row++;
 
-			if ((y % ROW_COUNT) == ROW_COUNT - 1 || y == getHeight() - 1 ||
-				y == yy + hh - 1)
+			if ((y % ROW_COUNT) == ROW_COUNT - 1 || y == getHeight() - 1 || y == yy +
+				hh - 1)
 			{
 				final IntRect r = new IntRect(x, y - row + 1, w, row);
 				options.width = w;
@@ -321,8 +322,8 @@ public class JPEGTileDecoder extends AbstractContextual {
 				options.bitsPerSample = 8;
 				options.signed = false;
 
-				final byte[] compressed =
-					codec.compress(toCompress.toByteArray(), options);
+				final byte[] compressed = codec.compress(toCompress.toByteArray(),
+					options);
 				compressedTiles.put(r, compressed);
 				toCompress.clear();
 			}
@@ -341,8 +342,8 @@ public class JPEGTileDecoder extends AbstractContextual {
 			toCompress.add(buf);
 			row++;
 
-			if ((y % ROW_COUNT) == ROW_COUNT - 1 || y == getHeight() - 1 ||
-				y == yy + hh - 1)
+			if ((y % ROW_COUNT) == ROW_COUNT - 1 || y == getHeight() - 1 || y == yy +
+				hh - 1)
 			{
 				final IntRect r = new IntRect(x, y - row + 1, w, row);
 				options.width = w;
@@ -351,8 +352,8 @@ public class JPEGTileDecoder extends AbstractContextual {
 				options.bitsPerSample = 8;
 				options.signed = false;
 
-				final byte[] compressed =
-					codec.compress(toCompress.toByteArray(), options);
+				final byte[] compressed = codec.compress(toCompress.toByteArray(),
+					options);
 				compressedTiles.put(r, compressed);
 				toCompress.clear();
 				row = 0;

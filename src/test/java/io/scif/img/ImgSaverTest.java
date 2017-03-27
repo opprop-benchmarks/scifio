@@ -45,7 +45,6 @@ import java.util.Iterator;
 
 import net.imagej.ImgPlus;
 import net.imagej.axis.CalibratedAxis;
-import net.imglib2.RandomAccess;
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 
