@@ -47,6 +47,7 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 
 import org.scijava.Priority;
+import org.scijava.io.handles.FileLocation;
 import org.scijava.object.ObjectService;
 import org.scijava.plugin.Plugin;
 import org.scijava.service.AbstractService;
@@ -152,24 +153,24 @@ public class SCIFIODatasetService extends AbstractService implements
 
 	@Override
 	public boolean canOpen(final String source) {
-		return datasetIOService().canOpen(source);
+		return datasetIOService().canOpen(new FileLocation(source));
 	}
 
 	@Override
 	public boolean canSave(final String destination) {
-		return datasetIOService().canSave(destination);
+		return datasetIOService().canSave(new FileLocation(destination));
 	}
 
 	@Override
 	public Dataset open(final String source) throws IOException {
-		return datasetIOService().open(source);
+		return datasetIOService().open(new FileLocation(source));
 	}
 
 	@Override
 	public Dataset open(final String source, final Object config)
 		throws IOException
 	{
-		return datasetIOService().open(source, getConfig(config));
+		return datasetIOService().open(new FileLocation(source), getConfig(config));
 	}
 
 	@Override
@@ -181,14 +182,15 @@ public class SCIFIODatasetService extends AbstractService implements
 	public Object save(final Dataset dataset, final String destination)
 		throws IOException
 	{
-		return datasetIOService().save(dataset, destination);
+		return datasetIOService().save(dataset, new FileLocation(destination));
 	}
 
 	@Override
 	public Object save(final Dataset dataset, final String destination,
 		final Object config) throws IOException
 	{
-		return datasetIOService().save(dataset, destination, getConfig(config));
+		return datasetIOService().save(dataset, new FileLocation(destination),
+			getConfig(config));
 	}
 
 	// -- Service methods --
