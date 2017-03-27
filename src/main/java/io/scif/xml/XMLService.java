@@ -31,7 +31,6 @@
 package io.scif.xml;
 
 import io.scif.SCIFIOService;
-import io.scif.io.RandomAccessInputStream;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +43,8 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -104,11 +105,11 @@ public interface XMLService extends SCIFIOService {
 	void parseXML(String xml, DefaultHandler handler) throws IOException;
 
 	/**
-	 * Parses the XML contained in the given input stream into using the specified
+	 * Parses the XML contained in the given data handle into using the specified
 	 * XML handler. Be very careful, as 'stream' <b>will</b> be closed by the SAX
 	 * parser.
 	 */
-	void parseXML(RandomAccessInputStream stream, DefaultHandler handler)
+	void parseXML(DataHandle<Location> handle, DefaultHandler handler)
 		throws IOException;
 
 	/**

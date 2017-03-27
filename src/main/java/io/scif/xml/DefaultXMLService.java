@@ -31,7 +31,6 @@
 package io.scif.xml;
 
 import io.scif.common.Constants;
-import io.scif.io.RandomAccessInputStream;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -73,6 +72,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -319,7 +320,7 @@ public class DefaultXMLService extends AbstractService implements XMLService {
 	}
 
 	@Override
-	public void parseXML(final RandomAccessInputStream stream,
+	public void parseXML(final DataHandle<Location> stream,
 		final DefaultHandler handler) throws IOException
 	{
 		parseXML((InputStream) stream, handler);
