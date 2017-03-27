@@ -69,15 +69,6 @@ public interface TypedParser<M extends TypedMetadata> extends Parser {
 	/**
 	 * Generic-parameterized {@code parse} method, using
 	 * {@link io.scif.TypedMetadata} to avoid type erasure conflicts with
-	 * {@link io.scif.Parser#parse(Location, Metadata)}.
-	 *
-	 * @see io.scif.Parser#parse(Location, Metadata)
-	 */
-	M parse(String fileName, M meta) throws IOException, FormatException;
-
-	/**
-	 * Generic-parameterized {@code parse} method, using
-	 * {@link io.scif.TypedMetadata} to avoid type erasure conflicts with
 	 * {@link io.scif.Parser#parse(DataHandle, Metadata)}.
 	 *
 	 * @see io.scif.Parser#parse(DataHandle, Metadata)
