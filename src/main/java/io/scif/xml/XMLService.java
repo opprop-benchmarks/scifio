@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
@@ -97,7 +98,7 @@ public interface XMLService extends SCIFIOService {
 	String indentXML(String xml, int spacing, boolean preserveCData);
 
 	/** Parses the given XML string into a list of key/value pairs. */
-	Hashtable<String, String> parseXML(String xml) throws IOException;
+	Map<String, String> parseXML(String xml) throws IOException;
 
 	/**
 	 * Parses the given XML string using the specified XML handler.

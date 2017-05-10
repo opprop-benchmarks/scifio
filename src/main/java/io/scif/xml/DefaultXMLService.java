@@ -46,6 +46,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -304,7 +305,7 @@ public class DefaultXMLService extends AbstractService implements XMLService {
 	// -- Parsing --
 
 	@Override
-	public Hashtable<String, String> parseXML(final String xml)
+	public Map<String, String> parseXML(final String xml)
 		throws IOException
 	{
 		final MetadataHandler handler = new MetadataHandler();
