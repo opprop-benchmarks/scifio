@@ -46,7 +46,6 @@ import io.scif.codec.JPEGCodec;
 import io.scif.codec.PackbitsCodec;
 import io.scif.config.SCIFIOConfig;
 import io.scif.gui.AWTImageTools;
-import io.scif.io.ByteArrayHandle;
 import io.scif.util.FormatTools;
 
 import java.io.IOException;
