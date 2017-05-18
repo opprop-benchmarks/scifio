@@ -68,7 +68,7 @@ public class GZipHandle extends StreamHandle {
 	/**
 	 * Construct a new GZipHandle for the given file.
 	 *
-	 * @throws HandleException if the given file name is not a GZip file.
+	 * @throws IOException if the given file name is not a GZip file.
 	 */
 	public GZipHandle(final Context context, final String file)
 		throws IOException

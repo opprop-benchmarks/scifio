@@ -143,7 +143,7 @@ public class LosslessJPEGCodec extends AbstractCodec {
 	 * {@link CodecOptions#interleaved interleaved}
 	 * {@link CodecOptions#littleEndian littleEndian}
 	 *
-	 * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
+	 * @see Codec#decompress(DataHandle, CodecOptions)
 	 */
 	@Override
 	public byte[] decompress(final DataHandle<Location> in, CodecOptions options)

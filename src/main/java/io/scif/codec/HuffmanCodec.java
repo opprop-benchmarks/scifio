@@ -75,7 +75,7 @@ public class HuffmanCodec extends AbstractCodec {
 	 * {@link HuffmanCodecOptions#table table} {@link CodecOptions#bitsPerSample
 	 * bitsPerSample} {@link CodecOptions#maxBytes maxBytes}
 	 *
-	 * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
+	 * @see Codec#decompress(DataHandle, CodecOptions)
 	 */
 	@Override
 	public byte[] decompress(final DataHandle<Location> in,
