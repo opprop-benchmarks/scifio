@@ -39,7 +39,6 @@ import io.scif.Writer;
 import io.scif.common.ReflectException;
 import io.scif.common.ReflectedUniverse;
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.RandomAccessInputStream;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -596,7 +595,7 @@ public final class FormatTools {
 	 *          reported as part of the exception message, if available. Use zero
 	 *          to suppress output of the calling method name.
 	 */
-	public static void assertStream(final RandomAccessInputStream stream,
+	public static void assertStream(final DataHandle<Location> stream,
 		final boolean notNull, final int depth)
 	{
 		String msg = null;
@@ -710,8 +709,7 @@ public final class FormatTools {
 	}
 
 	/**
-	 * Returns true if the given RandomAccessInputStream conatins at least 'len'
-	 * bytes.
+	 * Returns true if the given DataHandle contains at least 'len' bytes.
 	 */
 	public static boolean validStream(final DataHandle<Location> handle,
 		final int len, final boolean littleEndian) throws IOException

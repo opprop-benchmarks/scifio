@@ -82,7 +82,7 @@ public abstract class AbstractChecker extends AbstractHasFormat implements
 
 		if (suffixNecessary() || suffixSufficient()) {
 			// it's worth checking the file extension
-			final boolean suffixMatch = FormatTools.checkSuffix(loc, getFormat()
+			final boolean suffixMatch = FormatTools.checkSuffix(loc.getName(), getFormat()
 				.getSuffixes());
 
 			// if suffix match is required but it doesn't match, failure

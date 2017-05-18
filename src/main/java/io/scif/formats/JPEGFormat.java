@@ -107,7 +107,7 @@ public class JPEGFormat extends ImageIOFormat {
 				return super.isFormat(name, config);
 			}
 
-			return FormatTools.checkSuffix(name, getFormat().getSuffixes());
+			return FormatTools.checkSuffix(name.getName(), getFormat().getSuffixes());
 		}
 
 		@Override
