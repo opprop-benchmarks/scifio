@@ -43,21 +43,20 @@ import io.scif.common.ReflectedUniverse;
 import io.scif.config.SCIFIOConfig;
 import io.scif.gui.AWTImageTools;
 import io.scif.gui.BufferedImageReader;
-import io.scif.io.FileHandle;
-import io.scif.io.IRandomAccess;
-import io.scif.io.RandomAccessInputStream;
 import io.scif.services.FormatService;
 import io.scif.services.LocationService;
 import io.scif.util.FormatTools;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import net.imagej.axis.Axes;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
+import org.scijava.io.handles.FileLocation;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
@@ -158,7 +157,7 @@ public class TIFFJAIFormat extends AbstractFormat {
 		// -- Parser API Methods --
 
 		@Override
-		protected void typedParse(final RandomAccessInputStream stream,
+		protected void typedParse(final DataHandle<Location> stream,
 			final Metadata meta, final SCIFIOConfig config) throws IOException,
 			FormatException
 		{
@@ -179,30 +178,23 @@ public class TIFFJAIFormat extends AbstractFormat {
 
 			meta.setUniverse(r);
 
-			final String id = stream.getFileName();
+			final String id = stream.get().getName();
 
 			log().info("Reading movie dimensions");
 
 			// map Location to File or RandomAccessFile, if possible
-			final IRandomAccess ira = locationService.getMappedFile(id);
-			if (ira != null) {
-				if (ira instanceof FileHandle) {
-					final FileHandle fh = (FileHandle) ira;
-					r.setVar("file", fh.getRandomAccessFile());
-				}
-				else {
-					throw new FormatException("Unsupported handle type" + ira.getClass()
-						.getName());
-				}
+
+			final Location location = stream.get();
+			if (location instanceof FileLocation) {
+				final FileLocation fl = (FileLocation) location;
+				r.setVar("file", new RandomAccessFile(fl.getFile(), "r"));
 			}
 			else {
-				final String mapId = locationService.getMappedId(id);
-				final File file = new File(mapId);
-				if (file.exists()) {
-					r.setVar("file", file);
-				}
-				else throw new FileNotFoundException(id);
+				throw new FormatException("Unsupported Location type" + location
+					.getClass().getName());
 			}
+			// FIXME use caching for the RandomAccessFile?
+
 			r.setVar("tiff", "tiff");
 			r.setVar("param", null);
 
