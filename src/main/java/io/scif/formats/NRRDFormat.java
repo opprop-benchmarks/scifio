@@ -42,8 +42,6 @@ import io.scif.ImageMetadata;
 import io.scif.MetadataLevel;
 import io.scif.UnsupportedCompressionException;
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.Location;
-import io.scif.io.RandomAccessInputStream;
 import io.scif.services.FormatService;
 import io.scif.util.FormatTools;
 
@@ -52,6 +50,9 @@ import java.io.IOException;
 
 import net.imagej.axis.Axes;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
@@ -74,8 +75,8 @@ public class NRRDFormat extends AbstractFormat {
 
 		// -- Fields --
 
-		/** Name of data file, if the current extension is 'nhdr'. */
-		private String dataFile;
+		/** Location of data file, if the current extension is 'nhdr'. */
+		private Location dataFile;
 
 		/** Data encoding. */
 		private String encoding;
@@ -102,11 +103,11 @@ public class NRRDFormat extends AbstractFormat {
 			return helper;
 		}
 
-		public String getDataFile() {
+		public Location getDataFile() {
 			return dataFile;
 		}
 
-		public void setDataFile(final String dataFile) {
+		public void setDataFile(final Location dataFile) {
 			this.dataFile = dataFile;
 		}
 
@@ -169,7 +170,8 @@ public class NRRDFormat extends AbstractFormat {
 		public void close(final boolean fileOnly) throws IOException {
 			super.close(fileOnly);
 			if (!fileOnly) {
-				dataFile = encoding = null;
+				dataFile = null;
+				encoding = null;
 				offset = 0;
 				pixelSizes = null;
 				initializeHelper = false;
@@ -187,26 +189,32 @@ public class NRRDFormat extends AbstractFormat {
 		// -- Checker API Methods --
 
 		@Override
-		public boolean isFormat(String name, final SCIFIOConfig config) {
-			if (super.isFormat(name, config)) return true;
+		public boolean isFormat(final Location loc, final SCIFIOConfig config) {
+			if (super.isFormat(loc, config)) return true;
 			if (!config.checkerIsOpen()) return false;
 
-			// look for a matching .nhdr file
-			Location header = new Location(getContext(), name + ".nhdr");
-			if (header.exists()) {
-				return true;
-			}
+			try {
+				// look for a matching .nhdr file
+				String name = loc.getName();
+				Location header = loc.getSibling(name + ".nhdr");
+				if (header.exists()) {
+					return true;
+				}
 
-			if (name.contains(".")) {
-				name = name.substring(0, name.lastIndexOf("."));
-			}
+				if (name.contains(".")) {
+					name = name.substring(0, name.lastIndexOf('.'));
+				}
 
-			header = new Location(getContext(), name + ".nhdr");
-			return header.exists();
+				header = loc.getSibling(name + ".nhdr");
+				return header.exists();
+			}
+			catch (final IOException e) {
+				return false;
+			}
 		}
 
 		@Override
-		public boolean isFormat(final RandomAccessInputStream stream)
+		public boolean isFormat(final DataHandle<Location> stream)
 			throws IOException
 		{
 			final int blockLen = NRRD_MAGIC_STRING.length();
@@ -220,53 +228,60 @@ public class NRRDFormat extends AbstractFormat {
 		@Parameter
 		private FormatService formatService;
 
+		@Parameter
+		private DataHandleService dataHandleService;
+
 		// -- Parser API Methods --
 
 		@Override
-		public String[] getImageUsedFiles(final int imageIndex,
+		public Location[] getImageUsedFiles(final int imageIndex,
 			final boolean noPixels)
 		{
 			FormatTools.assertId(getSource(), true, 1);
 			if (noPixels) {
 				if (getMetadata().getDataFile() == null) return null;
-				return new String[] { getSource().getFileName() };
+				return new Location[] { getSource().get() };
 			}
-			if (getMetadata().getDataFile() == null) return new String[] { getSource()
-				.getFileName() };
-			return new String[] { getSource().getFileName(), getMetadata()
-				.getDataFile() };
+			if (getMetadata().getDataFile() == null) return new Location[] {
+				getSource().get() };
+			return new Location[] { getSource().get(), getMetadata().getDataFile() };
 		}
 
 		// -- Abstract Parser API Methods --
 
 		@Override
-		public Metadata parse(RandomAccessInputStream stream, final Metadata meta)
-			throws IOException, FormatException
+		public Metadata parse(final DataHandle<Location> stream,
+			final Metadata meta) throws IOException, FormatException
 		{
-			String id = stream.getFileName();
+			String id = stream.get().getName();
+			boolean changedStream = false;
+			Location newLocation = null;
 
 			// make sure we actually have the .nrrd/.nhdr file
 			if (!FormatTools.checkSuffix(id, "nhdr") && !FormatTools.checkSuffix(id,
 				"nrrd"))
 			{
+				changedStream = true;
 				id += ".nhdr";
 
-				if (!new Location(getContext(), id).exists()) {
-					id = id.substring(0, id.lastIndexOf("."));
-					id = id.substring(0, id.lastIndexOf("."));
+				if (!stream.get().getSibling(id).exists()) {
+					id = id.substring(0, id.lastIndexOf('.'));
+					id = id.substring(0, id.lastIndexOf('.'));
 					id += ".nhdr";
 				}
-				id = new Location(getContext(), id).getAbsolutePath();
+				newLocation = stream.get().getSibling(id);
 			}
-			stream.close();
 
-			stream = new RandomAccessInputStream(getContext(), id);
+			if (changedStream) {
+				stream.close();
+				return super.parse(dataHandleService.create(newLocation), meta);
+			}
 
 			return super.parse(stream, meta);
 		}
 
 		@Override
-		protected void typedParse(final RandomAccessInputStream stream,
+		protected void typedParse(final DataHandle<Location> stream,
 			final Metadata meta, final SCIFIOConfig config) throws IOException,
 			FormatException
 		{
@@ -336,7 +351,7 @@ public class NRRDFormat extends AbstractFormat {
 						}
 					}
 					else if (key.equals("data file") || key.equals("datafile")) {
-						meta.setDataFile(v);
+						meta.setDataFile(stream.get().getSibling(v));
 					}
 					else if (key.equals("encoding")) meta.setEncoding(v);
 					else if (key.equals("endian")) {
@@ -356,28 +371,25 @@ public class NRRDFormat extends AbstractFormat {
 
 			// nrrd files store pixel data in addition to metadata
 			// nhdr files don't store pixel data, but instead provide a path to
-			// the
-			// pixels file (this can be any format)
+			// the pixels file (this can be any format)
 
-			if (meta.getDataFile() == null) meta.setOffset(stream.getFilePointer());
+			if (meta.getDataFile() == null) meta.setOffset(stream.offset());
 			else {
-				final Location f = new Location(getContext(), getSource().getFileName())
-					.getAbsoluteFile();
-				final Location parent = f.getParentFile();
+				final Location f = getSource().get();
+				final Location parent = f.getParent();
 				if (f.exists() && parent != null) {
-					String dataFile = meta.getDataFile();
+					String dataFile = meta.getDataFile().getName();
 					dataFile = dataFile.substring(dataFile.indexOf(File.separator) + 1);
-					dataFile = new Location(getContext(), parent, dataFile)
-						.getAbsolutePath();
+					final Location dataLocation = f.getSibling(dataFile);
+					// TODO I think is was missing here:
+					meta.setDataFile(dataLocation);
 				}
 				meta.setInitializeHelper(!meta.getEncoding().equals("raw"));
 			}
 
 			if (meta.isInitializeHelper()) {
 				// Find the highest priority non-NRRD format that can support
-				// the
-				// current
-				// image and cache it as a helper
+				// the current image and cache it as a helper
 				final NRRDFormat nrrd = formatService.getFormatFromClass(
 					NRRDFormat.class);
 				formatService.removeFormat(nrrd);
@@ -420,6 +432,9 @@ public class NRRDFormat extends AbstractFormat {
 	public static class Reader extends ByteArrayReader<Metadata> {
 
 		// -- AbstractReader API Methods --
+
+		@Parameter
+		private DataHandleService dataHandleService;
 
 		@Override
 		protected String[] createDomainArray() {
@@ -469,17 +484,17 @@ public class NRRDFormat extends AbstractFormat {
 			if (meta.getDataFile() == null) {
 				if (meta.getEncoding().equals("raw")) {
 					final long planeSize = FormatTools.getPlaneSize(this, imageIndex);
-					getStream().seek(meta.getOffset() + planeIndex * planeSize);
+					getHandle().seek(meta.getOffset() + planeIndex * planeSize);
 
-					readPlane(getStream(), imageIndex, planeMin, planeMax, plane);
+					readPlane(getHandle(), imageIndex, planeMin, planeMax, plane);
 					return plane;
 				}
 				throw new UnsupportedCompressionException("Unsupported encoding: " +
 					meta.getEncoding());
 			}
 			else if (meta.getEncoding().equals("raw")) {
-				final RandomAccessInputStream s = new RandomAccessInputStream(
-					getContext(), meta.getDataFile());
+				final DataHandle<Location> s = dataHandleService.create(meta
+					.getDataFile());
 				s.seek(meta.getOffset() + planeIndex * FormatTools.getPlaneSize(this,
 					imageIndex));
 				readPlane(s, imageIndex, planeMin, planeMax, plane);
