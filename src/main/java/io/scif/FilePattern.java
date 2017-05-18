@@ -30,17 +30,18 @@
 
 package io.scif;
 
-import io.scif.io.Location;
-
 import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.scijava.Context;
+import org.scijava.io.Location;
 import org.scijava.log.LogService;
 
 /**
@@ -87,17 +88,25 @@ public class FilePattern {
 
 	// -- Constructors --
 
-	/** Creates a pattern object using the given file as a template. */
-	public FilePattern(final Context context, final Location file) {
+	/**
+	 * Creates a pattern object using the given file as a template.
+	 * 
+	 * @throws IOException
+	 */
+	public FilePattern(final Context context, final Location file)
+		throws IOException
+	{
 		this(context, new SCIFIO(context).filePattern().findPattern(file));
 	}
 
 	/**
 	 * Creates a pattern object using the given filename and directory path as a
 	 * template.
+	 * 
+	 * @throws IOException
 	 */
-	public FilePattern(final Context context, final String name,
-		final String dir)
+	public FilePattern(final Context context, final Location name,
+		final Location dir) throws IOException
 	{
 		this(context, new SCIFIO(context).filePattern().findPattern(name, dir));
 	}
@@ -120,13 +129,13 @@ public class FilePattern {
 		while (true) {
 			left = pattern.indexOf(FilePatternBlock.BLOCK_START, left + 1);
 			if (left < 0) break;
-			lt.add(new Integer(left));
+			lt.add(left);
 		}
 		int right = -1;
 		while (true) {
 			right = pattern.indexOf(FilePatternBlock.BLOCK_END, right + 1);
 			if (right < 0) break;
-			gt.add(new Integer(right));
+			gt.add(right);
 		}
 
 		// assemble numerical block indices
@@ -349,26 +358,23 @@ public class FilePattern {
 		}
 	}
 
-	private String[] getAllFiles(final String dir) {
-		final ArrayList<String> files = new ArrayList<>();
+	private List<Location> getAllFiles(final Location dir) throws IOException {
+		final List<Location> files = new ArrayList<>();
 
-		final Location root = new Location(scifio.getContext(), dir);
-		final String[] children = root.list();
+		final Location root = dir;
+		final Set<Location> children = root.getChildren();
 
-		for (final String child : children) {
-			final Location file = new Location(scifio.getContext(), root, child);
-			if (file.isDirectory()) {
-				final String[] grandchildren = getAllFiles(file.getAbsolutePath());
-				for (final String g : grandchildren) {
-					files.add(g);
-				}
+		for (final Location child : children) {
+			List<Location> grandChildren = getAllFiles(child);
+			if (grandChildren.isEmpty()) {
+				files.add(child);
 			}
 			else {
-				files.add(file.getAbsolutePath());
+				files.addAll(grandChildren);
 			}
 		}
 
-		return files.toArray(new String[files.size()]);
+		return files;
 	}
 
 	// -- Main method --

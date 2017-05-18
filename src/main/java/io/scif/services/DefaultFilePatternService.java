@@ -33,15 +33,19 @@ package io.scif.services;
 import io.scif.AxisGuesser;
 import io.scif.FilePattern;
 import io.scif.NumberFilter;
-import io.scif.io.Location;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.scijava.io.Location;
+import org.scijava.io.handles.FileLocation;
 import org.scijava.plugin.Plugin;
 import org.scijava.service.AbstractService;
 import org.scijava.service.Service;
@@ -59,56 +63,43 @@ public class DefaultFilePatternService extends AbstractService implements
 {
 
 	@Override
-	public String findPattern(final String path) {
-		return findPattern(new Location(getContext(), path));
+	public String findPattern(final String path) throws IOException {
+		return findPattern(new FileLocation(path));
 	}
 
 	@Override
-	public String findPattern(final Location file) {
-		return findPattern(file.getName(), file.getAbsoluteFile().getParent());
-	}
-
-	@Override
-	public String findPattern(final File file) {
-		return findPattern(file.getName(), file.getAbsoluteFile().getParent());
-	}
-
-	@Override
-	public String findPattern(final String name, String dir) {
-		if (dir == null) dir = ""; // current directory
-		else if (!dir.equals("") && !dir.endsWith(File.separator)) {
-			dir += File.separator;
+	public String findPattern(final Location file) throws IOException {
+		if (file.isBrowsable()) {
+			return findPattern(file, file.getParent());
 		}
-		final Location dirFile = new Location(getContext(), dir.equals("") ? "."
-			: dir);
+		throw new IOException("FilePatterns require a browsable Location!");
+	}
+
+	@Override
+	public String findPattern(final Location name, Location dir)
+		throws IOException
+	{
 
 		// list files in the given directory
-		final Location[] f = dirFile.listFiles();
-		if (f == null) return null;
-		final String[] nameList = new String[f.length];
-		for (int i = 0; i < nameList.length; i++)
-			nameList[i] = f[i].getName();
-
-		return findPattern(name, dir, nameList);
+		final Set<Location> f = dir.getChildren();
+		if (f.isEmpty()) return null;
+		return findPattern(name, dir, f);
 	}
 
 	@Override
-	public String findPattern(final String name, final String dir,
-		final String[] nameList)
+	public String findPattern(final Location name, final Location dir,
+		final Collection<Location> f)
 	{
-		return findPattern(name, dir, nameList, null);
+		return findPattern(name, dir, f, null);
 	}
 
 	@Override
-	public String findPattern(final String name, String dir,
-		final String[] nameList, int[] excludeAxes)
+	public String findPattern(final Location file, Location dir,
+		final Collection<Location> nameList, int[] excludeAxes)
 	{
 		if (excludeAxes == null) excludeAxes = new int[0];
 
-		if (dir == null) dir = ""; // current directory
-		else if (!dir.equals("") && !dir.endsWith(File.separator)) {
-			dir += File.separator;
-		}
+		String name = file.getName();
 
 		// compile list of numerical blocks
 		final int len = name.length();
@@ -117,7 +108,8 @@ public class DefaultFilePatternService extends AbstractService implements
 		final int[] endList = new int[bound];
 		int q = 0;
 		boolean num = false;
-		int ndx = -1, e = 0;
+		int ndx = -1;
+		int e = 0;
 		for (int i = 0; i < len; i++) {
 			final char c = name.charAt(i);
 			if (c >= '0' && c <= '9') {
@@ -142,7 +134,7 @@ public class DefaultFilePatternService extends AbstractService implements
 		}
 
 		// analyze each block, building pattern as we go
-		final StringBuilder sb = new StringBuilder(dir);
+		final StringBuilder sb = new StringBuilder("");
 
 		for (int i = 0; i < q; i++) {
 			final int last = i > 0 ? endList[i - 1] : 0;
@@ -265,41 +257,42 @@ public class DefaultFilePatternService extends AbstractService implements
 	}
 
 	@Override
-	public String[] findImagePatterns(final String base) {
-		final Location file = new Location(getContext(), base).getAbsoluteFile();
-		final Location parent = file.getParentFile();
-		final String[] list = parent.list(true);
-		return findImagePatterns(base, parent.getAbsolutePath(), list);
+	public String[] findImagePatterns(final Location base) throws IOException {
+		final Location file = base;
+		final Location parent = file.getParent();
+		final Set<Location> list = parent.getChildren();
+		return findImagePatterns(base, parent, list);
 	}
 
 	@Override
-	public String[] findImagePatterns(final String base, final String dir,
-		final String[] nameList)
+	public String[] findImagePatterns(final Location base, final Location dir,
+		final Collection<Location> nameList) throws IOException
 	{
-		String baseSuffix = base.substring(base.lastIndexOf(File.separator) + 1);
-		int dot = baseSuffix.indexOf(".");
+		String name = base.getName();
+		int dot = name.lastIndexOf('.');
+		String baseSuffix;
 		if (dot < 0) baseSuffix = "";
-		else baseSuffix = baseSuffix.substring(dot + 1);
+		else baseSuffix = name.substring(dot + 1);
 
-		final ArrayList<String> patterns = new ArrayList<>();
+		final List<String> patterns = new ArrayList<>();
 		final int[] exclude = new int[] { AxisGuesser.S_AXIS };
-		for (final String name : nameList) {
-			final String pattern = findPattern(name, dir, nameList, exclude);
+		for (final Location loc : nameList) {
+			final String pattern = findPattern(loc, dir, nameList, exclude);
 			if (pattern == null) continue;
 			int start = pattern.lastIndexOf(File.separator) + 1;
 			if (start < 0) start = 0;
 			String patternSuffix = pattern.substring(start);
-			dot = patternSuffix.indexOf(".");
+			dot = patternSuffix.indexOf('.');
 			if (dot < 0) patternSuffix = "";
 			else patternSuffix = patternSuffix.substring(dot + 1);
 
-			final String checkPattern = findPattern(name, dir, nameList);
+			final String checkPattern = findPattern(loc, dir, nameList);
 			final String[] checkFiles = new FilePattern(getContext(), checkPattern)
 				.getFiles();
 
-			if (!patterns.contains(pattern) && (!new Location(getContext(), pattern)
-				.exists() || base.equals(pattern)) && patternSuffix.equals(
-					baseSuffix) && ArrayUtils.indexOf(checkFiles, base) >= 0)
+			if (!patterns.contains(pattern) && (!base.getSibling(pattern).exists() ||
+				base.equals(pattern)) && patternSuffix.equals(baseSuffix) && ArrayUtils
+					.indexOf(checkFiles, base) >= 0)
 			{
 				patterns.add(pattern);
 			}
@@ -312,8 +305,9 @@ public class DefaultFilePatternService extends AbstractService implements
 	// -- Utility helper methods --
 
 	/** Recursive method for parsing a fixed-width numerical block. */
-	private String findPattern(final String name, final String[] nameList,
-		final int ndx, final int end, final String p)
+	private String findPattern(final String name,
+		final Collection<Location> nameList, final int ndx, final int end,
+		final String p)
 	{
 		if (ndx == end) return p;
 		for (int i = end - ndx; i >= 1; i--) {
@@ -373,13 +367,13 @@ public class DefaultFilePatternService extends AbstractService implements
 	}
 
 	/** Filters the given list of filenames according to the specified filter. */
-	private String[] matchFiles(final String[] inFiles,
+	private String[] matchFiles(final Collection<Location> nameList,
 		final NumberFilter filter)
 	{
-		final List<String> list = new ArrayList<>();
-		for (final String inFile : inFiles) {
-			if (filter.accept(inFile)) list.add(inFile);
+		final List<Location> list = new ArrayList<>();
+		for (final Location inFile : nameList) {
+			if (filter.accept(inFile.getName())) list.add(inFile);
 		}
-		return list.toArray(new String[0]);
+		return list.toArray(new String[list.size()]);
 	}
 }
