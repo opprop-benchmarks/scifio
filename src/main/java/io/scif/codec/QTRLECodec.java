@@ -93,7 +93,7 @@ public class QTRLECodec extends AbstractCodec {
 		final int line = options.width * bpp;
 
 		try {
-			DataHandle<Location> s = dataHandleService.create(new BytesLocation(
+			final DataHandle<Location> s = dataHandleService.create(new BytesLocation(
 				data));
 
 			s.skipBytes(4);
