@@ -41,9 +41,6 @@ import io.scif.HasColorTable;
 import io.scif.ImageMetadata;
 import io.scif.Plane;
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.IRandomAccess;
-import io.scif.io.RandomAccessInputStream;
-import io.scif.io.ZipHandle;
 import io.scif.services.FormatService;
 import io.scif.services.InitializeService;
 import io.scif.services.LocationService;
@@ -51,12 +48,17 @@ import io.scif.util.FormatTools;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import net.imglib2.display.ColorTable;
 
+import org.scijava.io.DataHandle;
+import org.scijava.io.Location;
+import org.scijava.io.handles.ZipHandle;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
@@ -88,11 +90,13 @@ public class ZipFormat extends AbstractFormat {
 
 		private io.scif.Metadata metadata;
 
-		private List<String> mappedFiles = new ArrayList<>();
+		private final List<Location> mappedFiles = new ArrayList<>();
+
+		private final Map<Location, DataHandle<Location>> handles = new HashMap<>();
 
 		// -- ZipMetadata methods --
 
-		public List<String> getMappedFiles() {
+		public List<Location> getMappedFiles() {
 			return mappedFiles;
 		}
 
@@ -127,21 +131,21 @@ public class ZipFormat extends AbstractFormat {
 
 		@Override
 		public void close(final boolean fileOnly) throws IOException {
-			for (final String name : mappedFiles) {
-				final IRandomAccess handle = locationService.getMappedFile(name);
-				locationService.mapFile(name, null);
+			for (final Location name : mappedFiles) {
+				final DataHandle<Location> handle = handles.get(name);
 				if (handle != null) {
 					handle.close();
 				}
 			}
+
 			mappedFiles.clear();
+			handles.clear();
 
 			super.close(fileOnly);
 
 			if (metadata != null) metadata.close(fileOnly);
 			if (!fileOnly) metadata = null;
 
-			mappedFiles = new ArrayList<>();
 		}
 	}
 
@@ -154,7 +158,7 @@ public class ZipFormat extends AbstractFormat {
 		private FormatService formatService;
 
 		@Override
-		public Metadata parse(final RandomAccessInputStream stream,
+		public Metadata parse(final DataHandle<Location> stream,
 			final Metadata meta, final SCIFIOConfig config) throws IOException,
 			FormatException
 		{
@@ -163,7 +167,7 @@ public class ZipFormat extends AbstractFormat {
 		}
 
 		@Override
-		protected void typedParse(final RandomAccessInputStream stream,
+		protected void typedParse(final DataHandle<Location> stream,
 			final Metadata meta, final SCIFIOConfig config) throws IOException,
 			FormatException
 		{
@@ -203,7 +207,7 @@ public class ZipFormat extends AbstractFormat {
 		// -- Reader API Methods --
 
 		@Override
-		public void setSource(final RandomAccessInputStream stream,
+		public void setSource(final DataHandle<Location> stream,
 			final SCIFIOConfig config) throws IOException
 		{
 			super.setSource(ZipUtilities.getRawStream(locationService, stream),
@@ -313,12 +317,12 @@ public class ZipFormat extends AbstractFormat {
 		 * NB: closes the provided stream.
 		 * </p>
 		 */
-		public static RandomAccessInputStream getRawStream(
-			final LocationService locationService,
-			final RandomAccessInputStream stream) throws IOException
+		public static DataHandle<Location> getRawStream(
+			final LocationService locationService, final DataHandle<Location> stream)
+			throws IOException
 		{
 			// NB: We need a raw handle on the ZIP data itself, not a ZipHandle.
-			final String id = stream.getFileName();
+			final Location id = stream.get();
 			final IRandomAccess rawHandle = locationService.getHandle(id, false,
 				false);
 			return new RandomAccessInputStream(locationService.getContext(),
