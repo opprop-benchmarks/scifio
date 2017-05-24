@@ -732,8 +732,7 @@ public class APNGFormat extends AbstractFormat {
 		private int numFrames = 0;
 
 		// Pointer to position in acTL chunk to write the number of frames in
-		// this
-		// image
+		// this image
 		private long numFramesPointer = 0;
 
 		// Current sequence number, shared by fcTL and fdAT frames to indicate
