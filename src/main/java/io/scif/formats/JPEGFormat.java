@@ -34,7 +34,6 @@ import io.scif.AbstractChecker;
 import io.scif.Format;
 import io.scif.FormatException;
 import io.scif.config.SCIFIOConfig;
-import io.scif.services.LocationService;
 import io.scif.util.FormatTools;
 
 import java.awt.color.CMMException;
@@ -46,6 +45,7 @@ import net.imagej.axis.Axes;
 import org.scijava.io.DataHandle;
 import org.scijava.io.DataHandleService;
 import org.scijava.io.Location;
+import org.scijava.io.LocationService;
 import org.scijava.io.handles.BytesLocation;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -71,14 +71,11 @@ public class JPEGFormat extends ImageIOFormat {
 
 	public static class Metadata extends ImageIOFormat.Metadata {
 
-		@Parameter
-		private LocationService locationService;
-
 		// -- Metadata API Methods --
 
 		@Override
 		public void close(final boolean fileOnly) throws IOException {
-			locationService.mapId(getDatasetName(), null);
+//			locationService.mapId(getDatasetName(), null);
 			super.close(fileOnly);
 		}
 	}

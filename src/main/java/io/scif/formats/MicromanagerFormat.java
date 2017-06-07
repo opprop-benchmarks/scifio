@@ -354,12 +354,12 @@ public class MicromanagerFormat extends AbstractFormat {
 		// -- Groupable API Methods --
 
 		@Override
-		public boolean isSingleFile(final String id) {
+		public boolean isSingleFile(final Location id) {
 			return false;
 		}
 
 		@Override
-		public int fileGroupOption(final String id) {
+		public int fileGroupOption(final Location id) {
 			return FormatTools.MUST_GROUP;
 		}
 

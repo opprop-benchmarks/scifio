@@ -44,7 +44,6 @@ import io.scif.config.SCIFIOConfig;
 import io.scif.gui.AWTImageTools;
 import io.scif.gui.BufferedImageReader;
 import io.scif.services.FormatService;
-import io.scif.services.LocationService;
 import io.scif.util.FormatTools;
 
 import java.awt.image.BufferedImage;
@@ -150,9 +149,6 @@ public class TIFFJAIFormat extends AbstractFormat {
 				"Please install JAI from https://jai.dev.java.net/";
 
 		// -- Fields --
-
-		@Parameter
-		private LocationService locationService;
 
 		// -- Parser API Methods --
 

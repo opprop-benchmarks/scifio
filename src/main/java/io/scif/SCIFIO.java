@@ -30,6 +30,13 @@
 
 package io.scif;
 
+import org.scijava.AbstractGateway;
+import org.scijava.Context;
+import org.scijava.Gateway;
+import org.scijava.io.NIOService;
+import org.scijava.plugin.Plugin;
+import org.scijava.service.SciJavaService;
+
 import io.scif.app.SCIFIOApp;
 import io.scif.codec.CodecService;
 import io.scif.formats.qt.QTJavaService;
@@ -42,16 +49,8 @@ import io.scif.services.DatasetIOService;
 import io.scif.services.FilePatternService;
 import io.scif.services.FormatService;
 import io.scif.services.InitializeService;
-import io.scif.services.LocationService;
 import io.scif.services.TranslatorService;
 import io.scif.xml.XMLService;
-
-import org.scijava.AbstractGateway;
-import org.scijava.Context;
-import org.scijava.Gateway;
-import org.scijava.io.NIOService;
-import org.scijava.plugin.Plugin;
-import org.scijava.service.SciJavaService;
 
 /**
  * Convenience {@link org.scijava.Context} wrapper.
@@ -167,15 +166,6 @@ public class SCIFIO extends AbstractGateway {
 	 */
 	public InitializeService initializer() {
 		return get(InitializeService.class);
-	}
-
-	/**
-	 * Gets this application context's {@link LocationService}.
-	 *
-	 * @return The {@link LocationService} of this application context.
-	 */
-	public LocationService location() {
-		return get(LocationService.class);
 	}
 
 	/**

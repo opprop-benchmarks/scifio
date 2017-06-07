@@ -71,9 +71,6 @@ public class DefaultInitializeService extends AbstractService implements
 	@Parameter
 	private TranslatorService translatorService;
 
-	@Parameter
-	private LocationService locationService;
-
 	// -- InitializeService API Methods --
 
 	@Override

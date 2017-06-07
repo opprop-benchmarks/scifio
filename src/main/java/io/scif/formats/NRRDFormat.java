@@ -415,14 +415,14 @@ public class NRRDFormat extends AbstractFormat {
 		}
 
 		@Override
-		public boolean isSingleFile(final String id) throws FormatException,
+		public boolean isSingleFile(final Location id) throws FormatException,
 			IOException
 		{
-			return FormatTools.checkSuffix(id, "nrrd");
+			return FormatTools.checkSuffix(id.getName(), "nrrd");
 		}
 
 		@Override
-		public int fileGroupOption(final String id) throws FormatException,
+		public int fileGroupOption(final Location id) throws FormatException,
 			IOException
 		{
 			return FormatTools.MUST_GROUP;
@@ -449,14 +449,14 @@ public class NRRDFormat extends AbstractFormat {
 		}
 
 		@Override
-		public boolean isSingleFile(final String id) throws FormatException,
+		public boolean isSingleFile(final Location id) throws FormatException,
 			IOException
 		{
-			return FormatTools.checkSuffix(id, "nrrd");
+			return FormatTools.checkSuffix(id.getName(), "nrrd");
 		}
 
 		@Override
-		public int fileGroupOption(final String id) throws FormatException,
+		public int fileGroupOption(final Location id) throws FormatException,
 			IOException
 		{
 			return FormatTools.MUST_GROUP;

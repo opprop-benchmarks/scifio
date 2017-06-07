@@ -515,7 +515,7 @@ public class DICOMFormat extends AbstractFormat {
 		// -- Parser API Methods --
 
 		@Override
-		public int fileGroupOption(final String id) throws FormatException,
+		public int fileGroupOption(final Location id) throws FormatException,
 			IOException
 		{
 			return FormatTools.CAN_GROUP;
@@ -935,15 +935,14 @@ public class DICOMFormat extends AbstractFormat {
 			IOException
 		{
 			final Location currentFile = getSource().get();
-
 			final FilePattern pattern = new FilePattern(getContext(), currentFile,
 				dir);
-			String[] patternFiles = pattern.getFiles();
-			if (patternFiles == null) patternFiles = new String[0];
+			Location[] patternFiles = pattern.getFiles();
+			if (patternFiles == null) patternFiles = new Location[0];
 			Arrays.sort(patternFiles);
 			final Set<Location> files = dir.getChildren();
 			if (files == null) return;
-			// FIXME should we sort the files?
+			// FIXME should we sort the files too?
 			for (final Location f : files) {
 				log().debug("Checking file " + f);
 

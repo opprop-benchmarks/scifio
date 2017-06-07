@@ -40,7 +40,6 @@ import io.scif.Format;
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
 import io.scif.config.SCIFIOConfig;
-import io.scif.services.LocationService;
 import io.scif.util.FormatTools;
 
 import java.io.IOException;
@@ -251,9 +250,6 @@ public class TextFormat extends AbstractFormat {
 		private static final long TIME_OFFSET = 2000;
 
 		// -- Fields --
-
-		@Parameter
-		private LocationService locationService;
 
 		// -- AbstractParser API Methods --
 
