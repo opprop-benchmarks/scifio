@@ -259,7 +259,9 @@ public class DefaultFormatService extends AbstractService implements
 		Writer w = null;
 
 		for (final Format f : formats()) {
-			if (!matched && FormatTools.checkSuffix(fileId.getName(), f.getSuffixes())) {
+			if (!matched && FormatTools.checkSuffix(fileId.getName(), f
+				.getSuffixes()))
+			{
 
 				if (!DefaultWriter.class.isAssignableFrom(f.getWriterClass())) {
 					w = f.createWriter();
@@ -336,15 +338,13 @@ public class DefaultFormatService extends AbstractService implements
 
 		final List<Format> formatList = new ArrayList<>();
 
-		boolean found = false;
-
 		for (final Format format : formats()) {
-			if (!found && format.isEnabled() && format.createChecker().isFormat(id,
-				config))
-			{
-				// if greedy is true, we can end after finding the first format
-				found = greedy;
+			if (format.isEnabled() && format.createChecker().isFormat(id, config)) {
+
 				formatList.add(format);
+
+				// if greedy is true, we can end after finding the first format
+				if (greedy) break;
 			}
 		}
 

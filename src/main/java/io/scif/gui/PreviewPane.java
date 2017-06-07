@@ -60,6 +60,7 @@ import javax.swing.border.EmptyBorder;
 import net.imagej.axis.CalibratedAxis;
 
 import org.scijava.Context;
+import org.scijava.io.handles.FileLocation;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
 
@@ -245,7 +246,7 @@ public class PreviewPane extends JPanel implements PropertyChangeListener,
 				}
 
 				try {
-					reader = initializeService.initializeReader(id);
+					reader = initializeService.initializeReader(new FileLocation(id));
 					reader.setNormalized(true);
 				}
 				catch (final FormatException exc) {
@@ -287,11 +288,7 @@ public class PreviewPane extends JPanel implements PropertyChangeListener,
 				try {
 					thumbPlane = reader.openPlane(0, planeIndex);
 				}
-				catch (final FormatException exc) {
-					logService.debug("Failed to read thumbnail #" + planeIndex +
-						" from " + id, exc);
-				}
-				catch (final IOException exc) {
+				catch (FormatException | IOException exc) {
 					logService.debug("Failed to read thumbnail #" + planeIndex +
 						" from " + id, exc);
 				}

@@ -45,7 +45,6 @@ import io.scif.img.converters.PlaneConverterService;
 import io.scif.services.InitializeService;
 import io.scif.util.FormatTools;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
