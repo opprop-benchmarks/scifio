@@ -253,7 +253,7 @@ public abstract class AbstractReaderFilter extends AbstractFilter<Reader>
 	}
 
 	@Override
-	public int fileGroupOption(final String id) throws FormatException,
+	public int fileGroupOption(final Location id) throws FormatException,
 		IOException
 	{
 		return getParent().fileGroupOption(id);
@@ -410,7 +410,7 @@ public abstract class AbstractReaderFilter extends AbstractFilter<Reader>
 	// -- Groupable API Methods --
 
 	@Override
-	public boolean isSingleFile(final String id) throws FormatException,
+	public boolean isSingleFile(final Location id) throws FormatException,
 		IOException
 	{
 		return getParent().isSingleFile(id);

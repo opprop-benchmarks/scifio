@@ -287,12 +287,12 @@ public class DefaultFilePatternService extends AbstractService implements
 			else patternSuffix = patternSuffix.substring(dot + 1);
 
 			final String checkPattern = findPattern(loc, dir, nameList);
-			final String[] checkFiles = new FilePattern(getContext(), checkPattern)
+			final Location[] checkFiles = new FilePattern(base, checkPattern)
 				.getFiles();
 
-			if (!patterns.contains(pattern) && (!base.getSibling(pattern).exists() ||
-				base.equals(pattern)) && patternSuffix.equals(baseSuffix) && ArrayUtils
-					.indexOf(checkFiles, base) >= 0)
+			if (!patterns.contains(pattern) && (!base.getSibling(pattern).exists()) &&
+				patternSuffix.equals(baseSuffix) && ArrayUtils.indexOf(checkFiles,
+					base) >= 0)
 			{
 				patterns.add(pattern);
 			}

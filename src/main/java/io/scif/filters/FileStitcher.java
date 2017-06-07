@@ -30,6 +30,14 @@
 
 package io.scif.filters;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import org.scijava.io.Location;
+import org.scijava.io.handles.DummyLocation;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
+
 import io.scif.ByteArrayPlane;
 import io.scif.ByteArrayReader;
 import io.scif.FilePattern;
@@ -38,20 +46,10 @@ import io.scif.Metadata;
 import io.scif.Plane;
 import io.scif.Reader;
 import io.scif.config.SCIFIOConfig;
-import io.scif.io.Location;
 import io.scif.services.FilePatternService;
 import io.scif.services.InitializeService;
-import io.scif.services.LocationService;
 import io.scif.util.FormatTools;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-
 import net.imagej.axis.Axes;
-
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
 
 /**
  * Logic to stitch together files with similar names. Assumes that all files
@@ -68,9 +66,6 @@ public class FileStitcher extends AbstractReaderFilter {
 	@Parameter
 	private FilePatternService filePatternService;
 
-	@Parameter
-	private LocationService locationService;
-
 	/**
 	 * Whether string ids given should be treated as file patterns rather than
 	 * single file paths.
@@ -86,7 +81,7 @@ public class FileStitcher extends AbstractReaderFilter {
 
 	private Reader[] readers = null;
 
-	private String[] files = null;
+	private Location[] files = null;
 
 	private FilePattern pattern;
 
@@ -166,38 +161,41 @@ public class FileStitcher extends AbstractReaderFilter {
 	/**
 	 * Constructs a new FilePattern around the pattern extracted from the given
 	 * id.
+	 *
+	 * @throws IOException
 	 */
-	public FilePattern findPattern(final String id) {
-		return new FilePattern(getContext(), filePatternService.findPattern(id));
+	public FilePattern findPattern(final Location id) throws IOException {
+		return new FilePattern(id, filePatternService.findPattern(id));
 	}
 
 	/**
 	 * Finds the file pattern for the given ID, based on the state of the file
 	 * stitcher. Takes both ID map entries and the patternIds flag into account.
+	 *
+	 * @throws IOException
 	 */
-	public String[] findPatterns(final String id) {
+	public String[] findPatterns(final Location id) throws IOException {
 		if (!patternIds) {
 			// find the containing patterns
-			final HashMap<String, Object> map = locationService.getIdMap();
-			if (map.containsKey(id)) {
-				// search ID map for pattern, rather than files on disk
-				final String[] idList = new String[map.size()];
-				map.keySet().toArray(idList);
-				return filePatternService.findImagePatterns(id, null, idList);
-			}
+//			final HashMap<String, Object> map = locationService.getIdMap();
+//			if (map.containsKey(id)) {
+//				// search ID map for pattern, rather than files on disk
+//				map.keySet().toArray(idList);
+//				return filePatternService.findImagePatterns(id, null, map.keySet());
+//			}
 			// id is an unmapped file path; look to similar files on disk
 			return filePatternService.findImagePatterns(id);
 		}
 		if (doNotChangePattern) {
-			return new String[] { id };
+			return new String[] { id.getName() };
 		}
 		patternIds = false;
-		String[] patterns = findPatterns(new FilePattern(getContext(), id)
+		String[] patterns = findPatterns(new FilePattern(filePatternService, id)
 			.getFiles()[0]);
-		if (patterns.length == 0) patterns = new String[] { id };
+		if (patterns.length == 0) patterns = new String[] { id.getName() };
 		else {
-			final FilePattern test = new FilePattern(getContext(), patterns[0]);
-			if (test.getFiles().length == 0) patterns = new String[] { id };
+			final FilePattern test = new FilePattern(id, patterns[0]);
+			if (test.getFiles().length == 0) patterns = new String[] { id.getName() };
 		}
 		patternIds = true;
 		return patterns;
@@ -206,7 +204,7 @@ public class FileStitcher extends AbstractReaderFilter {
 	// -- AbstractReaderFilter API Methods --
 
 	@Override
-	protected void setSourceHelper(final String source,
+	protected void setSourceHelper(final Location source,
 		final SCIFIOConfig config)
 	{
 		try {
@@ -214,13 +212,13 @@ public class FileStitcher extends AbstractReaderFilter {
 			log().debug("initFile: " + source);
 
 			// Determine if we we have a multi-element file pattern
-			FilePattern fp = new FilePattern(getContext(), source);
+			FilePattern fp = new FilePattern(filePatternService, source);
 			if (!patternIds) {
 				patternIds = fp.isValid() && fp.getFiles().length > 1;
 			}
 			else {
-				patternIds = !new Location(getContext(), source).exists() &&
-					locationService.getMappedId(source).equals(source);
+				patternIds = !source.exists();
+//						&& locationService.getMappedId(source) .equals(source);
 			}
 
 			// Determine if the wrapped reader should handle the stitching
@@ -254,10 +252,10 @@ public class FileStitcher extends AbstractReaderFilter {
 
 			// Get the individual file ids
 			String[] patterns = findPatterns(source);
-			if (patterns.length == 0) patterns = new String[] { source };
+			if (patterns.length == 0) patterns = new String[] { source.getName() };
 			readers = new Reader[patterns.length];
 
-			fp = new FilePattern(getContext(), patterns[0]);
+			fp = new FilePattern(source, patterns[0]);
 
 			getParent().close();
 
@@ -281,7 +279,7 @@ public class FileStitcher extends AbstractReaderFilter {
 				throw new FormatException("Invalid " + (patternIds ? "file pattern"
 					: "filename") + " (" + source + "): " + fp.getErrorMessage() + msg);
 			}
-			final String[] files = fp.getFiles();
+			final Location[] files = fp.getFiles();
 
 			if (files == null) {
 				throw new FormatException("No files matching pattern (" + fp
@@ -289,13 +287,14 @@ public class FileStitcher extends AbstractReaderFilter {
 			}
 
 			for (int i = 0; i < files.length; i++) {
-				final String file = files[i];
+				final Location file = files[i];
 
 				// TODO remove this when virtual handle is in use
 				// HACK: skip file existence check for fake files
-				if (file.toLowerCase().endsWith(".fake")) continue;
+				if (file instanceof DummyLocation || file.getName().toLowerCase()
+					.endsWith(".fake")) continue;
 
-				if (!new Location(getContext(), file).exists()) {
+				if (!file.exists()) {
 					throw new FormatException("File #" + i + " (" + file +
 						") does not exist.");
 				}
@@ -304,12 +303,7 @@ public class FileStitcher extends AbstractReaderFilter {
 			this.files = files;
 			pattern = fp;
 		}
-		catch (final IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (final FormatException e) {
-			// TODO Auto-generated catch block
+		catch (IOException | FormatException e) {
 			e.printStackTrace();
 		}
 	}
@@ -409,14 +403,15 @@ public class FileStitcher extends AbstractReaderFilter {
 	 * desired global image index - at index 0, the corresponding local image
 	 * index
 	 */
-	private int[] computeFileIndex(int imageIndex) {
-		if (noStitch) return new int[] { imageIndex, 0 };
+	private int[] computeFileIndex(final int imageIndex) {
+		int localIndex = imageIndex;
+		if (noStitch) return new int[] { localIndex, 0 };
 		int fileIndex = 0;
-		while (imageIndex >= imagesPerFile[fileIndex]) {
-			imageIndex -= imagesPerFile[fileIndex++];
+		while (localIndex >= imagesPerFile[fileIndex]) {
+			localIndex -= imagesPerFile[fileIndex++];
 		}
 
-		return new int[] { fileIndex, imageIndex };
+		return new int[] { fileIndex, localIndex };
 	}
 
 	@Override

@@ -30,26 +30,24 @@
 
 package io.scif.formats;
 
+import java.awt.color.CMMException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
+import org.scijava.io.handles.BytesLocation;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
+import org.scijava.util.Bytes;
+
 import io.scif.AbstractChecker;
 import io.scif.Format;
 import io.scif.FormatException;
 import io.scif.config.SCIFIOConfig;
 import io.scif.util.FormatTools;
-
-import java.awt.color.CMMException;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import net.imagej.axis.Axes;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleService;
-import org.scijava.io.Location;
-import org.scijava.io.LocationService;
-import org.scijava.io.handles.BytesLocation;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
-import org.scijava.util.Bytes;
 
 /**
  * JPEGReader is the file format reader for JPEG images.
@@ -147,9 +145,6 @@ public class JPEGFormat extends ImageIOFormat {
 	}
 
 	public static class Parser extends ImageIOFormat.Parser<Metadata> {
-
-		@Parameter
-		private LocationService locationService;
 
 		@Parameter
 		private DataHandleService dataHandleService;

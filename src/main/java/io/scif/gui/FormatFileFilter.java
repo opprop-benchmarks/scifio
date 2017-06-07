@@ -39,6 +39,8 @@ import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
+import org.scijava.io.handles.FileLocation;
+
 /**
  * A file filter for identifying the files supported by an associated
  * {@link Format}s. Because these filters are queried repeatedly, opening a
@@ -102,8 +104,8 @@ public class FormatFileFilter extends FileFilter implements java.io.FileFilter,
 	public boolean accept(final File f) {
 		if (f.isDirectory()) return true;
 		try {
-			return format.createChecker().isFormat(f.getPath(), new SCIFIOConfig()
-				.checkerSetOpen(false));
+			return format.createChecker().isFormat(new FileLocation(f),
+				new SCIFIOConfig().checkerSetOpen(false));
 		}
 		catch (final FormatException e) {
 			return false;

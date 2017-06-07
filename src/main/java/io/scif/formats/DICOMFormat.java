@@ -51,6 +51,7 @@ import io.scif.codec.JPEGCodec;
 import io.scif.codec.PackbitsCodec;
 import io.scif.config.SCIFIOConfig;
 import io.scif.formats.dicom.DICOMDictionary;
+import io.scif.services.FilePatternService;
 import io.scif.services.InitializeService;
 import io.scif.util.FormatTools;
 
@@ -512,6 +513,9 @@ public class DICOMFormat extends AbstractFormat {
 		@Parameter
 		private DataHandleService dataHandleService;
 
+		@Parameter
+		private FilePatternService filePatternService;
+
 		// -- Parser API Methods --
 
 		@Override
@@ -935,7 +939,7 @@ public class DICOMFormat extends AbstractFormat {
 			IOException
 		{
 			final Location currentFile = getSource().get();
-			final FilePattern pattern = new FilePattern(getContext(), currentFile,
+			final FilePattern pattern = new FilePattern(filePatternService, currentFile,
 				dir);
 			Location[] patternFiles = pattern.getFiles();
 			if (patternFiles == null) patternFiles = new Location[0];

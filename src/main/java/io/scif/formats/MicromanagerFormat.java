@@ -30,6 +30,25 @@
 
 package io.scif.formats;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import org.scijava.Priority;
+import org.scijava.io.DataHandle;
+import org.scijava.io.DataHandleService;
+import org.scijava.io.Location;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
+
 import io.scif.AbstractChecker;
 import io.scif.AbstractFormat;
 import io.scif.AbstractMetadata;
@@ -47,28 +66,7 @@ import io.scif.services.TranslatorService;
 import io.scif.util.FormatTools;
 import io.scif.xml.BaseHandler;
 import io.scif.xml.XMLService;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
 import net.imagej.axis.Axes;
-
-import org.scijava.Priority;
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleService;
-import org.scijava.io.Location;
-import org.scijava.io.LocationService;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * MicromanagerReader is the file format reader for Micro-Manager files.
@@ -241,9 +239,6 @@ public class MicromanagerFormat extends AbstractFormat {
 		public static final String DATE_FORMAT = "EEE MMM dd HH:mm:ss zzz yyyy";
 
 		// -- Fields --
-
-		@Parameter
-		private LocationService locationService;
 
 		@Parameter
 		private DataHandleService dataHandleService;
