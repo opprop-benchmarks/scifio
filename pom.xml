@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>13.0.0</version>
+		<version>16.1.0</version>
 		<relativePath />
 	</parent>
 
@@ -117,7 +117,7 @@ Wisconsin-Madison</license.copyrightOwners>
 
 		<imglib2.version>4.2.1</imglib2.version>
 		<mapdb.version>1.0.3</mapdb.version>
-		<scijava-common.version>2.62.2-SNAPSHOT</scijava-common.version>
+		<scijava-common.version>2.64.2-SNAPSHOT</scijava-common.version>
 	</properties>
 
 	<repositories>
