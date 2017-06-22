@@ -33,37 +33,17 @@ package io.scif.img.cell;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import org.junit.Test;
+
 import io.scif.img.IO;
 import io.scif.img.SCIFIOImgPlus;
-import io.scif.io.TestParameters;
-
-import java.util.Collection;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Tests for the {@link SCIFIOCellImg} and related classes.
  *
  * @author Mark Hiner
  */
-@RunWith(Parameterized.class)
 public class SCIFIOCellImgTest {
-
-	@Parameters
-	public static Collection<Object[]> parameters() {
-		return TestParameters.parameters("cellTests");
-	}
-
-	private final String provider;
-
-	public SCIFIOCellImgTest(final String provider, final boolean checkGrowth,
-		final boolean testLength)
-	{
-		this.provider = provider;
-	}
 
 	/**
 	 * Test that when a {@link SCIFIOCellImg} is opened and disposed, the

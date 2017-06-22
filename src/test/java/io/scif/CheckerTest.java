@@ -35,31 +35,25 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import io.scif.config.SCIFIOConfig;
-import io.scif.formats.FakeFormat;
-import io.scif.io.TestParameters;
-
 import java.io.IOException;
-import java.util.Collection;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.scijava.Context;
 import org.scijava.io.DataHandle;
 import org.scijava.io.DataHandleService;
 import org.scijava.io.Location;
 import org.scijava.io.handles.FileLocation;
 
+import io.scif.config.SCIFIOConfig;
+import io.scif.formats.FakeFormat;
+
 /**
  * Unit tests for {@link io.scif.Checker} interface methods.
  *
  * @author Mark Hiner
  */
-@RunWith(Parameterized.class)
 public class CheckerTest {
 
 	private final Location id = new FileLocation(
@@ -74,19 +68,6 @@ public class CheckerTest {
 	private Context context;
 
 	private DataHandleService dataHandleService;
-
-	@Parameters
-	public static Collection<Object[]> parameters() {
-		return TestParameters.parameters("checkerTests");
-	}
-
-	private final String provider;
-
-	public CheckerTest(final String provider, final boolean checkGrowth,
-		final boolean testLength)
-	{
-		this.provider = provider;
-	}
 
 	@Before
 	public void setUp() throws FormatException {

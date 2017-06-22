@@ -35,46 +35,26 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
+import org.junit.Test;
+import org.scijava.io.Location;
+import org.scijava.io.handles.FileLocation;
+
 import io.scif.filters.MetadataWrapper;
 import io.scif.filters.PlaneSeparator;
 import io.scif.filters.ReaderFilter;
 import io.scif.formats.FakeFormat;
 import io.scif.formats.ICSFormat;
-import io.scif.io.TestParameters;
 import io.scif.services.TranslatorService;
-
-import java.io.IOException;
-import java.util.Collection;
-
 import net.imagej.axis.Axes;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
 
 /**
  * Unit tests for {@link io.scif.Translator} interface methods.
  *
  * @author Mark Hiner
  */
-@RunWith(Parameterized.class)
 public class TranslatorTest {
-
-	@Parameters
-	public static Collection<Object[]> parameters() {
-		return TestParameters.parameters("translatorTests");
-	}
-
-	private final String provider;
-
-	public TranslatorTest(final String provider, final boolean checkGrowth,
-		final boolean testLength)
-	{
-		this.provider = provider;
-	}
 
 	private final Location id = new FileLocation(
 		"interleaved&pixelType=int8&axes=Channel,X,Y,Z&lengths=3,256,256,5.fake");
