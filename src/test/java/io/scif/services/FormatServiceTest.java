@@ -33,8 +33,6 @@ package io.scif.services;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-import io.scif.FormatException;
-
 import java.math.BigInteger;
 import java.util.Random;
 
@@ -44,6 +42,8 @@ import org.junit.Test;
 import org.scijava.Context;
 import org.scijava.io.handles.FileLocation;
 import org.scijava.thread.ThreadService;
+
+import io.scif.FormatException;
 
 /**
  * Tests {@link FormatService}.
@@ -74,7 +74,7 @@ public class FormatServiceTest {
 			"ima", "img", "isq", "j2k", "j2ki", "j2kr", "java", "jp2", "jpe", "jpeg",
 			"jpf", "jpg", "mng", "mov", "msr", "nhdr", "nrrd", "obf", "pct", "pcx",
 			"pgm", "pict", "png", "ps", "raw", "tf2", "tf8", "tif", "tiff", "txt",
-			"xml", "zip" };
+			"xml" };
 		assertArrayEquals(expectedSuffixes, suffixes);
 	}
 
