@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -53,6 +53,7 @@ import org.scijava.io.Location;
 import org.scijava.io.handles.BytesLocation;
 import org.scijava.io.handles.FileLocation;
 import org.scijava.log.LogService;
+import org.scijava.plugin.Parameter;
 
 /**
  * Writes TIFF data to an output location.
@@ -86,8 +87,10 @@ public class TiffSaver extends AbstractContextual {
 
 	private SCIFIO scifio;
 
+	@Parameter
 	private LogService log;
 
+	@Parameter
 	private DataHandleService dataHandleService;
 
 	// -- Constructors --
@@ -131,6 +134,7 @@ public class TiffSaver extends AbstractContextual {
 				"Output stream expected to be not-null");
 		}
 		this.out = out;
+		this.loc = out.get();
 		setContext(ctx);
 		scifio = new SCIFIO(ctx);
 		log = scifio.log();
@@ -257,8 +261,7 @@ public class TiffSaver extends AbstractContextual {
 	/**
 	 */
 	public void writeImage(final byte[] buf, final IFD ifd, final int no,
-		final int pixelType, final boolean last) throws FormatException,
-		IOException
+		final int pixelType, final boolean last) throws FormatException, IOException
 	{
 		if (ifd == null) {
 			throw new FormatException("IFD cannot be null");
@@ -279,8 +282,8 @@ public class TiffSaver extends AbstractContextual {
 	 * @param y The Y-coordinate of the top-left corner.
 	 * @param w The width of the rectangle.
 	 * @param h The height of the rectangle.
-	 * @param last Pass {@code true} if it is the last image,
-	 *          {@code false} otherwise.
+	 * @param last Pass {@code true} if it is the last image, {@code false}
+	 *          otherwise.
 	 * @throws FormatException
 	 * @throws IOException
 	 */
@@ -422,8 +425,8 @@ public class TiffSaver extends AbstractContextual {
 	 * @param ifd The Image File Directories. Mustn't be {@code null}.
 	 * @param planeIndex The image index within the current file, starting from 0.
 	 * @param strips The strips to write to the file.
-	 * @param last Pass {@code true} if it is the last image,
-	 *          {@code false} otherwise.
+	 * @param last Pass {@code true} if it is the last image, {@code false}
+	 *          otherwise.
 	 * @param x The initial X offset of the strips/tiles to write.
 	 * @param y The initial Y offset of the strips/tiles to write.
 	 * @throws FormatException
@@ -443,6 +446,9 @@ public class TiffSaver extends AbstractContextual {
 			DataHandle<Location> in = null;
 			if (loc != null) {
 				in = dataHandleService.create(loc);
+			}
+			else if (out != null) {
+				in = dataHandleService.create(out.get());
 			}
 			else if (bytes != null) {
 				in = dataHandleService.create(bytes);

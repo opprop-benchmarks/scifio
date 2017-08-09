@@ -1320,7 +1320,8 @@ public class ICSFormat extends AbstractFormat {
 			final Metadata meta) throws FormatException, IOException
 		{
 
-			String icsId, idsId;
+			String icsId;
+			String idsId;
 			Location icsLocation;
 			Location idsLocation;
 			icsId = idsId = stream.get().getName();
