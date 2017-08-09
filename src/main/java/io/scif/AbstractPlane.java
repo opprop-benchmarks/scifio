@@ -30,10 +30,10 @@
 
 package io.scif;
 
-import net.imglib2.display.ColorTable;
-
 import org.scijava.AbstractContextual;
 import org.scijava.Context;
+
+import net.imglib2.display.ColorTable;
 
 /**
  * Abstract superclass for {@link io.scif.Plane} implementations in SCIFIO.

@@ -30,18 +30,17 @@
 
 package io.scif.io;
 
-import io.scif.services.DatasetIOService;
-
 import java.io.IOException;
-
-import net.imagej.Dataset;
 
 import org.scijava.Priority;
 import org.scijava.io.AbstractIOPlugin;
 import org.scijava.io.IOPlugin;
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.location.FileLocation;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
+
+import io.scif.services.DatasetIOService;
+import net.imagej.Dataset;
 
 /**
  * I/O plugin for {@link Dataset}s.

@@ -30,11 +30,18 @@
 
 package io.scif.services;
 
-import io.scif.config.SCIFIOConfig;
-
 import java.io.IOException;
 import java.util.List;
 
+import org.scijava.Priority;
+import org.scijava.io.location.FileLocation;
+import org.scijava.object.ObjectService;
+import org.scijava.plugin.Plugin;
+import org.scijava.service.AbstractService;
+import org.scijava.service.Service;
+import org.scijava.service.ServiceIndex;
+
+import io.scif.config.SCIFIOConfig;
 import net.imagej.Dataset;
 import net.imagej.DatasetService;
 import net.imagej.DefaultDatasetService;
@@ -45,14 +52,6 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
-
-import org.scijava.Priority;
-import org.scijava.io.handles.FileLocation;
-import org.scijava.object.ObjectService;
-import org.scijava.plugin.Plugin;
-import org.scijava.service.AbstractService;
-import org.scijava.service.Service;
-import org.scijava.service.ServiceIndex;
 
 /**
  * This is a temporary service designed to supercede

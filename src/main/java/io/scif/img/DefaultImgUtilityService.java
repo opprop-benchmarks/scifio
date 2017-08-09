@@ -30,13 +30,6 @@
 
 package io.scif.img;
 
-import io.scif.Format;
-import io.scif.FormatException;
-import io.scif.Metadata;
-import io.scif.SCIFIO;
-import io.scif.config.SCIFIOConfig;
-import io.scif.util.FormatTools;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -47,6 +40,18 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Plugin;
+import org.scijava.service.AbstractService;
+import org.scijava.service.Service;
+import org.scijava.util.Bytes;
+
+import io.scif.Format;
+import io.scif.FormatException;
+import io.scif.Metadata;
+import io.scif.SCIFIO;
+import io.scif.config.SCIFIOConfig;
+import io.scif.util.FormatTools;
 import net.imagej.ImgPlus;
 import net.imagej.axis.CalibratedAxis;
 import net.imglib2.img.Img;
@@ -70,12 +75,6 @@ import net.imglib2.type.numeric.integer.UnsignedIntType;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
-
-import org.scijava.io.Location;
-import org.scijava.plugin.Plugin;
-import org.scijava.service.AbstractService;
-import org.scijava.service.Service;
-import org.scijava.util.Bytes;
 
 /**
  * Helper methods for converting between SCIFIO and ImgLib2 data structures.

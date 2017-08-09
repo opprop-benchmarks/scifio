@@ -30,11 +30,11 @@
 
 package io.scif.codec;
 
-import io.scif.enumeration.CodedEnum;
-
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+
+import io.scif.enumeration.CodedEnum;
 
 /**
  * An enumeration of JPEG 2000 box types.

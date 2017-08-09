@@ -30,6 +30,17 @@
 
 package io.scif.formats;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
+
 import io.scif.AbstractFormat;
 import io.scif.AbstractMetadata;
 import io.scif.AbstractParser;
@@ -45,19 +56,7 @@ import io.scif.gui.AWTImageTools;
 import io.scif.gui.BufferedImageReader;
 import io.scif.services.FormatService;
 import io.scif.util.FormatTools;
-
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-
 import net.imagej.axis.Axes;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
 
 /**
  * TiffJAIReader is a file format reader for TIFF images. It uses the Java

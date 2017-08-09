@@ -30,17 +30,17 @@
 
 package io.scif.filters;
 
+import java.io.IOException;
+
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Plugin;
+
 import io.scif.AbstractMetadata;
 import io.scif.Format;
 import io.scif.ImageMetadata;
 import io.scif.MetaTable;
 import io.scif.Metadata;
-
-import java.io.IOException;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
-import org.scijava.plugin.Plugin;
 
 /**
  * Abstract superclass for concrete implementations of {@code MetadataWrapper}.

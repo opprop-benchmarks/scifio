@@ -34,6 +34,17 @@ import static io.scif.JUnitHelper.assertCloseEnough;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
+import java.util.List;
+
+import org.junit.Test;
+import org.scijava.Context;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BytesLocation;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
+
 import io.scif.Format;
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
@@ -43,10 +54,6 @@ import io.scif.SCIFIO;
 import io.scif.config.SCIFIOConfig;
 import io.scif.formats.FakeFormat;
 import io.scif.img.cell.SCIFIOCellImgFactory;
-
-import java.io.IOException;
-import java.util.List;
-
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
@@ -59,14 +66,6 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
-
-import org.junit.Test;
-import org.scijava.Context;
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleService;
-import org.scijava.io.Location;
-import org.scijava.io.handles.BytesLocation;
-import org.scijava.io.handles.FileLocation;
 
 /**
  * Tests for the {@link ImgOpener} class.

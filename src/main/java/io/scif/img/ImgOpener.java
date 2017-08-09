@@ -30,6 +30,18 @@
 
 package io.scif.img;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.scijava.Context;
+import org.scijava.app.StatusService;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Parameter;
+
 import io.scif.FormatException;
 import io.scif.Metadata;
 import io.scif.Plane;
@@ -44,13 +56,6 @@ import io.scif.img.converters.PlaneConverter;
 import io.scif.img.converters.PlaneConverterService;
 import io.scif.services.InitializeService;
 import io.scif.util.FormatTools;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
@@ -62,12 +67,6 @@ import net.imglib2.img.basictypeaccess.PlanarAccess;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.RealType;
-
-import org.scijava.Context;
-import org.scijava.app.StatusService;
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
-import org.scijava.plugin.Parameter;
 
 /**
  * Reads in an {@link ImgPlus} using SCIFIO.

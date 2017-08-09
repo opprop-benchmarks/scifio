@@ -30,6 +30,18 @@
 
 package io.scif.formats;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.StringTokenizer;
+
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BytesLocation;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
+
 import io.scif.AbstractChecker;
 import io.scif.AbstractFormat;
 import io.scif.AbstractMetadata;
@@ -41,20 +53,7 @@ import io.scif.FormatException;
 import io.scif.ImageMetadata;
 import io.scif.config.SCIFIOConfig;
 import io.scif.util.FormatTools;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.StringTokenizer;
-
 import net.imagej.axis.Axes;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleService;
-import org.scijava.io.Location;
-import org.scijava.io.handles.BytesLocation;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
 
 /**
  * Handler plugin for the PGM file format.

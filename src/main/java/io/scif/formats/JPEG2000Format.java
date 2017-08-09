@@ -30,6 +30,18 @@
 
 package io.scif.formats;
 
+import java.io.IOException;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BytesLocation;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
+import org.scijava.util.Bytes;
+
 import io.scif.AbstractChecker;
 import io.scif.AbstractFormat;
 import io.scif.AbstractMetadata;
@@ -52,23 +64,10 @@ import io.scif.codec.JPEG2000CodecOptions;
 import io.scif.codec.JPEG2000SegmentMarker;
 import io.scif.config.SCIFIOConfig;
 import io.scif.util.FormatTools;
-
-import java.io.IOException;
-import java.nio.ByteOrder;
-import java.util.ArrayList;
-
 import net.imagej.axis.Axes;
 import net.imglib2.display.ColorTable;
 import net.imglib2.display.ColorTable16;
 import net.imglib2.display.ColorTable8;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleService;
-import org.scijava.io.Location;
-import org.scijava.io.handles.BytesLocation;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
-import org.scijava.util.Bytes;
 
 /**
  * JPEG2000Reader is the file format reader for JPEG-2000 images.

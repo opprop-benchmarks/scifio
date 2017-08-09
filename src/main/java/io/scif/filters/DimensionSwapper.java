@@ -30,21 +30,20 @@
 
 package io.scif.filters;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Plugin;
+
 import io.scif.FormatException;
 import io.scif.Metadata;
 import io.scif.Plane;
 import io.scif.config.SCIFIOConfig;
 import io.scif.util.FormatTools;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.imagej.axis.AxisType;
 import net.imagej.axis.CalibratedAxis;
-
-import org.scijava.io.Location;
-import org.scijava.plugin.Plugin;
 
 /**
  * Handles swapping the dimension order of an image series. This class is useful

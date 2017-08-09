@@ -33,7 +33,7 @@ package io.scif;
 import org.scijava.AbstractGateway;
 import org.scijava.Context;
 import org.scijava.Gateway;
-import org.scijava.io.NIOService;
+import org.scijava.io.nio.NIOService;
 import org.scijava.plugin.Plugin;
 import org.scijava.service.SciJavaService;
 

@@ -33,8 +33,8 @@ package io.scif.filters;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.scijava.io.Location;
-import org.scijava.io.handles.DummyLocation;
+import org.scijava.io.location.DummyLocation;
+import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 

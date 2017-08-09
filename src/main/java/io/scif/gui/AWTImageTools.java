@@ -30,15 +30,6 @@
 
 package io.scif.gui;
 
-import io.scif.BufferedImagePlane;
-import io.scif.FormatException;
-import io.scif.ImageMetadata;
-import io.scif.Metadata;
-import io.scif.Plane;
-import io.scif.Reader;
-import io.scif.util.FormatTools;
-import io.scif.util.ImageTools;
-
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -75,12 +66,20 @@ import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.Hashtable;
 
+import org.scijava.util.Bytes;
+
+import io.scif.BufferedImagePlane;
+import io.scif.FormatException;
+import io.scif.ImageMetadata;
+import io.scif.Metadata;
+import io.scif.Plane;
+import io.scif.Reader;
+import io.scif.util.FormatTools;
+import io.scif.util.ImageTools;
 import net.imagej.axis.Axes;
 import net.imglib2.display.ColorTable;
 import net.imglib2.display.ColorTable16;
 import net.imglib2.display.ColorTable8;
-
-import org.scijava.util.Bytes;
 
 /**
  * A utility class with convenience methods for manipulating images in

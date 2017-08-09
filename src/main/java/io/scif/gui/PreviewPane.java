@@ -30,12 +30,6 @@
 
 package io.scif.gui;
 
-import io.scif.FormatException;
-import io.scif.ImageMetadata;
-import io.scif.Plane;
-import io.scif.Reader;
-import io.scif.services.InitializeService;
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -57,12 +51,17 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import net.imagej.axis.CalibratedAxis;
-
 import org.scijava.Context;
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.location.FileLocation;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
+
+import io.scif.FormatException;
+import io.scif.ImageMetadata;
+import io.scif.Plane;
+import io.scif.Reader;
+import io.scif.services.InitializeService;
+import net.imagej.axis.CalibratedAxis;
 
 /**
  * PreviewPane is a panel for use as a JFileChooser accessory, displaying a

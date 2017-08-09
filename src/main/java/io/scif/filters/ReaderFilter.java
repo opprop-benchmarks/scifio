@@ -30,10 +30,10 @@
 
 package io.scif.filters;
 
+import java.util.Set;
+
 import io.scif.Metadata;
 import io.scif.Reader;
-
-import java.util.Set;
 
 /**
  * {@link io.scif.filters.MasterFilter} for wrapping {@link io.scif.Reader}

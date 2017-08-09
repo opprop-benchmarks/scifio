@@ -30,12 +30,12 @@
 
 package io.scif.formats.tiff;
 
-import io.scif.enumeration.CodedEnum;
-import io.scif.enumeration.EnumException;
-
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+
+import io.scif.enumeration.CodedEnum;
+import io.scif.enumeration.EnumException;
 
 /**
  * Utility class for working with TIFF fill orders. From the TIFF specification,

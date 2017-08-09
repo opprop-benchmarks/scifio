@@ -30,12 +30,6 @@
 
 package io.scif.codec;
 
-import io.scif.FormatException;
-import io.scif.gui.AWTImageTools;
-import io.scif.gui.UnsignedIntBuffer;
-import io.scif.services.JAIIIOService;
-import io.scif.services.ServiceException;
-
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
@@ -45,11 +39,17 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.util.Bytes;
+
+import io.scif.FormatException;
+import io.scif.gui.AWTImageTools;
+import io.scif.gui.UnsignedIntBuffer;
+import io.scif.services.JAIIIOService;
+import io.scif.services.ServiceException;
 
 /**
  * This class implements JPEG 2000 compression and decompression.

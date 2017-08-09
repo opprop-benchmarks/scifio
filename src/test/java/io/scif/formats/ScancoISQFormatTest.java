@@ -5,28 +5,27 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import io.scif.ByteArrayPlane;
-import io.scif.ImageMetadata;
-import io.scif.Reader;
-import io.scif.config.SCIFIOConfig;
-import io.scif.util.FormatTools;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import net.imagej.axis.CalibratedAxis;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.scijava.Context;
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleService;
-import org.scijava.io.Location;
-import org.scijava.io.handles.BytesLocation;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BytesLocation;
+import org.scijava.io.location.Location;
+
+import io.scif.ByteArrayPlane;
+import io.scif.ImageMetadata;
+import io.scif.Reader;
+import io.scif.config.SCIFIOConfig;
+import io.scif.util.FormatTools;
+import net.imagej.axis.CalibratedAxis;
 
 /**
  * Tests {@link ScancoISQFormat} and its subclasses

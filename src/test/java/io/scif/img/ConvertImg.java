@@ -30,17 +30,16 @@
 
 package io.scif.img;
 
-import io.scif.config.SCIFIOConfig;
-import io.scif.config.SCIFIOConfig.ImgMode;
-
 import java.io.File;
 
 import javax.swing.JFileChooser;
 
-import net.imagej.ImgPlus;
-
 import org.scijava.Context;
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.location.FileLocation;
+
+import io.scif.config.SCIFIOConfig;
+import io.scif.config.SCIFIOConfig.ImgMode;
+import net.imagej.ImgPlus;
 
 /**
  * A simple manual test opening and saving {@link ImgPlus}es.

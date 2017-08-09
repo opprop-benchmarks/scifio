@@ -32,15 +32,14 @@ package io.scif.formats;
 
 import static org.junit.Assert.assertEquals;
 
-import io.scif.img.IO;
-
 import java.net.URL;
 
+import org.junit.Test;
+import org.scijava.io.location.FileLocation;
+
+import io.scif.img.IO;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
-
-import org.junit.Test;
-import org.scijava.io.handles.FileLocation;
 
 /**
  * Tests reading of TIFF files without (dimensional) metainformation.

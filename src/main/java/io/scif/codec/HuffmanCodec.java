@@ -30,15 +30,15 @@
 
 package io.scif.codec;
 
-import io.scif.FormatException;
-import io.scif.UnsupportedCompressionException;
-
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
 import org.scijava.plugin.Plugin;
+
+import io.scif.FormatException;
+import io.scif.UnsupportedCompressionException;
 
 /**
  * This class implements Huffman decoding.

@@ -30,12 +30,12 @@
 
 package io.scif.refs;
 
-import io.scif.SCIFIOPlugin;
-
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 
 import org.scijava.plugin.SingletonPlugin;
+
+import io.scif.SCIFIOPlugin;
 
 /**
  * Interface for plugins that create references for a given referent. Each

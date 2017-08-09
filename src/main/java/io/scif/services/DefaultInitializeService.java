@@ -30,6 +30,16 @@
 
 package io.scif.services;
 
+import java.io.IOException;
+
+import org.scijava.Priority;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
+import org.scijava.plugin.PluginService;
+import org.scijava.service.AbstractService;
+import org.scijava.service.Service;
+
 import io.scif.Format;
 import io.scif.FormatException;
 import io.scif.Metadata;
@@ -38,16 +48,6 @@ import io.scif.Reader;
 import io.scif.Writer;
 import io.scif.config.SCIFIOConfig;
 import io.scif.filters.ReaderFilter;
-
-import java.io.IOException;
-
-import org.scijava.Priority;
-import org.scijava.io.Location;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
-import org.scijava.plugin.PluginService;
-import org.scijava.service.AbstractService;
-import org.scijava.service.Service;
 
 /**
  * Default {@link InitializeService} implementation.

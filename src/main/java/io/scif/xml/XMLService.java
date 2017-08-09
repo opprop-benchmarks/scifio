@@ -30,12 +30,9 @@
 
 package io.scif.xml;
 
-import io.scif.SCIFIOService;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Hashtable;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -44,11 +41,13 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import io.scif.SCIFIOService;
 
 /**
  * Interface for services that work with XML.

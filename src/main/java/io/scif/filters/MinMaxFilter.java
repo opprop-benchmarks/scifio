@@ -30,13 +30,6 @@
 
 package io.scif.filters;
 
-import io.scif.FormatException;
-import io.scif.ImageMetadata;
-import io.scif.Metadata;
-import io.scif.Plane;
-import io.scif.config.SCIFIOConfig;
-import io.scif.util.FormatTools;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,12 +37,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.imagej.axis.AxisType;
-import net.imagej.axis.CalibratedAxis;
-
 import org.scijava.plugin.Plugin;
 import org.scijava.util.ArrayUtils;
 import org.scijava.util.Bytes;
+
+import io.scif.FormatException;
+import io.scif.ImageMetadata;
+import io.scif.Metadata;
+import io.scif.Plane;
+import io.scif.config.SCIFIOConfig;
+import io.scif.util.FormatTools;
+import net.imagej.axis.AxisType;
+import net.imagej.axis.CalibratedAxis;
 
 /**
  * Logic to compute minimum and maximum values for each plane. For each plane,

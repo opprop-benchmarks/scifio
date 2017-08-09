@@ -30,16 +30,16 @@
 
 package io.scif.services;
 
+import java.io.IOException;
+
+import org.scijava.io.location.Location;
+
 import io.scif.FormatException;
 import io.scif.Metadata;
 import io.scif.SCIFIOService;
 import io.scif.Writer;
 import io.scif.config.SCIFIOConfig;
 import io.scif.filters.ReaderFilter;
-
-import java.io.IOException;
-
-import org.scijava.io.Location;
 
 /**
  * A collection of methods for initializing the IO components of SCIFIO (Readers

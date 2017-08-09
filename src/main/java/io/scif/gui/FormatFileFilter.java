@@ -30,16 +30,16 @@
 
 package io.scif.gui;
 
-import io.scif.Checker;
-import io.scif.Format;
-import io.scif.FormatException;
-import io.scif.config.SCIFIOConfig;
-
 import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.location.FileLocation;
+
+import io.scif.Checker;
+import io.scif.Format;
+import io.scif.FormatException;
+import io.scif.config.SCIFIOConfig;
 
 /**
  * A file filter for identifying the files supported by an associated

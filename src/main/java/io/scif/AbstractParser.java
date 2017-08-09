@@ -30,19 +30,19 @@
 
 package io.scif;
 
-import io.scif.config.SCIFIOConfig;
-import io.scif.util.SCIFIOMetadataTools;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleService;
-import org.scijava.io.Location;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
+
+import io.scif.config.SCIFIOConfig;
+import io.scif.util.SCIFIOMetadataTools;
 
 /**
  * Abstract superclass of all SCIFIO {@link io.scif.Parser} implementations.

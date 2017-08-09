@@ -33,16 +33,15 @@ package io.scif;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import io.scif.formats.FakeFormat;
-
 import java.io.IOException;
 
+import org.junit.Test;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
+
+import io.scif.formats.FakeFormat;
 import net.imagej.axis.Axes;
 import net.imglib2.display.ColorTable;
-
-import org.junit.Test;
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
 
 /**
  * Unit tests for {@link FakeFormat}. The FakeFormat is used in many other

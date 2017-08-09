@@ -30,11 +30,11 @@
 
 package io.scif;
 
-import io.scif.filters.MetadataWrapper;
-
 import java.util.List;
 
 import org.scijava.plugin.SingletonPlugin;
+
+import io.scif.filters.MetadataWrapper;
 
 /**
  * Interface for all SCIFIO {@code Translators}.

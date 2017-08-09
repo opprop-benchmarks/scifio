@@ -30,13 +30,17 @@
 
 package io.scif.img;
 
+import java.util.List;
+
+import org.scijava.Context;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
+import org.scijava.log.LogService;
+
 import io.scif.Reader;
 import io.scif.Writer;
 import io.scif.config.SCIFIOConfig;
 import io.scif.refs.RefManagerService;
-
-import java.util.List;
-
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
@@ -45,11 +49,6 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
-
-import org.scijava.Context;
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
-import org.scijava.log.LogService;
 
 /**
  * A static utility class for easy access to {@link ImgSaver} and

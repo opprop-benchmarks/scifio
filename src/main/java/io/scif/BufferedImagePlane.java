@@ -30,12 +30,12 @@
 
 package io.scif;
 
-import io.scif.gui.AWTImageTools;
-
 import java.awt.image.BufferedImage;
 
 import org.scijava.Context;
 import org.scijava.util.Bytes;
+
+import io.scif.gui.AWTImageTools;
 
 /**
  * A {@link io.scif.Plane} implementation using a

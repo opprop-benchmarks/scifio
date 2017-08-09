@@ -32,16 +32,16 @@ package io.scif.util;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
+
+import org.junit.Test;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
+
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
 import io.scif.Reader;
 import io.scif.SCIFIO;
-
-import java.io.IOException;
-
-import org.junit.Test;
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
 
 /**
  * Unit tests for {@link FormatTools}.

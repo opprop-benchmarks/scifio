@@ -30,16 +30,6 @@
 
 package io.scif.gui;
 
-import io.scif.BufferedImagePlane;
-import io.scif.FormatException;
-import io.scif.Plane;
-import io.scif.Reader;
-import io.scif.SCIFIOService;
-import io.scif.Writer;
-import io.scif.services.FormatService;
-import io.scif.services.InitializeService;
-import io.scif.util.FormatTools;
-
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
@@ -76,11 +66,21 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.scijava.Context;
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
 import org.scijava.service.SciJavaService;
+
+import io.scif.BufferedImagePlane;
+import io.scif.FormatException;
+import io.scif.Plane;
+import io.scif.Reader;
+import io.scif.SCIFIOService;
+import io.scif.Writer;
+import io.scif.services.FormatService;
+import io.scif.services.InitializeService;
+import io.scif.util.FormatTools;
 
 /**
  * A basic renderer for image data.

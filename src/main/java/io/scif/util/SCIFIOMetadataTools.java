@@ -30,21 +30,20 @@
 
 package io.scif.util;
 
-import io.scif.FormatException;
-import io.scif.Metadata;
-import io.scif.filters.MetadataWrapper;
-
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+
+import io.scif.FormatException;
+import io.scif.Metadata;
+import io.scif.filters.MetadataWrapper;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
 import net.imagej.axis.CalibratedAxis;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
 
 /**
  * A utility class for working with {@link io.scif.Metadata} objects.

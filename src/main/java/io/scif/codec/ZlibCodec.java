@@ -30,17 +30,17 @@
 
 package io.scif.codec;
 
-import io.scif.FormatException;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
 
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleInputStream;
-import org.scijava.io.Location;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleInputStream;
+import org.scijava.io.location.Location;
 import org.scijava.plugin.Plugin;
+
+import io.scif.FormatException;
 
 /**
  * This class implements ZLIB decompression.

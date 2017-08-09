@@ -30,19 +30,18 @@
 
 package io.scif;
 
-import io.scif.util.FormatTools;
-import io.scif.util.SCIFIOMetadataTools;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.scijava.util.ArrayUtils;
+
+import io.scif.util.FormatTools;
+import io.scif.util.SCIFIOMetadataTools;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
 import net.imagej.axis.CalibratedAxis;
-
-import org.scijava.util.ArrayUtils;
 
 /**
  * Abstract superclass of all {@link io.scif.ImageMetadata} implementations.

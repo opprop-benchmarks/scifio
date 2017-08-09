@@ -30,6 +30,16 @@
 
 package io.scif.formats;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Plugin;
+import org.scijava.util.ArrayUtils;
+import org.scijava.util.Bytes;
+
 import io.scif.AbstractFormat;
 import io.scif.AbstractWriter;
 import io.scif.DefaultMetadata;
@@ -41,23 +51,12 @@ import io.scif.Plane;
 import io.scif.config.SCIFIOConfig;
 import io.scif.util.FormatTools;
 import io.scif.util.SCIFIOMetadataTools;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-
 import net.imglib2.img.basictypeaccess.array.ByteArray;
 import net.imglib2.img.basictypeaccess.array.DoubleArray;
 import net.imglib2.img.basictypeaccess.array.FloatArray;
 import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.img.basictypeaccess.array.LongArray;
 import net.imglib2.img.basictypeaccess.array.ShortArray;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
-import org.scijava.plugin.Plugin;
-import org.scijava.util.ArrayUtils;
-import org.scijava.util.Bytes;
 
 /**
  * Format for Java source code. At the moment, this code just writes a very

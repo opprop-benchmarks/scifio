@@ -30,16 +30,16 @@
 
 package io.scif.services;
 
-import io.scif.Metadata;
-import io.scif.Translator;
-import io.scif.util.SCIFIOMetadataTools;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.scijava.plugin.AbstractSingletonService;
 import org.scijava.plugin.Plugin;
 import org.scijava.service.Service;
+
+import io.scif.Metadata;
+import io.scif.Translator;
+import io.scif.util.SCIFIOMetadataTools;
 
 /**
  * Default {@link TranslatorService} implementation. If a false exact flag is

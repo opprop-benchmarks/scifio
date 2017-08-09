@@ -30,20 +30,19 @@
 
 package io.scif.img;
 
+import java.io.IOException;
+
+import org.scijava.Disposable;
+
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
 import io.scif.Metadata;
 import io.scif.img.cell.SCIFIOCellImg;
-
-import java.io.IOException;
-
 import net.imagej.ImgPlus;
 import net.imagej.ImgPlusMetadata;
 import net.imagej.axis.AxisType;
 import net.imglib2.display.ColorTable;
 import net.imglib2.img.Img;
-
-import org.scijava.Disposable;
 
 /**
  * SCIFIO extension of {@link ImgPlus} that adds

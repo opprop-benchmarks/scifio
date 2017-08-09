@@ -30,12 +30,12 @@
 
 package io.scif.img;
 
-import io.scif.AbstractSCIFIOPlugin;
-import io.scif.SCIFIOService;
-
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.service.SciJavaService;
+
+import io.scif.AbstractSCIFIOPlugin;
+import io.scif.SCIFIOService;
 
 /**
  * Abstract superclass for ImgIOComponents (such as {@link ImgOpener} or

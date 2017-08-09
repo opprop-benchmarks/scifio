@@ -30,9 +30,9 @@
 
 package io.scif.codec;
 
-import io.scif.SCIFIOService;
-
 import org.scijava.plugin.SingletonService;
+
+import io.scif.SCIFIOService;
 
 /**
  * Interface for service which manages available {@link Codec}s.

@@ -30,14 +30,14 @@
 
 package io.scif.formats.tiff;
 
-import io.scif.FormatException;
-
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.service.AbstractService;
 import org.scijava.service.Service;
 import org.scijava.util.Bytes;
+
+import io.scif.FormatException;
 
 /**
  * Default service for working with TIFF files.

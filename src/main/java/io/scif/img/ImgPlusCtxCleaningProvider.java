@@ -30,20 +30,19 @@
 
 package io.scif.img;
 
-import io.scif.AbstractSCIFIOPlugin;
-import io.scif.refs.CleaningRef;
-import io.scif.refs.RefProvider;
-
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.imagej.ImgPlus;
-
 import org.scijava.Context;
 import org.scijava.plugin.Plugin;
+
+import io.scif.AbstractSCIFIOPlugin;
+import io.scif.refs.CleaningRef;
+import io.scif.refs.RefProvider;
+import net.imagej.ImgPlus;
 
 /**
  * {@link RefProvider} plugin for generating {@link ImgPlusCtxCleaner}

@@ -30,6 +30,17 @@
 
 package io.scif.formats;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+import org.scijava.log.LogService;
+import org.scijava.plugin.Plugin;
+import org.scijava.util.Bytes;
+
 import io.scif.AbstractChecker;
 import io.scif.AbstractFormat;
 import io.scif.AbstractMetadata;
@@ -41,20 +52,7 @@ import io.scif.FormatException;
 import io.scif.ImageMetadata;
 import io.scif.config.SCIFIOConfig;
 import io.scif.util.FormatTools;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import net.imagej.axis.Axes;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
-import org.scijava.log.LogService;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
-import org.scijava.util.Bytes;
 
 /**
  * Reader for text files containing tables of data. All image planes are stored

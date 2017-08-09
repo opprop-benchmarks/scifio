@@ -30,6 +30,24 @@
 
 package io.scif.formats.qt;
 
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageProducer;
+import java.io.IOException;
+import java.util.List;
+import java.util.Vector;
+
+import org.scijava.Priority;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
+import org.scijava.log.LogService;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
+import org.scijava.util.Bytes;
+
 import io.scif.AbstractFormat;
 import io.scif.AbstractMetadata;
 import io.scif.AbstractParser;
@@ -47,26 +65,7 @@ import io.scif.config.SCIFIOConfig;
 import io.scif.gui.AWTImageTools;
 import io.scif.gui.BufferedImageReader;
 import io.scif.util.FormatTools;
-
-import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageProducer;
-import java.io.IOException;
-import java.util.List;
-import java.util.Vector;
-
 import net.imagej.axis.Axes;
-
-import org.scijava.Priority;
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
-import org.scijava.log.LogService;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
-import org.scijava.util.Bytes;
 
 /**
  * LegacyQTReader is a file format reader for QuickTime movie files. To use it,

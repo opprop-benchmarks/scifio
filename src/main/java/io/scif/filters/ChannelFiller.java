@@ -30,21 +30,20 @@
 
 package io.scif.filters;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Plugin;
+import org.scijava.util.Bytes;
+
 import io.scif.ByteArrayPlane;
 import io.scif.ByteArrayReader;
 import io.scif.FormatException;
 import io.scif.Plane;
 import io.scif.config.SCIFIOConfig;
-
-import java.io.IOException;
-import java.util.Arrays;
-
 import net.imagej.axis.Axes;
 import net.imglib2.display.ColorTable;
-
-import org.scijava.io.Location;
-import org.scijava.plugin.Plugin;
-import org.scijava.util.Bytes;
 
 /**
  * For indexed color data representing true color, factors out the indices,

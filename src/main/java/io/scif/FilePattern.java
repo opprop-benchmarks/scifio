@@ -38,7 +38,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.scijava.io.Location;
+import org.scijava.io.location.Location;
 
 import io.scif.services.FilePatternService;
 

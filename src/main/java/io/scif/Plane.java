@@ -30,9 +30,9 @@
 
 package io.scif;
 
-import net.imglib2.display.ColorTable;
-
 import org.scijava.Contextual;
+
+import net.imglib2.display.ColorTable;
 
 /**
  * Top-level interface for all Plane representations in SCIFIO.

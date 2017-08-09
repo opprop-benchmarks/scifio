@@ -30,16 +30,16 @@
 
 package io.scif;
 
-import io.scif.config.SCIFIOConfig;
-import io.scif.util.FormatTools;
-
 import java.io.IOException;
 
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleService;
-import org.scijava.io.Location;
-import org.scijava.io.handles.BytesLocation;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BytesLocation;
+import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
+
+import io.scif.config.SCIFIOConfig;
+import io.scif.util.FormatTools;
 
 /**
  * Abstract superclass of all SCIFIO {@link io.scif.Checker} implementations.

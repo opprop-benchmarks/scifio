@@ -30,9 +30,6 @@
 
 package io.scif.formats.tiff;
 
-import io.scif.FormatException;
-import io.scif.util.FormatTools;
-
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -40,6 +37,9 @@ import java.util.HashMap;
 
 import org.scijava.log.LogService;
 import org.scijava.util.DebugUtils;
+
+import io.scif.FormatException;
+import io.scif.util.FormatTools;
 
 /**
  * Data structure for working with TIFF Image File Directories (IFDs).

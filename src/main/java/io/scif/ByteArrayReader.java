@@ -30,10 +30,9 @@
 
 package io.scif;
 
-import io.scif.util.FormatTools;
-
 import java.io.IOException;
 
+import io.scif.util.FormatTools;
 import net.imagej.axis.Axes;
 
 /**

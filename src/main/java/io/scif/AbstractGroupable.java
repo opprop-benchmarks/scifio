@@ -30,11 +30,11 @@
 
 package io.scif;
 
-import io.scif.util.FormatTools;
-
 import java.io.IOException;
 
-import org.scijava.io.Location;
+import org.scijava.io.location.Location;
+
+import io.scif.util.FormatTools;
 
 /**
  * Abstract super-class for all {@link io.scif.Groupable} components.

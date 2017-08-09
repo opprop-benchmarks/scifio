@@ -30,6 +30,14 @@
 
 package io.scif.filters;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Plugin;
+import org.scijava.util.ArrayUtils;
+
 import io.scif.ByteArrayPlane;
 import io.scif.FormatException;
 import io.scif.Metadata;
@@ -38,18 +46,9 @@ import io.scif.config.SCIFIOConfig;
 import io.scif.util.FormatTools;
 import io.scif.util.ImageTools;
 import io.scif.util.MemoryTools;
-
-import java.io.IOException;
-import java.util.Arrays;
-
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
 import net.imagej.axis.CalibratedAxis;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
-import org.scijava.plugin.Plugin;
-import org.scijava.util.ArrayUtils;
 
 /**
  * Logic to automatically separate the channels in a file.

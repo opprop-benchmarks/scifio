@@ -33,20 +33,19 @@ package io.scif.filters;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import io.scif.FormatException;
-import io.scif.Reader;
-import io.scif.SCIFIO;
-import io.scif.config.SCIFIOConfig;
-
 import java.io.IOException;
-
-import net.imagej.axis.Axes;
 
 import org.junit.After;
 import org.junit.Test;
 import org.scijava.Context;
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.location.FileLocation;
 import org.scijava.plugin.PluginInfo;
+
+import io.scif.FormatException;
+import io.scif.Reader;
+import io.scif.SCIFIO;
+import io.scif.config.SCIFIOConfig;
+import net.imagej.axis.Axes;
 
 /**
  * Tests for the {@link Filter} classes.

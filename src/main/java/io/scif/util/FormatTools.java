@@ -30,6 +30,14 @@
 
 package io.scif.util;
 
+import java.io.IOException;
+import java.nio.ByteOrder;
+import java.util.List;
+import java.util.Vector;
+
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
 import io.scif.Metadata;
@@ -39,20 +47,11 @@ import io.scif.Writer;
 import io.scif.common.ReflectException;
 import io.scif.common.ReflectedUniverse;
 import io.scif.config.SCIFIOConfig;
-
-import java.io.IOException;
-import java.nio.ByteOrder;
-import java.util.List;
-import java.util.Vector;
-
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
 import net.imagej.axis.CalibratedAxis;
 import net.imagej.axis.DefaultLinearAxis;
 import net.imagej.axis.LinearAxis;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
 
 /**
  * A collection of constants and utility methods applicable for all cycles of

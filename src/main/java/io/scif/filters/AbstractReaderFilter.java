@@ -30,6 +30,15 @@
 
 package io.scif.filters;
 
+import java.io.IOException;
+
+import org.scijava.Context;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
+import org.scijava.plugin.PluginService;
+
 import io.scif.Format;
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
@@ -37,15 +46,6 @@ import io.scif.Metadata;
 import io.scif.Plane;
 import io.scif.Reader;
 import io.scif.config.SCIFIOConfig;
-
-import java.io.IOException;
-
-import org.scijava.Context;
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
-import org.scijava.plugin.PluginService;
 
 /**
  * Abstract superclass for all {@link io.scif.filters.Filter} that delegate to

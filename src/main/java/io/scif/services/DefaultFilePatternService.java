@@ -30,10 +30,6 @@
 
 package io.scif.services;
 
-import io.scif.AxisGuesser;
-import io.scif.FilePattern;
-import io.scif.NumberFilter;
-
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -44,12 +40,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
 import org.scijava.plugin.Plugin;
 import org.scijava.service.AbstractService;
 import org.scijava.service.Service;
 import org.scijava.util.ArrayUtils;
+
+import io.scif.AxisGuesser;
+import io.scif.FilePattern;
+import io.scif.NumberFilter;
 
 /**
  * Default {@link FilePatternService} implementation.

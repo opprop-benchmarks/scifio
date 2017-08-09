@@ -40,7 +40,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.scijava.Context;
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.location.FileLocation;
 import org.scijava.thread.ThreadService;
 
 import io.scif.FormatException;

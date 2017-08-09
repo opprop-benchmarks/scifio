@@ -30,14 +30,14 @@
 
 package io.scif;
 
-import io.scif.codec.CodecOptions;
-import io.scif.config.SCIFIOConfig;
-
 import java.awt.image.ColorModel;
 import java.io.IOException;
 
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+
+import io.scif.codec.CodecOptions;
+import io.scif.config.SCIFIOConfig;
 
 /**
  * Interface for all SCIFIO writers.

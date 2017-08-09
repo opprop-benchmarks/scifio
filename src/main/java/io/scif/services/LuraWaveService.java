@@ -30,13 +30,13 @@
 
 package io.scif.services;
 
-import io.scif.DependencyException;
-import io.scif.SCIFIOService;
-
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.scijava.Optional;
+
+import io.scif.DependencyException;
+import io.scif.SCIFIOService;
 
 /**
  * @author Chris Allan

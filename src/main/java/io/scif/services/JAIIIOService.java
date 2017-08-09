@@ -30,14 +30,14 @@
 
 package io.scif.services;
 
-import io.scif.SCIFIOService;
-import io.scif.codec.JPEG2000CodecOptions;
-
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import io.scif.SCIFIOService;
+import io.scif.codec.JPEG2000CodecOptions;
 
 /**
  * Interface defining methods for reading data using JAI Image I/O.

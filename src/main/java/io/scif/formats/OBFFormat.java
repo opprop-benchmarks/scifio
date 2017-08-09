@@ -30,6 +30,17 @@
 
 package io.scif.formats;
 
+import java.io.IOException;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
+
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Plugin;
+
 import io.scif.AbstractChecker;
 import io.scif.AbstractFormat;
 import io.scif.AbstractMetadata;
@@ -41,19 +52,7 @@ import io.scif.FormatException;
 import io.scif.ImageMetadata;
 import io.scif.config.SCIFIOConfig;
 import io.scif.util.FormatTools;
-
-import java.io.IOException;
-import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
-
 import net.imagej.axis.Axes;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
-import org.scijava.plugin.Plugin;
 
 /**
  * OBFReader is the file format reader for Imspector OBF files.

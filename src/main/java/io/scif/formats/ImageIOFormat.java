@@ -30,6 +30,20 @@
 
 package io.scif.formats;
 
+import java.awt.image.BufferedImage;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.List;
+
+import javax.imageio.ImageIO;
+
+import org.scijava.Priority;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleInputStream;
+import org.scijava.io.handle.DataHandleOutputStream;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Plugin;
+
 import io.scif.AbstractFormat;
 import io.scif.AbstractMetadata;
 import io.scif.AbstractParser;
@@ -45,22 +59,7 @@ import io.scif.gui.AWTImageTools;
 import io.scif.gui.BufferedImageReader;
 import io.scif.util.FormatTools;
 import io.scif.util.SCIFIOMetadataTools;
-
-import java.awt.image.BufferedImage;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.util.List;
-
-import javax.imageio.ImageIO;
-
 import net.imagej.axis.Axes;
-
-import org.scijava.Priority;
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleInputStream;
-import org.scijava.io.DataHandleOutputStream;
-import org.scijava.io.Location;
-import org.scijava.plugin.Plugin;
 
 /**
  * ImageIOReader is the superclass for file format readers that use the

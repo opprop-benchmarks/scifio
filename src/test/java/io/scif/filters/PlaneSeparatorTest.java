@@ -32,15 +32,15 @@ package io.scif.filters;
 
 import static org.junit.Assert.assertEquals;
 
-import io.scif.FormatException;
-import io.scif.Reader;
-import io.scif.SCIFIO;
-
 import java.io.IOException;
 
 import org.junit.Test;
 import org.scijava.InstantiableException;
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.location.FileLocation;
+
+import io.scif.FormatException;
+import io.scif.Reader;
+import io.scif.SCIFIO;
 
 /**
  * Tests for {@link PlaneSeparator}.

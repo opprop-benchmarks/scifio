@@ -30,16 +30,16 @@
 
 package io.scif;
 
-import io.scif.img.ImgIOException;
-import io.scif.img.ImgOpener;
-import io.scif.img.SCIFIOImgPlus;
-
 import java.io.File;
 import java.util.List;
 
 import javax.swing.JFileChooser;
 
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.location.FileLocation;
+
+import io.scif.img.ImgIOException;
+import io.scif.img.ImgOpener;
+import io.scif.img.SCIFIOImgPlus;
 
 /**
  * Sample main method for reading images using SCIFIO.

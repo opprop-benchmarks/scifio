@@ -30,6 +30,10 @@
 
 package io.scif.formats.tiff;
 
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+
 import io.scif.FormatException;
 import io.scif.UnsupportedCompressionException;
 import io.scif.codec.Codec;
@@ -46,10 +50,6 @@ import io.scif.codec.PassthroughCodec;
 import io.scif.codec.ZlibCodec;
 import io.scif.enumeration.CodedEnum;
 import io.scif.enumeration.EnumException;
-
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Utility class for performing compression operations with a TIFF file.

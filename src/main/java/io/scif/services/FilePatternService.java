@@ -30,12 +30,12 @@
 
 package io.scif.services;
 
-import io.scif.SCIFIOService;
-
 import java.io.IOException;
 import java.util.Collection;
 
-import org.scijava.io.Location;
+import org.scijava.io.location.Location;
+
+import io.scif.SCIFIOService;
 
 /**
  * A collection of utility methods to facilitate {@link io.scif.FilePattern}

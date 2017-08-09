@@ -30,9 +30,9 @@
 
 package io.scif;
 
-import io.scif.util.SCIFIOMetadataTools;
-
 import java.util.List;
+
+import io.scif.util.SCIFIOMetadataTools;
 
 /**
  * Abstract superclass of all SCIFIO {@link io.scif.Translator} components.

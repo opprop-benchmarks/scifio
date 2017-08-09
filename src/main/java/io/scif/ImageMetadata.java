@@ -30,15 +30,14 @@
 
 package io.scif;
 
-import io.scif.util.FormatTools;
-
 import java.util.List;
 
+import org.scijava.Named;
+
+import io.scif.util.FormatTools;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
 import net.imagej.axis.CalibratedAxis;
-
-import org.scijava.Named;
 
 /**
  * ImageMetadata stores the metadata for a single image within a dataset. Here,

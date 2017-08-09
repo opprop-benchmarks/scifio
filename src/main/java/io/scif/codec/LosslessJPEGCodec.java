@@ -30,17 +30,17 @@
 
 package io.scif.codec;
 
-import io.scif.FormatException;
-import io.scif.UnsupportedCompressionException;
-
 import java.io.IOException;
 
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.util.Bytes;
 import org.scijava.util.ShortArray;
+
+import io.scif.FormatException;
+import io.scif.UnsupportedCompressionException;
 
 /**
  * Decompresses lossless JPEG images.

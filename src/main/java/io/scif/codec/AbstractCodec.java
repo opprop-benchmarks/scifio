@@ -30,17 +30,17 @@
 
 package io.scif.codec;
 
-import io.scif.AbstractSCIFIOPlugin;
-import io.scif.FormatException;
-
 import java.io.IOException;
 import java.util.Random;
 
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleService;
-import org.scijava.io.Location;
-import org.scijava.io.handles.BytesLocation;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BytesLocation;
+import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
+
+import io.scif.AbstractSCIFIOPlugin;
+import io.scif.FormatException;
 
 /**
  * BaseCodec contains default implementation and testing for classes

@@ -49,8 +49,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.scijava.Context;
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
 
 import io.scif.config.SCIFIOConfig;
 import io.scif.config.SCIFIOConfig.ImgMode;

@@ -30,11 +30,6 @@
 
 package io.scif.formats.tiff;
 
-import io.scif.FormatException;
-import io.scif.SCIFIO;
-import io.scif.codec.CodecOptions;
-import io.scif.util.FormatTools;
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -47,13 +42,18 @@ import java.util.TreeSet;
 
 import org.scijava.AbstractContextual;
 import org.scijava.Context;
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleService;
-import org.scijava.io.Location;
-import org.scijava.io.handles.BytesLocation;
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BytesLocation;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
+
+import io.scif.FormatException;
+import io.scif.SCIFIO;
+import io.scif.codec.CodecOptions;
+import io.scif.util.FormatTools;
 
 /**
  * Writes TIFF data to an output location.

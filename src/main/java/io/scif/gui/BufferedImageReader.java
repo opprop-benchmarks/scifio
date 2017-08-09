@@ -30,6 +30,8 @@
 
 package io.scif.gui;
 
+import java.io.IOException;
+
 import io.scif.AbstractReader;
 import io.scif.BufferedImagePlane;
 import io.scif.FormatException;
@@ -37,8 +39,6 @@ import io.scif.ImageMetadata;
 import io.scif.Metadata;
 import io.scif.TypedMetadata;
 import io.scif.util.FormatTools;
-
-import java.io.IOException;
 
 /**
  * BufferedImageReader is the superclass for file format readers that use

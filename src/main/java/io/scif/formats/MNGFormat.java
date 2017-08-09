@@ -30,6 +30,19 @@
 
 package io.scif.formats;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.ByteOrder;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.imageio.ImageIO;
+
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Plugin;
+
 import io.scif.AbstractChecker;
 import io.scif.AbstractFormat;
 import io.scif.AbstractMetadata;
@@ -41,21 +54,7 @@ import io.scif.config.SCIFIOConfig;
 import io.scif.gui.AWTImageTools;
 import io.scif.gui.BufferedImageReader;
 import io.scif.util.FormatTools;
-
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.ByteOrder;
-import java.util.Hashtable;
-import java.util.Vector;
-
-import javax.imageio.ImageIO;
-
 import net.imagej.axis.Axes;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
-import org.scijava.plugin.Plugin;
 
 /**
  * A handler for the Multiple-image Network Graphics (MNG) file format.

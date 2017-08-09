@@ -30,22 +30,22 @@
 
 package io.scif.codec;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
+import org.scijava.util.Bytes;
+
 import io.scif.DependencyException;
 import io.scif.FormatException;
 import io.scif.MissingLibraryException;
 import io.scif.UnsupportedCompressionException;
 import io.scif.services.LuraWaveService;
 import io.scif.services.ServiceException;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
-import org.scijava.util.Bytes;
 
 /**
  * This class provides LuraWave decompression, using LuraWave's Java decoding

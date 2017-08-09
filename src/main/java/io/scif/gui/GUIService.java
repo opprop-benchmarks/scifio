@@ -30,15 +30,15 @@
 
 package io.scif.gui;
 
-import io.scif.Format;
-import io.scif.SCIFIOService;
-
 import java.util.Collection;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import org.scijava.service.Service;
+
+import io.scif.Format;
+import io.scif.SCIFIOService;
 
 /**
  * A {@link Service} for working with graphical user interfaces.

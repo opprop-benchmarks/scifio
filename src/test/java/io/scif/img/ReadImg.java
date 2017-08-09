@@ -34,7 +34,7 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.location.FileLocation;
 
 import net.imagej.ImgPlus;
 import net.imagej.axis.CalibratedAxis;

@@ -30,18 +30,6 @@
 
 package io.scif.services;
 
-import io.scif.Checker;
-import io.scif.DefaultWriter;
-import io.scif.Format;
-import io.scif.FormatException;
-import io.scif.Metadata;
-import io.scif.Parser;
-import io.scif.Reader;
-import io.scif.Writer;
-import io.scif.app.SCIFIOApp;
-import io.scif.config.SCIFIOConfig;
-import io.scif.util.FormatTools;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,8 +41,8 @@ import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import org.scijava.app.AppService;
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -62,6 +50,18 @@ import org.scijava.plugin.PluginService;
 import org.scijava.service.AbstractService;
 import org.scijava.service.Service;
 import org.scijava.thread.ThreadService;
+
+import io.scif.Checker;
+import io.scif.DefaultWriter;
+import io.scif.Format;
+import io.scif.FormatException;
+import io.scif.Metadata;
+import io.scif.Parser;
+import io.scif.Reader;
+import io.scif.Writer;
+import io.scif.app.SCIFIOApp;
+import io.scif.config.SCIFIOConfig;
+import io.scif.util.FormatTools;
 
 /**
  * Default {@link FormatService} implementation

@@ -30,6 +30,18 @@
 
 package io.scif.img;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.scijava.Context;
+import org.scijava.app.StatusService;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Parameter;
+import org.scijava.util.Bytes;
+
 import io.scif.ByteArrayPlane;
 import io.scif.DefaultImageMetadata;
 import io.scif.DefaultMetadata;
@@ -45,12 +57,6 @@ import io.scif.services.FormatService;
 import io.scif.services.TranslatorService;
 import io.scif.util.FormatTools;
 import io.scif.util.SCIFIOMetadataTools;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.CalibratedAxis;
@@ -74,13 +80,6 @@ import net.imglib2.type.numeric.integer.GenericShortType;
 import net.imglib2.type.numeric.integer.LongType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
-
-import org.scijava.Context;
-import org.scijava.app.StatusService;
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
-import org.scijava.plugin.Parameter;
-import org.scijava.util.Bytes;
 
 /**
  * Writes out an {@link ImgPlus} using SCIFIO.

@@ -30,11 +30,11 @@
 
 package io.scif.gui;
 
-import io.scif.util.FormatTools;
-
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
+
+import io.scif.util.FormatTools;
 
 /**
  * Collection of static utility methods for working with

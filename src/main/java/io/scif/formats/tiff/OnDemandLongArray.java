@@ -32,8 +32,8 @@ package io.scif.formats.tiff;
 
 import java.io.IOException;
 
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
 
 /**
  * @author Melissa Linkert

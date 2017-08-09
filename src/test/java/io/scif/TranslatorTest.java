@@ -38,8 +38,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
 
 import io.scif.filters.MetadataWrapper;
 import io.scif.filters.PlaneSeparator;

@@ -32,7 +32,7 @@ package io.scif;
 
 import java.io.IOException;
 
-import org.scijava.io.Location;
+import org.scijava.io.location.Location;
 
 /**
  * Interface for components that can group multiple files together (e.g. for

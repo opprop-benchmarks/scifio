@@ -30,11 +30,11 @@
 
 package io.scif.services;
 
+import org.scijava.plugin.SingletonService;
+
 import io.scif.Metadata;
 import io.scif.SCIFIOService;
 import io.scif.Translator;
-
-import org.scijava.plugin.SingletonService;
 
 /**
  * Collection of methods for creating and using appropriate Translators to

@@ -30,24 +30,24 @@
 
 package io.scif.codec;
 
-import io.scif.FormatException;
-
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.ColorModel;
 import java.awt.image.ImageConsumer;
 import java.awt.image.ImageProducer;
 import java.io.IOException;
-import java.nio.ByteOrder;
 import java.util.Hashtable;
 
 import org.scijava.AbstractContextual;
 import org.scijava.Context;
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandle.ByteOrder;
+import org.scijava.io.location.Location;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
 import org.scijava.util.IntRect;
+
+import io.scif.FormatException;
 
 /**
  * TODO

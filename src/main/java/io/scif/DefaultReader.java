@@ -30,9 +30,9 @@
 
 package io.scif;
 
-import io.scif.config.SCIFIOConfig;
-
 import java.io.IOException;
+
+import io.scif.config.SCIFIOConfig;
 
 /**
  * Non-functional default {@link io.scif.Reader} implementation. For use in

@@ -30,11 +30,11 @@
 
 package io.scif.refs;
 
-import io.scif.SCIFIOService;
-
 import java.lang.ref.Reference;
 
 import org.scijava.service.Service;
+
+import io.scif.SCIFIOService;
 
 /**
  * A {@link Service} implementation for helping with {@link Reference}

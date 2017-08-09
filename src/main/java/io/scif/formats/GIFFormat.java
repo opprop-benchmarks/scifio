@@ -30,6 +30,14 @@
 
 package io.scif.formats;
 
+import java.io.IOException;
+import java.nio.ByteOrder;
+import java.util.Vector;
+
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Plugin;
+
 import io.scif.AbstractChecker;
 import io.scif.AbstractFormat;
 import io.scif.AbstractMetadata;
@@ -42,18 +50,9 @@ import io.scif.HasColorTable;
 import io.scif.ImageMetadata;
 import io.scif.config.SCIFIOConfig;
 import io.scif.util.FormatTools;
-
-import java.io.IOException;
-import java.nio.ByteOrder;
-import java.util.Vector;
-
 import net.imagej.axis.Axes;
 import net.imglib2.display.ColorTable;
 import net.imglib2.display.ColorTable8;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
-import org.scijava.plugin.Plugin;
 
 /**
  * Handler for the GIF file format.

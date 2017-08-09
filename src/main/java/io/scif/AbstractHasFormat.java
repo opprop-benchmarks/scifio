@@ -30,9 +30,9 @@
 
 package io.scif;
 
-import io.scif.services.FormatService;
-
 import org.scijava.plugin.Parameter;
+
+import io.scif.services.FormatService;
 
 /**
  * Abstract superclass for all classes that implement {@link io.scif.HasFormat}.

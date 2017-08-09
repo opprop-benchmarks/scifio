@@ -30,6 +30,10 @@
 
 package io.scif.filters;
 
+import java.io.IOException;
+
+import org.scijava.plugin.Parameter;
+
 import io.scif.DefaultImageMetadata;
 import io.scif.FormatException;
 import io.scif.HasColorTable;
@@ -39,14 +43,9 @@ import io.scif.Reader;
 import io.scif.config.SCIFIOConfig;
 import io.scif.services.InitializeService;
 import io.scif.util.FormatTools;
-
-import java.io.IOException;
-
 import net.imagej.axis.Axes;
 import net.imglib2.display.ArrayColorTable;
 import net.imglib2.display.ColorTable;
-
-import org.scijava.plugin.Parameter;
 
 /**
  * {@link io.scif.filters.MetadataWrapper} implementation specifically for use

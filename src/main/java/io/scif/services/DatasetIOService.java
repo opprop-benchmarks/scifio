@@ -33,12 +33,12 @@ package io.scif.services;
 import java.io.IOException;
 import java.util.List;
 
+import org.scijava.io.location.Location;
+
 import io.scif.Metadata;
 import io.scif.SCIFIOService;
 import io.scif.config.SCIFIOConfig;
 import net.imagej.Dataset;
-
-import org.scijava.io.Location;
 
 /**
  * A service for opening and saving {@link Dataset}s using SCIFIO.

@@ -30,6 +30,18 @@
 
 package io.scif.services;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
+import org.scijava.log.LogService;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
+import org.scijava.service.AbstractService;
+import org.scijava.service.Service;
+
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
 import io.scif.Metadata;
@@ -39,25 +51,12 @@ import io.scif.img.ImgIOException;
 import io.scif.img.ImgOpener;
 import io.scif.img.ImgSaver;
 import io.scif.img.SCIFIOImgPlus;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.imagej.Dataset;
 import net.imagej.DatasetService;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.CalibratedAxis;
 import net.imglib2.exception.IncompatibleTypeException;
-
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
-import org.scijava.log.LogService;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
-import org.scijava.service.AbstractService;
-import org.scijava.service.Service;
 
 /**
  * Default {@link DatasetIOService} implementation.

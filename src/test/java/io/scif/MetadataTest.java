@@ -34,17 +34,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import io.scif.img.axes.SCIFIOAxes;
-import io.scif.util.FormatTools;
-
 import java.io.IOException;
 
+import org.junit.Test;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
+
+import io.scif.img.axes.SCIFIOAxes;
+import io.scif.util.FormatTools;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
-
-import org.junit.Test;
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
 
 /**
  * Unit tests for {@link io.scif.Metadata} interface methods.

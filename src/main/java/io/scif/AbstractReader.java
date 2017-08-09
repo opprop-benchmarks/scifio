@@ -30,18 +30,17 @@
 
 package io.scif;
 
+import java.io.IOException;
+
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Parameter;
+
 import io.scif.config.SCIFIOConfig;
 import io.scif.util.FormatTools;
 import io.scif.util.SCIFIOMetadataTools;
-
-import java.io.IOException;
-
 import net.imagej.axis.Axes;
-
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleService;
-import org.scijava.io.Location;
-import org.scijava.plugin.Parameter;
 
 /**
  * Abstract superclass of all SCIFIO {@link io.scif.Reader} implementations.

@@ -30,10 +30,11 @@
 
 package io.scif.img;
 
+import org.scijava.io.location.Location;
+
 import io.scif.Metadata;
 import io.scif.SCIFIOService;
 import io.scif.config.SCIFIOConfig;
-
 import net.imagej.ImgPlus;
 import net.imagej.axis.CalibratedAxis;
 import net.imglib2.img.Img;
@@ -42,8 +43,6 @@ import net.imglib2.img.basictypeaccess.PlanarAccess;
 import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
-
-import org.scijava.io.Location;
 
 /**
  * Helper methods for converting between SCIFIO and ImgLib2 data structures.

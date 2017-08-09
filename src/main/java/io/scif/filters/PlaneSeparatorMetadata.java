@@ -30,16 +30,15 @@
 
 package io.scif.filters;
 
-import io.scif.DefaultImageMetadata;
-import io.scif.ImageMetadata;
-import io.scif.Metadata;
-
 import java.util.HashSet;
 import java.util.Set;
 
-import net.imagej.axis.AxisType;
-
 import org.scijava.plugin.Plugin;
+
+import io.scif.DefaultImageMetadata;
+import io.scif.ImageMetadata;
+import io.scif.Metadata;
+import net.imagej.axis.AxisType;
 
 /**
  * {@link io.scif.filters.MetadataWrapper} implementation specifically for use

@@ -30,10 +30,10 @@
 
 package io.scif;
 
-import io.scif.util.FormatTools;
-
 import org.scijava.Context;
 import org.scijava.util.ArrayUtils;
+
+import io.scif.util.FormatTools;
 
 /**
  * A naive {@link io.scif.Plane} implementation that uses {@code byte[]} for its

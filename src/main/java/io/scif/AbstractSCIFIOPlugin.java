@@ -30,11 +30,11 @@
 
 package io.scif;
 
-import io.scif.services.FormatService;
-
 import org.scijava.log.LogService;
 import org.scijava.plugin.AbstractRichPlugin;
 import org.scijava.plugin.Parameter;
+
+import io.scif.services.FormatService;
 
 /**
  * Abstract superclass of all {@link SCIFIOPlugin} implementations.

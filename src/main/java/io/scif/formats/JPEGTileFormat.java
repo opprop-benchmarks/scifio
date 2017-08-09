@@ -30,6 +30,13 @@
 
 package io.scif.formats;
 
+import java.io.IOException;
+
+import org.scijava.Priority;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Plugin;
+
 import io.scif.AbstractFormat;
 import io.scif.AbstractMetadata;
 import io.scif.AbstractParser;
@@ -41,15 +48,7 @@ import io.scif.ImageMetadata;
 import io.scif.codec.JPEGTileDecoder;
 import io.scif.config.SCIFIOConfig;
 import io.scif.util.FormatTools;
-
-import java.io.IOException;
-
 import net.imagej.axis.Axes;
-
-import org.scijava.Priority;
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
-import org.scijava.plugin.Plugin;
 
 /**
  * Reader for decoding JPEG images using java.awt.Toolkit. This reader is useful

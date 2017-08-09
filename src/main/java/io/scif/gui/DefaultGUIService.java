@@ -30,8 +30,6 @@
 
 package io.scif.gui;
 
-import io.scif.Format;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
@@ -42,6 +40,8 @@ import javax.swing.filechooser.FileFilter;
 import org.scijava.plugin.Plugin;
 import org.scijava.service.AbstractService;
 import org.scijava.service.Service;
+
+import io.scif.Format;
 
 /**
  * Basic {@link GUIService} implementation.

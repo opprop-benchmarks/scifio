@@ -30,6 +30,15 @@
 
 package io.scif.services;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import org.scijava.Priority;
+import org.scijava.Versioned;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
+
 import io.scif.Checker;
 import io.scif.Format;
 import io.scif.FormatException;
@@ -39,15 +48,6 @@ import io.scif.Reader;
 import io.scif.SCIFIOService;
 import io.scif.Writer;
 import io.scif.config.SCIFIOConfig;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import org.scijava.Priority;
-import org.scijava.Versioned;
-import org.scijava.io.DataHandle;
-import org.scijava.io.Location;
 
 /**
  * A collection of methods for finding {@link io.scif.Format} instances given a

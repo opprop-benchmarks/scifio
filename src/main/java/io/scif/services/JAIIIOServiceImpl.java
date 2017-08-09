@@ -30,14 +30,6 @@
 
 package io.scif.services;
 
-import io.scif.codec.JPEG2000CodecOptions;
-import io.scif.media.imageio.plugins.jpeg2000.J2KImageReadParam;
-import io.scif.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
-import io.scif.media.imageioimpl.plugins.jpeg2000.J2KImageReader;
-import io.scif.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi;
-import io.scif.media.imageioimpl.plugins.jpeg2000.J2KImageWriter;
-import io.scif.media.imageioimpl.plugins.jpeg2000.J2KImageWriterSpi;
-
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.IOException;
@@ -56,6 +48,14 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
 import org.scijava.plugin.Plugin;
 import org.scijava.service.AbstractService;
 import org.scijava.service.Service;
+
+import io.scif.codec.JPEG2000CodecOptions;
+import io.scif.media.imageio.plugins.jpeg2000.J2KImageReadParam;
+import io.scif.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
+import io.scif.media.imageioimpl.plugins.jpeg2000.J2KImageReader;
+import io.scif.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi;
+import io.scif.media.imageioimpl.plugins.jpeg2000.J2KImageWriter;
+import io.scif.media.imageioimpl.plugins.jpeg2000.J2KImageWriterSpi;
 
 /**
  * Implementation of JAIIIOService for reading and writing JPEG-2000 data.

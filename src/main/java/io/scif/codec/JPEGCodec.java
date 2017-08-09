@@ -30,9 +30,6 @@
 
 package io.scif.codec;
 
-import io.scif.FormatException;
-import io.scif.gui.AWTImageTools;
-
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,12 +38,15 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleInputStream;
-import org.scijava.io.Location;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleInputStream;
+import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.util.Bytes;
+
+import io.scif.FormatException;
+import io.scif.gui.AWTImageTools;
 
 /**
  * This class implements JPEG compression and decompression.

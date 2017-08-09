@@ -30,18 +30,17 @@
 
 package io.scif.io;
 
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
+
 import io.scif.img.IO;
 import io.scif.img.ImgIOException;
 import io.scif.img.ImgOpener;
-
 import net.imagej.ImgPlus;
 import net.imglib2.Cursor;
 import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
-
-import org.scijava.io.Location;
-import org.scijava.io.handles.FileLocation;
 
 /**
  * A simple test for {@link ImgOpener}.

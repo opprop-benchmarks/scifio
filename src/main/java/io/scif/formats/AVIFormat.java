@@ -30,6 +30,19 @@
 
 package io.scif.formats;
 
+import java.awt.image.IndexColorModel;
+import java.io.IOException;
+import java.nio.ByteOrder;
+import java.util.List;
+import java.util.Vector;
+
+import org.scijava.Priority;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
+
 import io.scif.AbstractChecker;
 import io.scif.AbstractFormat;
 import io.scif.AbstractMetadata;
@@ -56,23 +69,9 @@ import io.scif.config.SCIFIOConfig;
 import io.scif.util.FormatTools;
 import io.scif.util.ImageTools;
 import io.scif.util.SCIFIOMetadataTools;
-
-import java.awt.image.IndexColorModel;
-import java.io.IOException;
-import java.nio.ByteOrder;
-import java.util.List;
-import java.util.Vector;
-
 import net.imagej.axis.Axes;
 import net.imglib2.display.ColorTable;
 import net.imglib2.display.ColorTable8;
-
-import org.scijava.Priority;
-import org.scijava.io.DataHandle;
-import org.scijava.io.DataHandleService;
-import org.scijava.io.Location;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.Plugin;
 
 /**
  * AVIReader is the file format reader for AVI files. Much of this code was
