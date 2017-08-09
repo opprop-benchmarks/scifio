@@ -33,7 +33,7 @@ package io.scif.formats;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.ByteOrder;
+import org.scijava.io.handle.DataHandle.ByteOrder;
 import java.util.Hashtable;
 import java.util.Vector;
 

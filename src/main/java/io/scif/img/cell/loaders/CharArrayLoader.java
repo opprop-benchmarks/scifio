@@ -36,7 +36,7 @@ import io.scif.img.ImageRegion;
 import io.scif.util.FormatTools;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import org.scijava.io.handle.DataHandle.ByteOrder;
 
 import net.imglib2.img.basictypeaccess.array.CharArray;
 import net.imglib2.type.numeric.integer.GenericByteType;

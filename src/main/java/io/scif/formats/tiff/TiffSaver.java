@@ -33,7 +33,7 @@ package io.scif.formats.tiff;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.nio.ByteOrder;
+import org.scijava.io.handle.DataHandle.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

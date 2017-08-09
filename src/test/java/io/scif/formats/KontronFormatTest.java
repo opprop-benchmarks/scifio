@@ -8,7 +8,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import org.scijava.io.handle.DataHandle.ByteOrder;
 
 import org.junit.AfterClass;
 import org.junit.Before;

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import org.scijava.io.handle.DataHandle.ByteOrder;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.IntStream;

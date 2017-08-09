@@ -2,7 +2,7 @@
 package io.scif.formats;
 
 import java.io.IOException;
-import java.nio.ByteOrder;
+import org.scijava.io.handle.DataHandle.ByteOrder;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;

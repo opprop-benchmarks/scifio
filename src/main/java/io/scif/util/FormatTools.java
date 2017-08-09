@@ -31,7 +31,7 @@
 package io.scif.util;
 
 import java.io.IOException;
-import java.nio.ByteOrder;
+import org.scijava.io.handle.DataHandle.ByteOrder;
 import java.util.List;
 import java.util.Vector;
 

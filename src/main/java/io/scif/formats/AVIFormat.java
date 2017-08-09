@@ -32,12 +32,12 @@ package io.scif.formats;
 
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
-import java.nio.ByteOrder;
 import java.util.List;
 import java.util.Vector;
 
 import org.scijava.Priority;
 import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandle.ByteOrder;
 import org.scijava.io.handle.DataHandleService;
 import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
