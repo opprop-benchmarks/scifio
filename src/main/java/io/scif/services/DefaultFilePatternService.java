@@ -40,8 +40,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BrowsableLocation;
 import org.scijava.io.location.FileLocation;
 import org.scijava.io.location.Location;
+import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.service.AbstractService;
 import org.scijava.service.Service;
@@ -62,40 +65,40 @@ public class DefaultFilePatternService extends AbstractService implements
 	FilePatternService
 {
 
+	@Parameter
+	private DataHandleService dataHandleService;
+
 	@Override
 	public String findPattern(final String path) throws IOException {
 		return findPattern(new FileLocation(path));
 	}
 
 	@Override
-	public String findPattern(final Location file) throws IOException {
-		if (file.isBrowsable()) {
+	public String findPattern(final BrowsableLocation file) throws IOException {
 			return findPattern(file, file.getParent());
-		}
-		throw new IOException("FilePatterns require a browsable Location!");
 	}
 
 	@Override
-	public String findPattern(final Location name, Location dir)
+	public String findPattern(final BrowsableLocation name, BrowsableLocation dir)
 		throws IOException
 	{
 
 		// list files in the given directory
-		final Set<Location> f = dir.getChildren();
+		final Set<BrowsableLocation> f = dir.getChildren();
 		if (f.isEmpty()) return null;
 		return findPattern(name, dir, f);
 	}
 
 	@Override
-	public String findPattern(final Location name, final Location dir,
-		final Collection<Location> f)
+	public String findPattern(final BrowsableLocation name, final BrowsableLocation dir,
+		final Collection<BrowsableLocation> f)
 	{
 		return findPattern(name, dir, f, null);
 	}
 
 	@Override
-	public String findPattern(final Location file, Location dir,
-		final Collection<Location> nameList, int[] excludeAxes)
+	public String findPattern(final BrowsableLocation file, BrowsableLocation dir,
+		final Collection<BrowsableLocation> nameList, int[] excludeAxes)
 	{
 		if (excludeAxes == null) excludeAxes = new int[0];
 
@@ -257,16 +260,16 @@ public class DefaultFilePatternService extends AbstractService implements
 	}
 
 	@Override
-	public String[] findImagePatterns(final Location base) throws IOException {
-		final Location file = base;
-		final Location parent = file.getParent();
-		final Set<Location> list = parent.getChildren();
+	public String[] findImagePatterns(final BrowsableLocation base) throws IOException {
+		final BrowsableLocation file = base;
+		final BrowsableLocation parent = file.getParent();
+		final Set<BrowsableLocation> list = parent.getChildren();
 		return findImagePatterns(base, parent, list);
 	}
 
 	@Override
-	public String[] findImagePatterns(final Location base, final Location dir,
-		final Collection<Location> nameList) throws IOException
+	public String[] findImagePatterns(final BrowsableLocation base, final BrowsableLocation dir,
+		final Collection<BrowsableLocation> nameList) throws IOException
 	{
 		String name = base.getName();
 		int dot = name.lastIndexOf('.');
@@ -276,7 +279,7 @@ public class DefaultFilePatternService extends AbstractService implements
 
 		final List<String> patterns = new ArrayList<>();
 		final int[] exclude = new int[] { AxisGuesser.S_AXIS };
-		for (final Location loc : nameList) {
+		for (final BrowsableLocation loc : nameList) {
 			final String pattern = findPattern(loc, dir, nameList, exclude);
 			if (pattern == null) continue;
 			int start = pattern.lastIndexOf(File.separator) + 1;
@@ -290,7 +293,7 @@ public class DefaultFilePatternService extends AbstractService implements
 			final Location[] checkFiles = new FilePattern(base, checkPattern)
 				.getFiles();
 
-			if (!patterns.contains(pattern) && (!base.getSibling(pattern).exists()) &&
+			if (!patterns.contains(pattern) && (!dataHandleService.handleExists(base.createSibling(pattern))) &&
 				patternSuffix.equals(baseSuffix) && ArrayUtils.indexOf(checkFiles,
 					base) >= 0)
 			{
@@ -306,7 +309,7 @@ public class DefaultFilePatternService extends AbstractService implements
 
 	/** Recursive method for parsing a fixed-width numerical block. */
 	private String findPattern(final String name,
-		final Collection<Location> nameList, final int ndx, final int end,
+		final Collection<BrowsableLocation> nameList, final int ndx, final int end,
 		final String p)
 	{
 		if (ndx == end) return p;
@@ -367,11 +370,11 @@ public class DefaultFilePatternService extends AbstractService implements
 	}
 
 	/** Filters the given list of filenames according to the specified filter. */
-	private String[] matchFiles(final Collection<Location> nameList,
+	private String[] matchFiles(final Collection<BrowsableLocation> nameList,
 		final NumberFilter filter)
 	{
-		final List<Location> list = new ArrayList<>();
-		for (final Location inFile : nameList) {
+		final List<BrowsableLocation> list = new ArrayList<>();
+		for (final BrowsableLocation inFile : nameList) {
 			if (filter.accept(inFile.getName())) list.add(inFile);
 		}
 		return list.toArray(new String[list.size()]);

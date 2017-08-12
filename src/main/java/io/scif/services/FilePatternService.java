@@ -33,7 +33,7 @@ package io.scif.services;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.scijava.io.location.Location;
+import org.scijava.io.location.BrowsableLocation;
 
 import io.scif.SCIFIOService;
 
@@ -61,14 +61,8 @@ public interface FilePatternService extends SCIFIOService {
 	 * @param file The file to use as a template for the match.
 	 * @throws IOException
 	 */
-	String findPattern(Location file) throws IOException;
+	String findPattern(BrowsableLocation file) throws IOException;
 
-	/**
-	 * Identifies the group pattern from a given file within that group.
-	 *
-	 * @param file The file to use as a template for the match.
-	 */
-//	String findPattern(File file);
 
 	/**
 	 * Identifies the group pattern from a given file within that group.
@@ -77,7 +71,7 @@ public interface FilePatternService extends SCIFIOService {
 	 * @param dir The directory in which to search for matching files.
 	 * @throws IOException
 	 */
-	String findPattern(Location name, Location dir) throws IOException;
+	String findPattern(BrowsableLocation name, BrowsableLocation dir) throws IOException;
 
 	/**
 	 * Identifies the group pattern from a given file within that group.
@@ -86,8 +80,8 @@ public interface FilePatternService extends SCIFIOService {
 	 * @param dir The directory prefix to use for matching files.
 	 * @param nameList The names through which to search for matching files.
 	 */
-	String findPattern(Location name, Location dir,
-		Collection<Location> nameList);
+	String findPattern(BrowsableLocation name, BrowsableLocation dir,
+		Collection<BrowsableLocation> nameList);
 
 	/**
 	 * Identifies the group pattern from a given file within that group.
@@ -98,7 +92,7 @@ public interface FilePatternService extends SCIFIOService {
 	 * @param excludeAxes The list of axis types which should be excluded from the
 	 *          pattern.
 	 */
-	String findPattern(Location name, Location dir, Collection<Location> nameList,
+	String findPattern(BrowsableLocation name, BrowsableLocation dir, Collection<BrowsableLocation> nameList,
 		int[] excludeAxes);
 
 	/**
@@ -113,18 +107,18 @@ public interface FilePatternService extends SCIFIOService {
 	/**
 	 * Finds the list of names matching the provided base and generates all
 	 * patterns that match the list.
-	 * 
+	 *
 	 * @throws IOException
 	 */
-	String[] findImagePatterns(Location base) throws IOException;
+	String[] findImagePatterns(BrowsableLocation base) throws IOException;
 
 	/**
 	 * Generates a list of all the patterns that match the provided list of file
 	 * names.
-	 * 
+	 *
 	 * @throws IOException
 	 */
-	String[] findImagePatterns(Location base, Location dir,
-		Collection<Location> nameList) throws IOException;
+	String[] findImagePatterns(BrowsableLocation base, BrowsableLocation dir,
+		Collection<BrowsableLocation> nameList) throws IOException;
 
 }

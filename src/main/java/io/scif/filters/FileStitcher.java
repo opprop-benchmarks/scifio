@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BrowsableLocation;
 import org.scijava.io.location.DummyLocation;
 import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
@@ -169,7 +170,7 @@ public class FileStitcher extends AbstractReaderFilter {
 	 * @throws IOException
 	 */
 	public FilePattern findPattern(final Location id) throws IOException {
-		return new FilePattern(id, filePatternService.findPattern(id));
+			return new FilePattern(id, filePatternService.findPattern(asBrowsable(id)));
 	}
 
 	/**
@@ -188,7 +189,7 @@ public class FileStitcher extends AbstractReaderFilter {
 //				return filePatternService.findImagePatterns(id, null, map.keySet());
 //			}
 			// id is an unmapped file path; look to similar files on disk
-			return filePatternService.findImagePatterns(id);
+			return filePatternService.findImagePatterns(asBrowsable(id));
 		}
 		if (doNotChangePattern) {
 			return new String[] { id.getName() };
@@ -416,6 +417,13 @@ public class FileStitcher extends AbstractReaderFilter {
 		}
 
 		return new int[] { fileIndex, localIndex };
+	}
+
+	private BrowsableLocation asBrowsable(Location loc) {
+		if (loc instanceof BrowsableLocation) {
+			return (BrowsableLocation) loc;
+		}
+		throw new IllegalArgumentException("The provided location is not browsable!");
 	}
 
 	@Override
