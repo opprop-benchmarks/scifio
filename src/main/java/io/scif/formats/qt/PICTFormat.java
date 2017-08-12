@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.scijava.io.ByteArrayByteBank;
 import org.scijava.io.handle.DataHandle;
 import org.scijava.io.handle.DataHandleService;
 import org.scijava.io.location.BytesLocation;
@@ -715,30 +716,25 @@ public class PICTFormat extends AbstractFormat {
 				final byte[] b = new byte[(int) (getHandle().length() - getHandle()
 					.offset())];
 				getHandle().read(b);
-				DataHandle<Location> compressedImages = dataHandleService.create(
+				try (DataHandle<Location> compressedImages = dataHandleService.create(
 					new BytesLocation(b));
+						DataHandle<Location> decompressedImages = dataHandleService.create(
+							new BytesLocation(new ByteArrayByteBank(10000))))
+				{
+					for (final long jpegOffset : meta.getJpegOffsets()) {
+						compressedImages.seek(jpegOffset - meta.getJpegOffsets().get(0));
 
-				DataHandle<Location> decompressedImages = dataHandleService.create(
-					new BytesLocation(ByteBuffer.allocate(10000)));
+						final CodecOptions options = new CodecOptions();
+						options.interleaved = meta.get(0).getInterleavedAxisCount() > 0;
+						options.littleEndian = meta.get(0).isLittleEndian();
 
-				for (final long jpegOffset : meta.getJpegOffsets()) {
-					compressedImages.seek(jpegOffset - meta.getJpegOffsets().get(0));
+						final Codec codec = codecService.getCodec(JPEGCodec.class);
+						decompressedImages.write(codec.decompress(compressedImages,
+							options));
+					}
 
-					final CodecOptions options = new CodecOptions();
-					options.interleaved = meta.get(0).getInterleavedAxisCount() > 0;
-					options.littleEndian = meta.get(0).isLittleEndian();
-
-					final Codec codec = codecService.getCodec(JPEGCodec.class);
-					decompressedImages.write(codec.decompress(compressedImages, options));
-				}
-				compressedImages.close();
-
-				decompressedImages.seek(0);
-				try {
+					decompressedImages.seek(0);
 					readPlane(decompressedImages, imageIndex, planeMin, planeMax, plane);
-				}
-				finally {
-					decompressedImages.close();
 				}
 
 				return plane;

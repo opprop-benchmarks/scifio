@@ -38,6 +38,7 @@ import java.util.List;
 import org.scijava.Priority;
 import org.scijava.io.handle.DataHandle;
 import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BrowsableLocation;
 import org.scijava.io.location.BytesLocation;
 import org.scijava.io.location.Location;
 import org.scijava.log.LogService;
@@ -388,6 +389,15 @@ public class NativeQTFormat extends AbstractFormat {
 			// this handles the case where the data and resource forks have been
 			// separated
 			if (meta.isSpork()) {
+				BrowsableLocation browsableBaseLoc;
+				if (baseLocation instanceof BrowsableLocation) {
+					browsableBaseLoc = (BrowsableLocation) baseLocation;
+				}
+				else {
+					throw new IOException(
+						"Can not open sporked QT file from an not browsable location!");
+				}
+
 				// first we want to check if there is a resource fork present
 				// the resource fork will generally have the same name as the
 				// data fork, but will have either the prefix "._" or the suffix ".qtr"
@@ -399,9 +409,9 @@ public class NativeQTFormat extends AbstractFormat {
 				}
 				else base = id;
 
-				Location f = baseLocation.getSibling(base + ".qtr");
+				BrowsableLocation f = browsableBaseLoc.createSibling(base + ".qtr");
 				log().debug("Searching for research fork:");
-				if (f.exists()) {
+				if (dataHandleService.handleExists(f)) {
 					log().debug("\t Found: " + f);
 					if (getSource() != null) getSource().close();
 					updateSource(f);
@@ -412,16 +422,16 @@ public class NativeQTFormat extends AbstractFormat {
 				}
 				else {
 					log().debug("\tAbsent: " + f);
-					f = baseLocation.getSibling("._" + base);
-					if (f.exists()) {
+					f = browsableBaseLoc.createSibling("._" + base);
+					if (dataHandleService.handleExists(f)) {
 						log().debug("\t Found: " + f);
 						parseLocation(meta, offsets, f);
 					}
 					else {
 						log().debug("\tAbsent: " + f);
-						f = baseLocation.getSibling(File.separator + ".." + File.separator +
-							"namedfork" + File.separator + "rsrc");
-						if (f.exists()) {
+						f = browsableBaseLoc.createSibling(File.separator + ".." +
+							File.separator + "namedfork" + File.separator + "rsrc");
+						if (dataHandleService.handleExists(f)) {
 							log().debug("\t Found: " + f);
 							parseLocation(meta, offsets, f);
 						}
