@@ -33,6 +33,7 @@ package io.scif.filters;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.scijava.io.handle.DataHandleService;
 import org.scijava.io.location.DummyLocation;
 import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
@@ -65,6 +66,9 @@ public class FileStitcher extends AbstractReaderFilter {
 
 	@Parameter
 	private FilePatternService filePatternService;
+
+	@Parameter
+	private DataHandleService dataHandleService;
 
 	/**
 	 * Whether string ids given should be treated as file patterns rather than
@@ -217,7 +221,7 @@ public class FileStitcher extends AbstractReaderFilter {
 				patternIds = fp.isValid() && fp.getFiles().length > 1;
 			}
 			else {
-				patternIds = !source.exists();
+				patternIds = !dataHandleService.handleExists(source);
 //						&& locationService.getMappedId(source) .equals(source);
 			}
 
@@ -294,7 +298,7 @@ public class FileStitcher extends AbstractReaderFilter {
 				if (file instanceof DummyLocation || file.getName().toLowerCase()
 					.endsWith(".fake")) continue;
 
-				if (!file.exists()) {
+				if (!dataHandleService.handleExists(file)) {
 					throw new FormatException("File #" + i + " (" + file +
 						") does not exist.");
 				}
