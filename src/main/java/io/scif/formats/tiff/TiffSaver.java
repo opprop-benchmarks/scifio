@@ -597,7 +597,7 @@ public class TiffSaver extends AbstractContextual {
 		}
 		if (bigTiff) out.seek(out.offset());
 		writeIntValue(out, nextOffset);
-		out.write(extra.getByteBuffer(), (int) extraHandle.length());
+		out.write(extra.getByteBank(), 0, (int) extraHandle.length());
 	}
 
 	/**
@@ -894,7 +894,7 @@ public class TiffSaver extends AbstractContextual {
 				writeIntValue(out, newOffset);
 				if (extraHandle.length() > 0) {
 					out.seek(newOffset);
-					out.write(extraBuf.getByteBuffer(), newCount);
+					out.write(extraBuf.getByteBank(), 0, newCount);
 				}
 				return;
 			}
