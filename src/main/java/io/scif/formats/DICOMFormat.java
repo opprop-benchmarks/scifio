@@ -41,6 +41,7 @@ import java.util.Set;
 
 import org.scijava.io.handle.DataHandle;
 import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BrowsableLocation;
 import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -123,7 +124,7 @@ public class DICOMFormat extends AbstractFormat {
 		private int imagesPerFile = 0;
 		private double rescaleSlope = 1.0;
 		private double rescaleIntercept = 0.0;
-		private Map<Integer, List<Location>> fileList;
+		private Map<Integer, List<BrowsableLocation>> fileList;
 		private boolean inverted = false;
 
 		private String pixelSizeX, pixelSizeY;
@@ -133,7 +134,7 @@ public class DICOMFormat extends AbstractFormat {
 		private String originalDate, originalTime, originalInstance;
 		private int originalSeries;
 
-		private List<Location> companionFiles = new ArrayList<>();
+		private List<BrowsableLocation> companionFiles = new ArrayList<>();
 
 		// Getters and Setters
 
@@ -249,11 +250,13 @@ public class DICOMFormat extends AbstractFormat {
 			this.imagesPerFile = imagesPerFile;
 		}
 
-		public Map<Integer, List<Location>> getFileList() {
+		public Map<Integer, List<BrowsableLocation>> getFileList() {
 			return fileList;
 		}
 
-		public void setFileList(final Map<Integer, List<Location>> fileList) {
+		public void setFileList(
+			final Map<Integer, List<BrowsableLocation>> fileList)
+		{
 			this.fileList = fileList;
 		}
 
@@ -313,11 +316,13 @@ public class DICOMFormat extends AbstractFormat {
 			this.originalSeries = originalSeries;
 		}
 
-		public List<Location> getCompanionFiles() {
+		public List<BrowsableLocation> getCompanionFiles() {
 			return companionFiles;
 		}
 
-		public void setCompanionFiles(final List<Location> companionFiles) {
+		public void setCompanionFiles(
+			final List<BrowsableLocation> companionFiles)
+		{
 			this.companionFiles = companionFiles;
 		}
 
@@ -453,6 +458,9 @@ public class DICOMFormat extends AbstractFormat {
 		public boolean isFormat(final Location location,
 			final SCIFIOConfig config)
 		{
+			// NB: we need to be able look at the companion files.
+			if (!(location instanceof BrowsableLocation)) return false;
+
 			// extension is sufficient as long as it is DIC, DCM, DICOM, J2KI, or J2KR
 			if (FormatTools.checkSuffix(location.getName(), DICOM_SUFFIXES))
 				return true;
@@ -465,6 +473,9 @@ public class DICOMFormat extends AbstractFormat {
 		{
 			final int blockLen = 2048;
 			if (!FormatTools.validStream(handle, blockLen, true)) return false;
+
+			// NB: we need to be able look at the companion files.
+			if (!(handle.get() instanceof BrowsableLocation)) return false;
 
 			handle.seek(128);
 			if (handle.readString(4).equals(DICOM_MAGIC_STRING)) return true;
@@ -536,7 +547,12 @@ public class DICOMFormat extends AbstractFormat {
 			final ImageMetadata iMeta = meta.get(0);
 
 			// look for companion files
-			final List<Location> companionFiles = new ArrayList<>();
+
+			if (!(stream.get() instanceof BrowsableLocation)) {
+				throw new FormatException("DICOM Format requires a BrowsableLocation");
+			}
+
+			final List<BrowsableLocation> companionFiles = new ArrayList<>();
 			attachCompanionFiles(companionFiles);
 			meta.setCompanionFiles(companionFiles);
 
@@ -831,9 +847,9 @@ public class DICOMFormat extends AbstractFormat {
 			final Integer[] keys = getMetadata().getFileList().keySet().toArray(
 				new Integer[0]);
 			Arrays.sort(keys);
-			final List<Location> files = getMetadata().getFileList().get(
+			final List<BrowsableLocation> files = getMetadata().getFileList().get(
 				keys[imageIndex]);
-			for (final Location f : getMetadata().getCompanionFiles()) {
+			for (final BrowsableLocation f : getMetadata().getCompanionFiles()) {
 				files.add(f);
 			}
 			return files == null ? null : files.toArray(new Location[files.size()]);
@@ -851,32 +867,32 @@ public class DICOMFormat extends AbstractFormat {
 					.getOriginalDate() != null && getMetadata()
 						.getOriginalTime() != null && config.groupableIsGroupFiles())
 			{
-				final Map<Integer, List<Location>> fileList = new HashMap<>();
+				final Map<Integer, List<BrowsableLocation>> fileList = new HashMap<>();
 				final Integer s = getMetadata().getOriginalSeries();
-				fileList.put(s, new ArrayList<Location>());
+				fileList.put(s, new ArrayList<BrowsableLocation>());
 
 				final int instanceNumber = Integer.parseInt(getMetadata()
 					.getOriginalInstance()) - 1;
-				if (instanceNumber == 0) fileList.get(s).add(getSource().get());
+				if (instanceNumber == 0) fileList.get(s).add(getBrowsableSource());
 				else {
 					while (instanceNumber > fileList.get(s).size()) {
 						fileList.get(s).add(null);
 					}
-					fileList.get(s).add(getSource().get());
+					fileList.get(s).add(getBrowsableSource());
 				}
 
 				// look for matching files in the current directory
-				final Location currentFile = getSource().get();
-				Location directory = currentFile.getParent();
+				final BrowsableLocation currentFile = getBrowsableSource();
+				BrowsableLocation directory = currentFile.getParent();
 				scanDirectory(fileList, directory, false);
 
 				// move up a directory and look for other directories that
 				// could contain matching files
 
 				directory = directory.getParent();
-				final Set<Location> subdirs = directory.getChildren();
+				final Set<BrowsableLocation> subdirs = directory.getChildren();
 				if (subdirs != null) {
-					for (final Location subdir : subdirs) {
+					for (final BrowsableLocation subdir : subdirs) {
 						if (!subdir.isDirectory()) continue;
 						scanDirectory(fileList, subdir, true);
 					}
@@ -896,12 +912,19 @@ public class DICOMFormat extends AbstractFormat {
 				getMetadata().setFileList(fileList);
 			}
 			else if (getMetadata().getFileList() == null) {
-				final Map<Integer, List<Location>> fileList = new HashMap<>();
-				final List<Location> locationList = new ArrayList<>();
-				locationList.add(getSource().get());
+				final Map<Integer, List<BrowsableLocation>> fileList = new HashMap<>();
+				final List<BrowsableLocation> locationList = new ArrayList<>();
+				locationList.add(getBrowsableSource());
 				fileList.put(0, locationList);
 				getMetadata().setFileList(fileList);
 			}
+		}
+
+		private BrowsableLocation getBrowsableSource() throws FormatException {
+			if (getSource().get() instanceof BrowsableLocation) {
+				return (BrowsableLocation) getSource().get();
+			}
+			throw new FormatException();
 		}
 
 		/**
@@ -911,18 +934,23 @@ public class DICOMFormat extends AbstractFormat {
 		 * extra files, but do locate and attach them to the DICOM file(s).
 		 *
 		 * @throws IOException
+		 * @throws FormatException
 		 */
-		private void attachCompanionFiles(final List<Location> companionFiles)
-			throws IOException
+		private void attachCompanionFiles(
+			final List<BrowsableLocation> companionFiles) throws IOException,
+			FormatException
 		{
-			final Location parent = getSource().get().getParent();
-			final Location grandparent = parent.getParent();
+			// TODO check if valid
+			final BrowsableLocation parent = getBrowsableSource().getParent();
+			final BrowsableLocation grandparent = parent.getParent();
 
-			if (parent.getSibling(parent.getName() + ".mif").exists()) {
+			BrowsableLocation mifSibling = parent.createSibling(parent.getName() +
+				".mif");
+			if (dataHandleService.handleExists(mifSibling)) {
 
 				// FIXME: This will add empty folders, how could this be fixed?
-				final Set<Location> list = grandparent.getChildren();
-				for (final Location f : list) {
+				final Set<BrowsableLocation> list = grandparent.getChildren();
+				for (final BrowsableLocation f : list) {
 					if (f.getChildren().isEmpty()) {
 						companionFiles.add(f);
 					}
@@ -933,20 +961,21 @@ public class DICOMFormat extends AbstractFormat {
 		/**
 		 * Scan the given directory for files that belong to this dataset.
 		 */
-		private void scanDirectory(final Map<Integer, List<Location>> fileList,
-			final Location dir, final boolean checkSeries) throws FormatException,
-			IOException
+		private void scanDirectory(
+			final Map<Integer, List<BrowsableLocation>> fileList,
+			final BrowsableLocation dir, final boolean checkSeries)
+			throws FormatException, IOException
 		{
 			final Location currentFile = getSource().get();
-			final FilePattern pattern = new FilePattern(filePatternService, currentFile,
-				dir);
+			final FilePattern pattern = new FilePattern(filePatternService,
+				currentFile, dir);
 			Location[] patternFiles = pattern.getFiles();
 			if (patternFiles == null) patternFiles = new Location[0];
 			Arrays.sort(patternFiles);
-			final Set<Location> files = dir.getChildren();
+			final Set<BrowsableLocation> files = dir.getChildren();
 			if (files == null) return;
 			// FIXME should we sort the files too?
-			for (final Location f : files) {
+			for (final BrowsableLocation f : files) {
 				log().debug("Checking file " + f);
 
 				if (!f.equals(getSource().get()) && getFormat().createChecker()
@@ -962,9 +991,10 @@ public class DICOMFormat extends AbstractFormat {
 		 * Determine if the given file belongs in the same dataset as this file.
 		 */
 
-		private void addFileToList(final Map<Integer, List<Location>> fileList,
-			final Location file, final boolean checkSeries) throws FormatException,
-			IOException
+		private void addFileToList(
+			final Map<Integer, List<BrowsableLocation>> fileList,
+			final BrowsableLocation file, final boolean checkSeries)
+			throws FormatException, IOException
 		{
 			final DataHandle<Location> stream = dataHandleService.create(file);
 			if (!getFormat().createChecker().isFormat(stream)) {
@@ -1028,7 +1058,7 @@ public class DICOMFormat extends AbstractFormat {
 				int position = Integer.parseInt(instance) - 1;
 				if (position < 0) position = 0;
 				if (fileList.get(fileSeries) == null) {
-					fileList.put(fileSeries, new ArrayList<Location>());
+					fileList.put(fileSeries, new ArrayList<BrowsableLocation>());
 				}
 				if (position < fileList.get(fileSeries).size()) {
 					while (position < fileList.get(fileSeries).size() && fileList.get(
@@ -1297,7 +1327,7 @@ public class DICOMFormat extends AbstractFormat {
 			final int x = (int) planeMin[xAxis], y = (int) planeMin[yAxis], w =
 				(int) planeMax[xAxis], h = (int) planeMax[yAxis];
 
-			final Map<Integer, List<Location>> fileList = meta.getFileList();
+			final Map<Integer, List<BrowsableLocation>> fileList = meta.getFileList();
 
 			final Integer[] keys = fileList.keySet().toArray(new Integer[0]);
 			Arrays.sort(keys);
@@ -1488,8 +1518,7 @@ public class DICOMFormat extends AbstractFormat {
 		}
 
 		private static DICOMTag getNextTag(final DataHandle<Location> handle,
-			final boolean bigEndianTransferSyntax) throws FormatException,
-			IOException
+			final boolean bigEndianTransferSyntax) throws FormatException, IOException
 		{
 			return getNextTag(handle, bigEndianTransferSyntax, false);
 		}
