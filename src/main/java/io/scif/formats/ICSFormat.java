@@ -44,6 +44,7 @@ import org.scijava.Priority;
 import org.scijava.io.handle.DataHandle;
 import org.scijava.io.handle.DataHandleInputStream;
 import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BrowsableLocation;
 import org.scijava.io.location.BytesLocation;
 import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
@@ -1170,12 +1171,13 @@ public class ICSFormat extends AbstractFormat {
 
 		// Converts a generic array to a space-delimited String
 		private <T> String merge(final T... values) {
-			String s = "";
+			StringBuilder b = new StringBuilder();
 
-			for (final T v : values)
-				s += (v.toString() + " ");
+			for (final T v : values) {
+				b.append(v.toString() + " ");
+			}
 
-			return s;
+			return b.toString();
 		}
 	}
 
@@ -1321,10 +1323,10 @@ public class ICSFormat extends AbstractFormat {
 
 			String icsId;
 			String idsId;
-			Location icsLocation;
-			Location idsLocation;
+			BrowsableLocation icsLocation;
+			BrowsableLocation idsLocation;
 			icsId = idsId = stream.get().getName();
-			if ("".equals(icsId) || !stream.get().isBrowsable()) {
+			if ("".equals(icsId) || !(stream.get() instanceof BrowsableLocation)) {
 				// handle has no filename, we are probably reading from a byte array.
 				// OR we can't browse for companion file as the location does not
 				// support it
@@ -1338,8 +1340,8 @@ public class ICSFormat extends AbstractFormat {
 				final char[] c = idsId.toCharArray();
 				c[c.length - 2]++;
 				idsId = new String(c);
-				icsLocation = stream.get();
-				idsLocation = icsLocation.getSibling(idsId);
+				icsLocation = (BrowsableLocation) stream.get();
+				idsLocation = icsLocation.createSibling(idsId);
 			}
 			else if ("ids".equals(ext)) {
 				// convert D to C regardless of case
@@ -1347,8 +1349,8 @@ public class ICSFormat extends AbstractFormat {
 				c[c.length - 2]--;
 				icsId = new String(c);
 
-				idsLocation = stream.get();
-				icsLocation = idsLocation.getSibling(icsId);
+				idsLocation = (BrowsableLocation) stream.get();
+				icsLocation = idsLocation.createSibling(icsId);
 			}
 			else {
 				throw new FormatException("Companion file not found");
@@ -2011,7 +2013,7 @@ public class ICSFormat extends AbstractFormat {
 	 * SCIFIO file format Translator for ICS Metadata objects to the SCIFIO Core
 	 * metadata type.
 	 */
-	@Plugin(type = Translator.class, priority = Priority.LOW_PRIORITY)
+	@Plugin(type = Translator.class, priority = Priority.LOW)
 	public static class ICSTranslator extends
 		AbstractTranslator<io.scif.Metadata, Metadata>
 	{
