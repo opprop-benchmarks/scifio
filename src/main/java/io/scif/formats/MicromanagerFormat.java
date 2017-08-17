@@ -43,6 +43,7 @@ import java.util.StringTokenizer;
 import org.scijava.Priority;
 import org.scijava.io.handle.DataHandle;
 import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BrowsableLocation;
 import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -165,12 +166,13 @@ public class MicromanagerFormat extends AbstractFormat {
 						return checkMetadataHandle(handle);
 					}
 				}
-				// Can't look for neighbors
-				if (!location.isBrowsable()) return false;
+
+				// Ensure we can look for neighbors
+				if (!(location instanceof BrowsableLocation)) return false;
 
 				// Search for metadata file in the vicinity + check image file
 				try (DataHandle<Location> handle = dataHandleService.create(location)) {
-					return checkImageFile(location, config, handle);
+					return checkImageFile((BrowsableLocation) location, config, handle);
 				}
 			}
 			catch (final IOException e) {
@@ -179,11 +181,12 @@ public class MicromanagerFormat extends AbstractFormat {
 			}
 		}
 
-		private boolean checkImageFile(final Location location,
+		private boolean checkImageFile(final BrowsableLocation location,
 			final SCIFIOConfig config, final DataHandle<Location> handle)
 		{
 			try {
-				final Location metaFile = location.getSibling(METADATA);
+				final Location metaFile = location.createSibling(METADATA);
+				// FIXME Why is this call duplicated?
 				boolean validTIFF = isFormat(handle);
 				final io.scif.Checker checker;
 				checker = formatService.getFormatFromClass(MinimalTIFFFormat.class)
@@ -207,10 +210,8 @@ public class MicromanagerFormat extends AbstractFormat {
 				checkMetadataHandle(handle);
 			}
 
-			// Can't look for neighbors
-			if (!location.isBrowsable()) return false;
-
-			return false;
+			// ensure we can look for neighbors
+			return handle.get() instanceof BrowsableLocation;
 		}
 
 		private boolean validMetadataFile(final Location location) {
@@ -280,15 +281,9 @@ public class MicromanagerFormat extends AbstractFormat {
 
 			// find metadata.txt
 
-			final Location file = stream.get();
-			if (!file.isBrowsable()) {
-				throw new FormatException(
-					"Micromanger files can only be read from browsable Locations," +
-						" try downloading the file to your computer and try again!");
-				// FIXME: // Needs a better message
-			}
-			Location parentFile = file.getParent();
-			final Location metadataFile = file.getSibling(METADATA);
+			final BrowsableLocation file = asBrowsableLocation(stream);
+			BrowsableLocation parentFile = file.getParent();
+			final BrowsableLocation metadataFile = file.createSibling(METADATA);
 
 			if (metadataFile == null || parentFile == null) {
 				throw new IOException(
@@ -299,14 +294,13 @@ public class MicromanagerFormat extends AbstractFormat {
 
 			if (parentFile.getName().contains("Pos_")) {
 				parentFile = parentFile.getParent();
-				final Set<Location> dirs = parentFile.getChildren();
+				final Set<BrowsableLocation> dirs = parentFile.getChildren();
 
 				// Arrays.sort(dirs); // FIXME is this needed?
-				for (final Location dir : dirs) {
+				for (final BrowsableLocation dir : dirs) {
 					if (dir.getName().contains("Pos_")) {
 						final Position pos = new Position();
-						final Location posDir = dir;
-						pos.metadataFile = posDir.getChild(METADATA);
+						pos.metadataFile = dir.createChild(METADATA);
 						positions.add(pos);
 					}
 				}
@@ -385,7 +379,7 @@ public class MicromanagerFormat extends AbstractFormat {
 			try {
 				final Position p = meta.getPositions().get(posIndex);
 				final ImageMetadata ms = meta.get(posIndex);
-				final Location parent = p.metadataFile.getParent();
+				final BrowsableLocation parent = p.metadataFile.getParent();
 
 				log().info("Finding image file names");
 
@@ -401,7 +395,7 @@ public class MicromanagerFormat extends AbstractFormat {
 					final List<String> uniqueC = new ArrayList<>();
 					final List<String> uniqueT = new ArrayList<>();
 
-					final Set<Location> fSet = parent.getChildren();
+					final Set<BrowsableLocation> fSet = parent.getChildren();
 					final Location[] files = fSet.toArray(new Location[fSet.size()]);
 					Arrays.sort(files);
 					for (final Location file : files) {
@@ -438,7 +432,7 @@ public class MicromanagerFormat extends AbstractFormat {
 		{
 			final Position p = meta.getPositions().get(posIndex);
 			final ImageMetadata ms = meta.get(posIndex);
-			final Location metadataFile = p.metadataFile;
+			final BrowsableLocation metadataFile = p.metadataFile;
 
 			// now parse the rest of the metadata
 
@@ -528,7 +522,7 @@ public class MicromanagerFormat extends AbstractFormat {
 						p.comment = value;
 					}
 					else if (key.equals("FileName")) {
-						final Location file = metadataFile.getSibling(value);
+						final Location file = metadataFile.createSibling(value);
 						p.locationMap.put(new Index(slice), file);
 						if (p.baseTiff == null) {
 							p.baseTiff = file;
@@ -646,7 +640,7 @@ public class MicromanagerFormat extends AbstractFormat {
 							p.voltage.add(new Double(value));
 						}
 						else if (key.equals("FileName")) {
-							final Location file = metadataFile.getSibling(value);
+							final Location file = metadataFile.createSibling(value);
 							p.locationMap.put(new Index(slice), file);
 							if (p.baseTiff == null) {
 								p.baseTiff = file;
@@ -663,7 +657,7 @@ public class MicromanagerFormat extends AbstractFormat {
 
 			// look for the optional companion XML file
 
-			p.xmlFile = p.metadataFile.getSibling(XML);
+			p.xmlFile = p.metadataFile.createSibling(XML);
 			if (p.xmlFile != null) {
 				parseXMLFile(meta, posIndex);
 			}
@@ -711,7 +705,7 @@ public class MicromanagerFormat extends AbstractFormat {
 						filename.append(z);
 						filename.append(".tif");
 
-						p.tiffs.add(p.metadataFile.getSibling(filename.toString()));
+						p.tiffs.add(p.metadataFile.createSibling(filename.toString()));
 						filename.delete(0, filename.length());
 					}
 				}
@@ -883,9 +877,9 @@ public class MicromanagerFormat extends AbstractFormat {
 
 		public Map<Index, Location> locationMap = new HashMap<>();
 
-		public Location metadataFile;
+		public BrowsableLocation metadataFile;
 
-		public Location xmlFile;
+		public BrowsableLocation xmlFile;
 
 		public String[] channels;
 
