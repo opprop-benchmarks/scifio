@@ -873,16 +873,16 @@ public class DICOMFormat extends AbstractFormat {
 
 				final int instanceNumber = Integer.parseInt(getMetadata()
 					.getOriginalInstance()) - 1;
-				if (instanceNumber == 0) fileList.get(s).add(getBrowsableSource());
+				if (instanceNumber == 0) fileList.get(s).add(asBrowsableLocation(getSource()));
 				else {
 					while (instanceNumber > fileList.get(s).size()) {
 						fileList.get(s).add(null);
 					}
-					fileList.get(s).add(getBrowsableSource());
+					fileList.get(s).add(asBrowsableLocation(getSource()));
 				}
 
 				// look for matching files in the current directory
-				final BrowsableLocation currentFile = getBrowsableSource();
+				final BrowsableLocation currentFile = asBrowsableLocation(getSource());
 				BrowsableLocation directory = currentFile.getParent();
 				scanDirectory(fileList, directory, false);
 
@@ -914,17 +914,10 @@ public class DICOMFormat extends AbstractFormat {
 			else if (getMetadata().getFileList() == null) {
 				final Map<Integer, List<BrowsableLocation>> fileList = new HashMap<>();
 				final List<BrowsableLocation> locationList = new ArrayList<>();
-				locationList.add(getBrowsableSource());
+				locationList.add(asBrowsableLocation(getSource()));
 				fileList.put(0, locationList);
 				getMetadata().setFileList(fileList);
 			}
-		}
-
-		private BrowsableLocation getBrowsableSource() throws FormatException {
-			if (getSource().get() instanceof BrowsableLocation) {
-				return (BrowsableLocation) getSource().get();
-			}
-			throw new FormatException();
 		}
 
 		/**
@@ -941,7 +934,7 @@ public class DICOMFormat extends AbstractFormat {
 			FormatException
 		{
 			// TODO check if valid
-			final BrowsableLocation parent = getBrowsableSource().getParent();
+			final BrowsableLocation parent = asBrowsableLocation(getSource()).getParent();
 			final BrowsableLocation grandparent = parent.getParent();
 
 			BrowsableLocation mifSibling = parent.createSibling(parent.getName() +
