@@ -7,9 +7,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.nio.ByteBuffer;
-import org.scijava.io.handle.DataHandle.ByteOrder;
-
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -25,6 +22,7 @@ import io.scif.ImageMetadata;
 import io.scif.Metadata;
 import io.scif.Reader;
 import io.scif.config.SCIFIOConfig;
+import io.scif.util.FormatTestHelpers;
 import io.scif.util.FormatTools;
 
 /**
@@ -113,16 +111,15 @@ public class KontronFormatTest {
 		final KontronFormat.Metadata kontronMeta = new KontronFormat.Metadata();
 
 		// Create a mock input stream with a Kontron header
-		final ByteBuffer buffer = ByteBuffer.allocate(HEADER_BYTES).order(
-			ByteOrder.LITTLE_ENDIAN);
-		// Mock a Kontron header
-		buffer.put(KontronFormat.KONTRON_ID);
-		buffer.putShort((short) width);
-		buffer.putShort((short) height);
-		buffer.position(HEADER_BYTES);
+		final DataHandle<Location> stream = FormatTestHelpers
+			.createLittleEndianHandle(HEADER_BYTES, dataHandleService);
 
-		final DataHandle<Location> stream = dataHandleService.create(
-			new BytesLocation(buffer));
+		// Mock a Kontron header
+		stream.write(KontronFormat.KONTRON_ID);
+		stream.writeShort((short) width);
+		stream.writeShort((short) height);
+//		stream.seek(HEADER_BYTES);
+
 		reader.setSource(stream);
 
 		// EXERCISE
@@ -143,14 +140,14 @@ public class KontronFormatTest {
 		final long[] planeMax = { width, height };
 		final ByteArrayPlane plane = new ByteArrayPlane(context);
 		plane.setData(new byte[planeBytes]);
-		final ByteBuffer buffer = ByteBuffer.allocate(HEADER_BYTES + planeBytes);
-		buffer.order(ByteOrder.LITTLE_ENDIAN);
-		buffer.position(KONTRON_ID.length);
-		buffer.putShort(width).putShort(height);
-		final DataHandle<Location> stream = dataHandleService.create(
-			new BytesLocation(buffer));
+
+		DataHandle<Location> handle = FormatTestHelpers.createLittleEndianHandle(
+			HEADER_BYTES + planeBytes, dataHandleService);
+		handle.seek(KONTRON_ID.length);
+		handle.writeShort(width);
+		handle.writeShort(height);
 		final Reader reader = format.createReader();
-		reader.setSource(stream);
+		reader.setSource(handle);
 
 		// EXECUTE
 		reader.openPlane(0, 0, plane, planeMin, planeMax, new SCIFIOConfig());
@@ -158,6 +155,7 @@ public class KontronFormatTest {
 		// VERIFY
 		assertEquals(
 			"Position of stream incorrect: should point to the end of the file",
-			stream.length(), stream.offset());
+			handle.length(), handle.offset());
 	}
+
 }
