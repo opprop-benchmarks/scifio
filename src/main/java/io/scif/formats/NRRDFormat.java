@@ -35,6 +35,7 @@ import java.io.IOException;
 
 import org.scijava.io.handle.DataHandle;
 import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BrowsableLocation;
 import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -185,6 +186,9 @@ public class NRRDFormat extends AbstractFormat {
 
 		public static final String NRRD_MAGIC_STRING = "NRRD";
 
+		@Parameter
+		private DataHandleService dataHandleService;
+
 		// -- Checker API Methods --
 
 		@Override
@@ -192,20 +196,23 @@ public class NRRDFormat extends AbstractFormat {
 			if (super.isFormat(loc, config)) return true;
 			if (!config.checkerIsOpen()) return false;
 
+			if (!(loc instanceof BrowsableLocation)) return false;
+			final BrowsableLocation bLoc = (BrowsableLocation) loc;
 			try {
 				// look for a matching .nhdr file
 				String name = loc.getName();
-				Location header = loc.getSibling(name + ".nhdr");
-				if (header.exists()) {
+				Location header = bLoc.createSibling(name + ".nhdr");
+				if (dataHandleService.handleExists(header)) {
 					return true;
 				}
 
+				// strip current extension and try appending '.nhdr'
 				if (name.contains(".")) {
 					name = name.substring(0, name.lastIndexOf('.'));
 				}
 
-				header = loc.getSibling(name + ".nhdr");
-				return header.exists();
+				header = bLoc.createSibling(name + ".nhdr");
+				return dataHandleService.handleExists(header);
 			}
 			catch (final IOException e) {
 				return false;
@@ -252,7 +259,8 @@ public class NRRDFormat extends AbstractFormat {
 		public Metadata parse(final DataHandle<Location> stream,
 			final Metadata meta) throws IOException, FormatException
 		{
-			String id = stream.get().getName();
+			final BrowsableLocation loc = asBrowsableLocation(stream);
+			String id = loc.getName();
 			boolean changedStream = false;
 			Location newLocation = null;
 
@@ -263,12 +271,12 @@ public class NRRDFormat extends AbstractFormat {
 				changedStream = true;
 				id += ".nhdr";
 
-				if (!stream.get().getSibling(id).exists()) {
+				if (!dataHandleService.handleExists(loc.createSibling(id))) {
 					id = id.substring(0, id.lastIndexOf('.'));
 					id = id.substring(0, id.lastIndexOf('.'));
 					id += ".nhdr";
 				}
-				newLocation = stream.get().getSibling(id);
+				newLocation = loc.createSibling(id);
 			}
 
 			if (changedStream) {
@@ -350,7 +358,7 @@ public class NRRDFormat extends AbstractFormat {
 						}
 					}
 					else if (key.equals("data file") || key.equals("datafile")) {
-						meta.setDataFile(stream.get().getSibling(v));
+						meta.setDataFile(asBrowsableLocation(stream).createSibling(v));
 					}
 					else if (key.equals("encoding")) meta.setEncoding(v);
 					else if (key.equals("endian")) {
@@ -374,12 +382,12 @@ public class NRRDFormat extends AbstractFormat {
 
 			if (meta.getDataFile() == null) meta.setOffset(stream.offset());
 			else {
-				final Location f = getSource().get();
+				final BrowsableLocation f = asBrowsableLocation(getSource());
 				final Location parent = f.getParent();
-				if (f.exists() && parent != null) {
+				if (dataHandleService.handleExists(f) && parent != null) {
 					String dataFile = meta.getDataFile().getName();
 					dataFile = dataFile.substring(dataFile.indexOf(File.separator) + 1);
-					final Location dataLocation = f.getSibling(dataFile);
+					final Location dataLocation = f.createSibling(dataFile);
 					// TODO I think is was missing here:
 					meta.setDataFile(dataLocation);
 				}
