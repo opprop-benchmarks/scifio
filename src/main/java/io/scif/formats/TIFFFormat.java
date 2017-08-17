@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 import org.scijava.io.handle.DataHandle;
 import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BrowsableLocation;
 import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -456,12 +457,13 @@ public class TIFFFormat extends AbstractFormat {
 
 			// check for another file with the same name
 			if (config.groupableIsGroupFiles()) {
+				// FIXME check if this logic is still consistent
 //				final Location currentFile = new Location(getContext(), getSource()
 //					.getFileName()).getAbsoluteFile();
-				final Location currentFile = getSource().get();
+				final BrowsableLocation currentFile = asBrowsableLocation(getSource());
 				final String currentName = currentFile.getName();
-				final Location directory = currentFile.getParent();
-				final Set<Location> files = directory.getChildren();
+				final BrowsableLocation directory = currentFile.getParent();
+				final Set<BrowsableLocation> files = directory.getChildren();
 				if (!files.isEmpty()) {
 					for (final Location file : files) {
 						String name = file.getName();
@@ -1587,8 +1589,7 @@ public class TIFFFormat extends AbstractFormat {
 		 */
 		private long prepareToWritePlane(final int imageIndex,
 			final long planeIndex, final Plane plane, final IFD ifd, final int x,
-			final int y, final int w, final int h) throws IOException,
-			FormatException
+			final int y, final int w, final int h) throws IOException, FormatException
 		{
 			final byte[] buf = plane.getBytes();
 			final Metadata meta = getMetadata();
