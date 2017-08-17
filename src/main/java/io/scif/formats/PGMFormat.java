@@ -31,11 +31,11 @@
 package io.scif.formats;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import org.scijava.io.handle.DataHandle.ByteOrder;
 import java.util.StringTokenizer;
 
+import org.scijava.io.ByteArrayByteBank;
 import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandle.ByteOrder;
 import org.scijava.io.handle.DataHandleService;
 import org.scijava.io.location.BytesLocation;
 import org.scijava.io.location.Location;
@@ -263,7 +263,7 @@ public class PGMFormat extends AbstractFormat {
 			}
 			else {
 				try (DataHandle<Location> bytes = dataHandleService.create(
-					new BytesLocation(ByteBuffer.allocate(10000))))
+					new BytesLocation(new ByteArrayByteBank(10_000))))
 				// FIXME: what is a good value for this?
 				{
 
