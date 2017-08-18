@@ -169,8 +169,11 @@ public class FileStitcher extends AbstractReaderFilter {
 	 *
 	 * @throws IOException
 	 */
-	public FilePattern findPattern(final Location id) throws IOException {
-			return new FilePattern(id, filePatternService.findPattern(asBrowsable(id)));
+	public FilePattern findPattern(final BrowsableLocation id)
+		throws IOException
+	{
+		return new FilePattern(id, filePatternService.findPattern(asBrowsable(id)),
+			dataHandleService);
 	}
 
 	/**
@@ -179,7 +182,7 @@ public class FileStitcher extends AbstractReaderFilter {
 	 *
 	 * @throws IOException
 	 */
-	public String[] findPatterns(final Location id) throws IOException {
+	public String[] findPatterns(final BrowsableLocation id) throws IOException {
 		if (!patternIds) {
 			// find the containing patterns
 //			final HashMap<String, Object> map = locationService.getIdMap();
@@ -195,11 +198,12 @@ public class FileStitcher extends AbstractReaderFilter {
 			return new String[] { id.getName() };
 		}
 		patternIds = false;
-		String[] patterns = findPatterns(new FilePattern(filePatternService, id)
-			.getFiles()[0]);
+		String[] patterns = findPatterns(asBrowsable(new FilePattern(
+			filePatternService, id, dataHandleService).getFiles()[0]));
 		if (patterns.length == 0) patterns = new String[] { id.getName() };
 		else {
-			final FilePattern test = new FilePattern(id, patterns[0]);
+			final FilePattern test = new FilePattern(id, patterns[0],
+				dataHandleService);
 			if (test.getFiles().length == 0) patterns = new String[] { id.getName() };
 		}
 		patternIds = true;
@@ -212,17 +216,19 @@ public class FileStitcher extends AbstractReaderFilter {
 	protected void setSourceHelper(final Location source,
 		final SCIFIOConfig config)
 	{
+		final BrowsableLocation browsableSource = asBrowsable(source);
 		try {
 			cleanUp();
-			log().debug("initFile: " + source);
+			log().debug("initFile: " + browsableSource);
 
 			// Determine if we we have a multi-element file pattern
-			FilePattern fp = new FilePattern(filePatternService, source);
+			FilePattern fp = new FilePattern(filePatternService, browsableSource,
+				dataHandleService);
 			if (!patternIds) {
 				patternIds = fp.isValid() && fp.getFiles().length > 1;
 			}
 			else {
-				patternIds = !dataHandleService.handleExists(source);
+				patternIds = !dataHandleService.handleExists(browsableSource);
 //						&& locationService.getMappedId(source) .equals(source);
 			}
 
@@ -234,7 +240,7 @@ public class FileStitcher extends AbstractReaderFilter {
 			}
 			else {
 				mustGroup = getParent().fileGroupOption(
-					source) == FormatTools.MUST_GROUP;
+					browsableSource) == FormatTools.MUST_GROUP;
 			}
 
 			// If the wrapped reader will handle the stitching, we can set its
@@ -246,7 +252,7 @@ public class FileStitcher extends AbstractReaderFilter {
 				if (patternIds && fp.isValid()) {
 					getParent().setSource(fp.getFiles()[0], config);
 				}
-				else getParent().setSource(source, config);
+				else getParent().setSource(browsableSource, config);
 				return;
 			}
 
@@ -256,11 +262,12 @@ public class FileStitcher extends AbstractReaderFilter {
 			}
 
 			// Get the individual file ids
-			String[] patterns = findPatterns(source);
-			if (patterns.length == 0) patterns = new String[] { source.getName() };
+			String[] patterns = findPatterns(browsableSource);
+			if (patterns.length == 0) patterns = new String[] { browsableSource
+				.getName() };
 			readers = new Reader[patterns.length];
 
-			fp = new FilePattern(source, patterns[0]);
+			fp = new FilePattern(browsableSource, patterns[0], dataHandleService);
 
 			getParent().close();
 
@@ -282,7 +289,8 @@ public class FileStitcher extends AbstractReaderFilter {
 			// verify that file pattern is valid and matches existing files
 			if (!fp.isValid()) {
 				throw new FormatException("Invalid " + (patternIds ? "file pattern"
-					: "filename") + " (" + source + "): " + fp.getErrorMessage() + msg);
+					: "filename") + " (" + browsableSource.getName() + "): " + fp
+						.getErrorMessage() + msg);
 			}
 			final Location[] files = fp.getFiles();
 
@@ -419,11 +427,12 @@ public class FileStitcher extends AbstractReaderFilter {
 		return new int[] { fileIndex, localIndex };
 	}
 
-	private BrowsableLocation asBrowsable(Location loc) {
+	private BrowsableLocation asBrowsable(final Location loc) {
 		if (loc instanceof BrowsableLocation) {
 			return (BrowsableLocation) loc;
 		}
-		throw new IllegalArgumentException("The provided location is not browsable!");
+		throw new IllegalArgumentException(
+			"The provided location is not browsable!");
 	}
 
 	@Override

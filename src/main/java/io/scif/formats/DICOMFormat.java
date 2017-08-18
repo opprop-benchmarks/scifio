@@ -873,7 +873,8 @@ public class DICOMFormat extends AbstractFormat {
 
 				final int instanceNumber = Integer.parseInt(getMetadata()
 					.getOriginalInstance()) - 1;
-				if (instanceNumber == 0) fileList.get(s).add(asBrowsableLocation(getSource()));
+				if (instanceNumber == 0) fileList.get(s).add(asBrowsableLocation(
+					getSource()));
 				else {
 					while (instanceNumber > fileList.get(s).size()) {
 						fileList.get(s).add(null);
@@ -934,7 +935,8 @@ public class DICOMFormat extends AbstractFormat {
 			FormatException
 		{
 			// TODO check if valid
-			final BrowsableLocation parent = asBrowsableLocation(getSource()).getParent();
+			final BrowsableLocation parent = asBrowsableLocation(getSource())
+				.getParent();
 			final BrowsableLocation grandparent = parent.getParent();
 
 			BrowsableLocation mifSibling = parent.createSibling(parent.getName() +
@@ -959,9 +961,9 @@ public class DICOMFormat extends AbstractFormat {
 			final BrowsableLocation dir, final boolean checkSeries)
 			throws FormatException, IOException
 		{
-			final Location currentFile = getSource().get();
+			final BrowsableLocation currentFile = asBrowsableLocation(getSource());
 			final FilePattern pattern = new FilePattern(filePatternService,
-				currentFile, dir);
+				currentFile, dir, dataHandleService);
 			Location[] patternFiles = pattern.getFiles();
 			if (patternFiles == null) patternFiles = new Location[0];
 			Arrays.sort(patternFiles);

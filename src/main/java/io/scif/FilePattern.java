@@ -38,6 +38,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BrowsableLocation;
 import org.scijava.io.location.Location;
 
 import io.scif.services.FilePatternService;
@@ -62,7 +64,7 @@ public class FilePattern {
 	private String pattern;
 
 	/** The Location this pattern is based on */
-	private Location baseLoc;
+	private BrowsableLocation baseLoc;
 
 	/** The validity of the file pattern. */
 	private boolean valid;
@@ -85,8 +87,6 @@ public class FilePattern {
 	/** Whether or not this FilePattern represents a regular expression. */
 	private boolean isRegex = false;
 
-	private SCIFIO scifio;
-
 	// -- Constructors --
 
 	/**
@@ -94,10 +94,11 @@ public class FilePattern {
 	 *
 	 * @throws IOException
 	 */
-	public FilePattern(FilePatternService filePatternService, final Location file)
+	public FilePattern(FilePatternService filePatternService,
+		final BrowsableLocation file, DataHandleService dataHandleService)
 		throws IOException
 	{
-		this(file, filePatternService.findPattern(file));
+		this(file, filePatternService.findPattern(file), dataHandleService);
 	}
 
 	/**
@@ -107,9 +108,10 @@ public class FilePattern {
 	 * @throws IOException
 	 */
 	public FilePattern(final FilePatternService filePatternService,
-		final Location name, final Location dir) throws IOException
+		final BrowsableLocation name, final BrowsableLocation dir,
+		DataHandleService dataHandleService) throws IOException
 	{
-		this(name, filePatternService.findPattern(name, dir));
+		this(name, filePatternService.findPattern(name, dir), dataHandleService);
 	}
 
 	/**
@@ -117,8 +119,8 @@ public class FilePattern {
 	 *
 	 * @throws IOException
 	 */
-	public FilePattern(final Location baseLoc, final String pattern)
-		throws IOException
+	public FilePattern(final BrowsableLocation baseLoc, final String pattern,
+		final DataHandleService dataHandleService) throws IOException
 	{
 		this.baseLoc = baseLoc;
 		this.pattern = pattern;
@@ -177,13 +179,13 @@ public class FilePattern {
 
 		// build file listing
 		final List<Location> fileList = new ArrayList<>();
-		buildFiles("", num, fileList);
+		buildFiles("", num, fileList, dataHandleService);
 		files = fileList.toArray(new Location[fileList.size()]);
 
 		if (files.length == 0) {
 			try {
-				Location sibling = baseLoc.getSibling(pattern);
-				if (sibling.exists()) {
+				BrowsableLocation sibling = baseLoc.createSibling(pattern);
+				if (dataHandleService.handleExists(sibling)) {
 					files = new Location[] { sibling };
 				}
 			}
@@ -295,13 +297,14 @@ public class FilePattern {
 	 * @throws IOException
 	 */
 	private void buildFiles(final String prefix, int ndx,
-		final List<Location> fileList) throws IOException
+		final List<Location> fileList, DataHandleService dataHandleService)
+		throws IOException
 	{
 		if (blocks.length == 0) {
 			// regex pattern
 
-			Location patternLocation = baseLoc.getSibling(pattern);
-			if (patternLocation.exists()) {
+			Location patternLocation = baseLoc.createSibling(pattern);
+			if (dataHandleService.handleExists(patternLocation)) {
 				fileList.add(patternLocation);
 				return;
 			}
@@ -326,11 +329,13 @@ public class FilePattern {
 				dir = pattern.substring(0, endNotRegex);
 				end = endNotRegex;
 			}
-			if ("".equals(dir) || !baseLoc.getSibling(dir).exists()) {
+			if ("".equals(dir) || !dataHandleService.handleExists(baseLoc
+				.createSibling(dir)))
+			{
 				localfiles = getAllFiles(baseLoc.getParent());
 			}
 			else {
-				localfiles = getAllFiles(baseLoc.getSibling(dir));
+				localfiles = getAllFiles(baseLoc.createSibling(dir));
 			}
 
 			final String basePattern = pattern.substring(end);
@@ -357,24 +362,26 @@ public class FilePattern {
 			final int n2 = ndx == num ? pattern.length() : startIndex[ndx];
 			final String pre = pattern.substring(n1, n2);
 
-			if (ndx == 0) fileList.add(baseLoc.getSibling(pre + prefix));
+			if (ndx == 0) fileList.add(baseLoc.createSibling(pre + prefix));
 			else {
 				final FilePatternBlock block = blocks[--ndx];
 				final String[] blockElements = block.getElements();
 				for (final String element : blockElements) {
-					buildFiles(element + pre + prefix, ndx, fileList);
+					buildFiles(element + pre + prefix, ndx, fileList, dataHandleService);
 				}
 			}
 		}
 	}
 
-	private List<Location> getAllFiles(final Location dir) throws IOException {
+	private List<Location> getAllFiles(final BrowsableLocation dir)
+		throws IOException
+	{
 		final List<Location> subfiles = new ArrayList<>();
 
-		final Location root = dir;
-		final Set<Location> children = root.getChildren();
+		final BrowsableLocation root = dir;
+		final Set<BrowsableLocation> children = root.getChildren();
 
-		for (final Location child : children) {
+		for (final BrowsableLocation child : children) {
 			List<Location> grandChildren = getAllFiles(child);
 			if (grandChildren.isEmpty()) {
 				subfiles.add(child);
@@ -383,7 +390,6 @@ public class FilePattern {
 				subfiles.addAll(grandChildren);
 			}
 		}
-
 		return subfiles;
 	}
 }

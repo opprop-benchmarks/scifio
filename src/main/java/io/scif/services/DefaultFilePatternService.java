@@ -75,14 +75,13 @@ public class DefaultFilePatternService extends AbstractService implements
 
 	@Override
 	public String findPattern(final BrowsableLocation file) throws IOException {
-			return findPattern(file, file.getParent());
+		return findPattern(file, file.getParent());
 	}
 
 	@Override
-	public String findPattern(final BrowsableLocation name, BrowsableLocation dir)
-		throws IOException
+	public String findPattern(final BrowsableLocation name,
+		final BrowsableLocation dir) throws IOException
 	{
-
 		// list files in the given directory
 		final Set<BrowsableLocation> f = dir.getChildren();
 		if (f.isEmpty()) return null;
@@ -90,19 +89,20 @@ public class DefaultFilePatternService extends AbstractService implements
 	}
 
 	@Override
-	public String findPattern(final BrowsableLocation name, final BrowsableLocation dir,
-		final Collection<BrowsableLocation> f)
+	public String findPattern(final BrowsableLocation name,
+		final BrowsableLocation dir, final Collection<BrowsableLocation> f)
 	{
 		return findPattern(name, dir, f, null);
 	}
 
 	@Override
-	public String findPattern(final BrowsableLocation file, BrowsableLocation dir,
-		final Collection<BrowsableLocation> nameList, int[] excludeAxes)
+	public String findPattern(final BrowsableLocation file,
+		final BrowsableLocation dir, final Collection<BrowsableLocation> nameList,
+		int[] excludeAxes)
 	{
 		if (excludeAxes == null) excludeAxes = new int[0];
 
-		String name = file.getName();
+		final String name = file.getName();
 
 		// compile list of numerical blocks
 		final int len = name.length();
@@ -260,7 +260,9 @@ public class DefaultFilePatternService extends AbstractService implements
 	}
 
 	@Override
-	public String[] findImagePatterns(final BrowsableLocation base) throws IOException {
+	public String[] findImagePatterns(final BrowsableLocation base)
+		throws IOException
+	{
 		final BrowsableLocation file = base;
 		final BrowsableLocation parent = file.getParent();
 		final Set<BrowsableLocation> list = parent.getChildren();
@@ -268,10 +270,11 @@ public class DefaultFilePatternService extends AbstractService implements
 	}
 
 	@Override
-	public String[] findImagePatterns(final BrowsableLocation base, final BrowsableLocation dir,
-		final Collection<BrowsableLocation> nameList) throws IOException
+	public String[] findImagePatterns(final BrowsableLocation base,
+		final BrowsableLocation dir, final Collection<BrowsableLocation> nameList)
+		throws IOException
 	{
-		String name = base.getName();
+		final String name = base.getName();
 		int dot = name.lastIndexOf('.');
 		String baseSuffix;
 		if (dot < 0) baseSuffix = "";
@@ -290,12 +293,12 @@ public class DefaultFilePatternService extends AbstractService implements
 			else patternSuffix = patternSuffix.substring(dot + 1);
 
 			final String checkPattern = findPattern(loc, dir, nameList);
-			final Location[] checkFiles = new FilePattern(base, checkPattern)
-				.getFiles();
+			final Location[] checkFiles = new FilePattern(base, checkPattern,
+				dataHandleService).getFiles();
 
-			if (!patterns.contains(pattern) && (!dataHandleService.handleExists(base.createSibling(pattern))) &&
-				patternSuffix.equals(baseSuffix) && ArrayUtils.indexOf(checkFiles,
-					base) >= 0)
+			if (!patterns.contains(pattern) && (!dataHandleService.handleExists(base
+				.createSibling(pattern))) && patternSuffix.equals(baseSuffix) &&
+				ArrayUtils.indexOf(checkFiles, base) >= 0)
 			{
 				patterns.add(pattern);
 			}
