@@ -32,11 +32,14 @@ package io.scif.codec;
 
 import io.scif.FormatException;
 import io.scif.UnsupportedCompressionException;
-import io.scif.io.ByteArrayHandle;
-import io.scif.io.RandomAccessInputStream;
 
 import java.io.IOException;
 
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.BytesLocation;
+import org.scijava.io.location.Location;
+import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
 /**
@@ -44,6 +47,9 @@ import org.scijava.plugin.Plugin;
  */
 @Plugin(type = Codec.class)
 public class QTRLECodec extends AbstractCodec {
+
+	@Parameter
+	DataHandleService dataHandleService;
 
 	@Override
 	public byte[] compress(final byte[] data, final CodecOptions options)
@@ -54,12 +60,12 @@ public class QTRLECodec extends AbstractCodec {
 	}
 
 	@Override
-	public byte[] decompress(final RandomAccessInputStream in,
+	public byte[] decompress(final DataHandle<Location> in,
 		final CodecOptions options) throws FormatException, IOException
 	{
 		if (in == null) throw new IllegalArgumentException(
 			"No data to decompress.");
-		final byte[] b = new byte[(int) (in.length() - in.getFilePointer())];
+		final byte[] b = new byte[(int) (in.length() - in.offset())];
 		in.read(b);
 		return decompress(b, options);
 	}
@@ -87,7 +93,9 @@ public class QTRLECodec extends AbstractCodec {
 		final int line = options.width * bpp;
 
 		try {
-			final ByteArrayHandle s = new ByteArrayHandle(data);
+			final DataHandle<Location> s = dataHandleService.create(new BytesLocation(
+				data));
+
 			s.skipBytes(4);
 
 			final int header = s.readShort();
@@ -166,8 +174,7 @@ public class QTRLECodec extends AbstractCodec {
 						// unpack next pixel and copy it to output -(rle) times
 						for (int j = 0; j < (-1 * rle); j++) {
 							if (off < output.length) {
-								System.arraycopy(data, (int) s.getFilePointer(), output, off,
-									bpp);
+								System.arraycopy(data, (int) s.offset(), output, off, bpp);
 								off += bpp;
 							}
 							else break;
@@ -178,15 +185,15 @@ public class QTRLECodec extends AbstractCodec {
 						// copy (rle) pixels to output
 						int len = rle * bpp;
 						if (output.length - off < len) len = output.length - off;
-						if (s.length() - s.getFilePointer() < len) {
-							len = (int) (s.length() - s.getFilePointer());
+						if (s.length() - s.offset() < len) {
+							len = (int) (s.length() - s.offset());
 						}
 						if (len < 0) len = 0;
 						if (off > output.length) off = output.length;
 						s.read(output, off, len);
 						off += len;
 					}
-					if (s.getFilePointer() >= s.length()) return output;
+					if (s.offset() >= s.length()) return output;
 				}
 				rowPointer += line;
 			}

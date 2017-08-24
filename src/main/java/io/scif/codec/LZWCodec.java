@@ -31,19 +31,19 @@
 package io.scif.codec;
 
 import io.scif.FormatException;
-import io.scif.io.RandomAccessInputStream;
 
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.location.Location;
 import org.scijava.plugin.Plugin;
 
 /**
  * This is an optimized LZW codec for use with TIFF files. Most of the code is
  * inlined, and specifics of TIFF usage of LZW (known size of decompressor
- * output; possible lengths of LZW codes; specified values for
- * {@code CLEAR} and {@code END_OF_INFORMATION} codes) are taken in
- * account.
+ * output; possible lengths of LZW codes; specified values for {@code CLEAR} and
+ * {@code END_OF_INFORMATION} codes) are taken in account.
  * <p>
  * Estimating the worst-case size of compressor output:
  * </p>
@@ -58,7 +58,8 @@ import org.scijava.plugin.Plugin;
  * <ul>
  * <li>9 bits for CLEAR code;</li>
  * <li>9*253 + 10*512 + 11*1024 + 12*2048 = 43237 bits for character codes.</li>
- * </ul></li>
+ * </ul>
+ * </li>
  * <li>Let n=3837, m=(number of bytes in the last incomplete portion), N=(number
  * of bytes in compressed complete portion with CLEAR code), M=(number of bytes
  * in compressed last incomplete portion). We have inequalities:
@@ -67,7 +68,8 @@ import org.scijava.plugin.Plugin;
  * <li>{@code M <= 1.41 * m}</li>
  * <li>The last incomplete portion should also include {@code CLEAR} and
  * {@code END_OF_INFORMATION} codes; they occupy less than 3 bytes.
- * </ul></li>
+ * </ul>
+ * </li>
  * </ul>
  * <p>
  * Thus, we can claim than the number of bytes in compressed output never
@@ -260,11 +262,11 @@ public class LZWCodec extends AbstractCodec {
 	 * The CodecOptions parameter should have the following fields set:
 	 * {@link CodecOptions#maxBytes maxBytes}
 	 *
-	 * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
+	 * @see Codec#decompress(DataHandle, CodecOptions)
 	 */
 	@Override
-	public byte[] decompress(final RandomAccessInputStream in,
-		CodecOptions options) throws FormatException, IOException
+	public byte[] decompress(final DataHandle<Location> in, CodecOptions options)
+		throws FormatException, IOException
 	{
 		if (in == null || in.length() == 0) return null;
 		if (options == null) options = CodecOptions.getDefaultOptions();
@@ -407,7 +409,7 @@ public class LZWCodec extends AbstractCodec {
 						break;
 				}
 			}
-			while (currOutPos < output.length && in.getFilePointer() < in.length());
+			while (currOutPos < output.length && in.offset() < in.length());
 		}
 		catch (final ArrayIndexOutOfBoundsException e) {
 			throw new FormatException("Invalid LZW data", e);

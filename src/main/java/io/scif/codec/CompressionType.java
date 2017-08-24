@@ -67,8 +67,8 @@ public enum CompressionType implements CodedEnum {
 	 * Retrieves the compression by reverse lookup of its "code".
 	 *
 	 * @param code The code to look up.
-	 * @return The {@code CompressionType} instance for the {@code code}
-	 *         or {@code null} if it does not exist.
+	 * @return The {@code CompressionType} instance for the {@code code} or
+	 *         {@code null} if it does not exist.
 	 */
 	public static CompressionType get(final int code) {
 		final CompressionType toReturn = lookup.get(code);

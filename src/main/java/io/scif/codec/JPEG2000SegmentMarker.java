@@ -79,8 +79,8 @@ public enum JPEG2000SegmentMarker implements CodedEnum {
 	 * Retrieves the segment marker by reverse lookup of its "code".
 	 *
 	 * @param code The code to look up.
-	 * @return The {@code JPEG2000SegmentMarker} instance for the
-	 *         {@code code} or {@code null} if it does not exist.
+	 * @return The {@code JPEG2000SegmentMarker} instance for the {@code code} or
+	 *         {@code null} if it does not exist.
 	 */
 	public static JPEG2000SegmentMarker get(final int code) {
 		return lookup.get(code);
