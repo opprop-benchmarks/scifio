@@ -30,8 +30,6 @@
 
 package io.scif.img.converters;
 
-import org.scijava.plugin.Plugin;
-
 import io.scif.Reader;
 import io.scif.config.SCIFIOConfig;
 import io.scif.img.cell.loaders.ByteAccessLoader;
@@ -48,6 +46,7 @@ import io.scif.img.cell.loaders.LongAccessLoader;
 import io.scif.img.cell.loaders.LongArrayLoader;
 import io.scif.img.cell.loaders.ShortAccessLoader;
 import io.scif.img.cell.loaders.ShortArrayLoader;
+
 import net.imagej.ImgPlus;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.basictypeaccess.ByteAccess;
@@ -66,6 +65,7 @@ import net.imglib2.img.basictypeaccess.array.LongArray;
 import net.imglib2.img.basictypeaccess.array.ShortArray;
 import net.imglib2.type.numeric.RealType;
 
+import org.scijava.plugin.Plugin;
 
 /**
  * {@link PlaneConverter} implementation specialized for populating
@@ -130,41 +130,41 @@ public class ArrayDataAccessConverter extends AbstractPlaneConverter {
 				.imgOpenerGetRegion());
 			loader.convertBytes((IntArray) store, source, planeIndex);
 		}
-		else if ( store instanceof ByteAccess )
-		{
-			final ByteAccessLoader loader = new ByteAccessLoader( reader, config.imgOpenerGetRegion(), ByteArray::new );
-			loader.convertBytes( ( ByteAccess ) store, source, planeIndex );
+		else if (store instanceof ByteAccess) {
+			final ByteAccessLoader loader = new ByteAccessLoader(reader, config
+				.imgOpenerGetRegion(), ByteArray::new);
+			loader.convertBytes((ByteAccess) store, source, planeIndex);
 
 		}
-		else if ( store instanceof ShortAccess )
-		{
-			final ShortAccessLoader loader = new ShortAccessLoader( reader, config.imgOpenerGetRegion(), ShortArray::new );
-			loader.convertBytes( ( ShortAccess ) store, source, planeIndex );
+		else if (store instanceof ShortAccess) {
+			final ShortAccessLoader loader = new ShortAccessLoader(reader, config
+				.imgOpenerGetRegion(), ShortArray::new);
+			loader.convertBytes((ShortAccess) store, source, planeIndex);
 		}
-		else if ( store instanceof LongAccess )
-		{
-			final LongAccessLoader loader = new LongAccessLoader( reader, config.imgOpenerGetRegion(), LongArray::new );
-			loader.convertBytes( ( LongAccess ) store, source, planeIndex );
+		else if (store instanceof LongAccess) {
+			final LongAccessLoader loader = new LongAccessLoader(reader, config
+				.imgOpenerGetRegion(), LongArray::new);
+			loader.convertBytes((LongAccess) store, source, planeIndex);
 		}
-		else if ( store instanceof CharAccess )
-		{
-			final CharAccessLoader loader = new CharAccessLoader( reader, config.imgOpenerGetRegion(), CharArray::new );
-			loader.convertBytes( ( CharAccess ) store, source, planeIndex );
+		else if (store instanceof CharAccess) {
+			final CharAccessLoader loader = new CharAccessLoader(reader, config
+				.imgOpenerGetRegion(), CharArray::new);
+			loader.convertBytes((CharAccess) store, source, planeIndex);
 		}
-		else if ( store instanceof DoubleAccess )
-		{
-			final DoubleAccessLoader loader = new DoubleAccessLoader( reader, config.imgOpenerGetRegion(), DoubleArray::new );
-			loader.convertBytes( ( DoubleAccess ) store, source, planeIndex );
+		else if (store instanceof DoubleAccess) {
+			final DoubleAccessLoader loader = new DoubleAccessLoader(reader, config
+				.imgOpenerGetRegion(), DoubleArray::new);
+			loader.convertBytes((DoubleAccess) store, source, planeIndex);
 		}
-		else if ( store instanceof FloatAccess )
-		{
-			final FloatAccessLoader loader = new FloatAccessLoader( reader, config.imgOpenerGetRegion(), FloatArray::new );
-			loader.convertBytes( ( FloatAccess ) store, source, planeIndex );
+		else if (store instanceof FloatAccess) {
+			final FloatAccessLoader loader = new FloatAccessLoader(reader, config
+				.imgOpenerGetRegion(), FloatArray::new);
+			loader.convertBytes((FloatAccess) store, source, planeIndex);
 		}
-		else if ( store instanceof IntAccess )
-		{
-			final IntAccessLoader loader = new IntAccessLoader( reader, config.imgOpenerGetRegion(), IntArray::new );
-			loader.convertBytes( ( IntAccess ) store, source, planeIndex );
+		else if (store instanceof IntAccess) {
+			final IntAccessLoader loader = new IntAccessLoader(reader, config
+				.imgOpenerGetRegion(), IntArray::new);
+			loader.convertBytes((IntAccess) store, source, planeIndex);
 		}
 
 	}

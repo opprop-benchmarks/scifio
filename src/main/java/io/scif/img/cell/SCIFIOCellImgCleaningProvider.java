@@ -30,20 +30,21 @@
 
 package io.scif.img.cell;
 
-import java.io.IOException;
-import java.lang.ref.PhantomReference;
-import java.lang.ref.Reference;
-import java.lang.ref.ReferenceQueue;
-
-import org.scijava.plugin.Plugin;
-
 import io.scif.AbstractSCIFIOPlugin;
 import io.scif.Reader;
 import io.scif.img.cell.cache.CacheService;
 import io.scif.refs.CleaningRef;
 import io.scif.refs.RefProvider;
+
+import java.io.IOException;
+import java.lang.ref.PhantomReference;
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+
 import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.type.NativeType;
+
+import org.scijava.plugin.Plugin;
 
 /**
  * {@link RefProvider} plugin for creating {@link SCIFIOCellImgCleaner}

@@ -30,14 +30,15 @@
 
 package io.scif.img.cell.loaders;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.function.IntFunction;
-
 import io.scif.ImageMetadata;
 import io.scif.Reader;
 import io.scif.img.ImageRegion;
 import io.scif.util.FormatTools;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.function.IntFunction;
+
 import net.imglib2.img.basictypeaccess.CharAccess;
 import net.imglib2.img.basictypeaccess.array.CharArray;
 import net.imglib2.type.numeric.integer.GenericByteType;
@@ -48,64 +49,57 @@ import net.imglib2.type.numeric.integer.GenericByteType;
  * @author Mark Hiner
  * @author Philipp Hanslovsky
  */
-public class CharAccessLoader extends AbstractArrayLoader< CharAccess >
-{
+public class CharAccessLoader extends AbstractArrayLoader<CharAccess> {
 
-	private final IntFunction< CharAccess > accessFactory;
+	private final IntFunction<CharAccess> accessFactory;
 
-	public CharAccessLoader( final Reader reader, final ImageRegion subRegion, final IntFunction< CharAccess > accessFactory )
+	public CharAccessLoader(final Reader reader, final ImageRegion subRegion,
+		final IntFunction<CharAccess> accessFactory)
 	{
-		super( reader, subRegion );
+		super(reader, subRegion);
 		this.accessFactory = accessFactory;
 	}
 
 	@Override
-	public void convertBytes( final CharAccess data, final byte[] bytes,
-			final int planesRead )
+	public void convertBytes(final CharAccess data, final byte[] bytes,
+		final int planesRead)
 	{
-		final ImageMetadata iMeta = reader().getMetadata().get( 0 );
-		if ( isCompatible() )
-		{
+		final ImageMetadata iMeta = reader().getMetadata().get(0);
+		if (isCompatible()) {
 			final int offset = planesRead * bytes.length;
 
-			final ByteBuffer bb = ByteBuffer.wrap( bytes );
+			final ByteBuffer bb = ByteBuffer.wrap(bytes);
 
-			bb.order( iMeta.isLittleEndian() ? ByteOrder.LITTLE_ENDIAN
-					: ByteOrder.BIG_ENDIAN );
-			for ( int k = offset; bb.hasRemaining(); ++k )
-				data.setValue( k, bb.getChar() );
+			bb.order(iMeta.isLittleEndian() ? ByteOrder.LITTLE_ENDIAN
+				: ByteOrder.BIG_ENDIAN);
+			for (int k = offset; bb.hasRemaining(); ++k)
+				data.setValue(k, bb.getChar());
 		}
-		else
-		{
+		else {
 			final int pixelType = iMeta.getPixelType();
-			final int bpp = FormatTools.getBytesPerPixel( pixelType );
-			final int offset = planesRead * ( bytes.length / bpp );
+			final int bpp = FormatTools.getBytesPerPixel(pixelType);
+			final int offset = planesRead * (bytes.length / bpp);
 
-			for ( int index = 0; index < bytes.length / bpp; index++ )
-			{
-				final char value =
-						( char ) utils().decodeWord( bytes, index * bpp, pixelType,
-								iMeta.isLittleEndian() );
-				data.setValue( offset + index, value );
+			for (int index = 0; index < bytes.length / bpp; index++) {
+				final char value = (char) utils().decodeWord(bytes, index * bpp,
+					pixelType, iMeta.isLittleEndian());
+				data.setValue(offset + index, value);
 			}
 		}
 	}
 
 	@Override
-	public CharAccess emptyArray( final int entities )
-	{
-		return accessFactory.apply( entities );
+	public CharAccess emptyArray(final int entities) {
+		return accessFactory.apply(entities);
 	}
 
 	@Override
-	public int getBitsPerElement()
-	{
+	public int getBitsPerElement() {
 		return Character.SIZE;
 	}
 
 	@Override
-	public Class< ? > outputClass()
-	{
+	public Class<?> outputClass() {
 		return GenericByteType.class;
 	}
 }

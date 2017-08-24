@@ -30,14 +30,13 @@
 
 package io.scif.img.cell;
 
-import java.io.IOException;
-
-import org.scijava.Disposable;
-
 import io.scif.FormatException;
 import io.scif.Reader;
 import io.scif.img.cell.loaders.SCIFIOArrayLoader;
 import io.scif.refs.RefManagerService;
+
+import java.io.IOException;
+
 import net.imglib2.display.ColorTable;
 import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.img.cell.AbstractCellImg;
@@ -45,6 +44,8 @@ import net.imglib2.img.cell.CellGrid;
 import net.imglib2.img.cell.LazyCellImg.LazyCells;
 import net.imglib2.type.NativeType;
 import net.imglib2.util.Fraction;
+
+import org.scijava.Disposable;
 
 /**
  * {@link AbstractCellImg} implementation for working with {@link SCIFIOCell}s.
