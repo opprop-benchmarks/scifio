@@ -44,13 +44,11 @@ import io.scif.img.cell.SCIFIOCell;
 import io.scif.img.cell.SCIFIOCellCache;
 import io.scif.img.cell.loaders.ByteArrayLoader;
 import io.scif.img.cell.loaders.SCIFIOArrayLoader;
-import io.scif.io.TestParameters;
 import io.scif.util.MemoryTools;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
-import java.util.Collection;
 
 import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.img.basictypeaccess.array.ByteArray;
@@ -58,10 +56,9 @@ import net.imglib2.img.basictypeaccess.array.ByteArray;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.scijava.Context;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
 
 /**
  * Unit tests for testing the {@link CacheService}. Tests storage and retrieval,
@@ -69,7 +66,6 @@ import org.scijava.Context;
  *
  * @author Mark Hiner
  */
-@RunWith(Parameterized.class)
 public class CacheServiceTest {
 
 	// -- Constants --
@@ -85,19 +81,6 @@ public class CacheServiceTest {
 	private SCIFIO scifio;
 
 	private static CacheService<SCIFIOCell<?>> cs;
-
-	@Parameters
-	public static Collection<Object[]> parameters() {
-		return TestParameters.parameters("cacheTests");
-	}
-
-	private final String provider;
-
-	public CacheServiceTest(final String provider, final boolean checkGrowth,
-		final boolean testLength)
-	{
-		this.provider = provider;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -470,9 +453,9 @@ public class CacheServiceTest {
 	// -- Helper methods --
 
 	// return a fake id for a file of the specified size
-	private String makeFakeFile(final long bytes) {
+	private Location makeFakeFile(final long bytes) {
 		final long dim = Math.round(Math.sqrt(bytes));
-		return "testImg&lengths=" + dim + "," + dim + ".fake";
+		return new FileLocation("testImg&lengths=" + dim + "," + dim + ".fake");
 	}
 
 	// Creates a SCIFIOCellCache anonymously for a file of the specified size
@@ -483,7 +466,7 @@ public class CacheServiceTest {
 	}
 
 	// Creates a SCIFIOCellCache for the given id
-	private SCIFIOCellCache<ByteArray> makeCache(final String id)
+	private SCIFIOCellCache<ByteArray> makeCache(final Location id)
 		throws FormatException, IOException
 	{
 		final ReaderFilter rf = scifio.initializer().initializeReader(id,
@@ -498,7 +481,7 @@ public class CacheServiceTest {
 	private TestCellCache<ByteArray> makeTestCache(final long bytes)
 		throws FormatException, IOException
 	{
-		final String id = makeFakeFile(bytes);
+		final Location id = makeFakeFile(bytes);
 		final ReaderFilter rf = scifio.initializer().initializeReader(id,
 			new SCIFIOConfig().checkerSetOpen(true));
 		final ByteArrayLoader loader = new ByteArrayLoader(rf, null);

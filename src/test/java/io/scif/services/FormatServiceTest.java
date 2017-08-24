@@ -42,6 +42,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.scijava.Context;
+import org.scijava.io.location.FileLocation;
 import org.scijava.thread.ThreadService;
 
 /**
@@ -73,7 +74,7 @@ public class FormatServiceTest {
 			"ima", "img", "isq", "j2k", "j2ki", "j2kr", "java", "jp2", "jpe", "jpeg",
 			"jpf", "jpg", "mng", "mov", "msr", "nhdr", "nrrd", "obf", "pct", "pcx",
 			"pgm", "pict", "png", "ps", "raw", "tf2", "tf8", "tif", "tiff", "txt",
-			"xml", "zip" };
+			"xml" };
 		assertArrayEquals(expectedSuffixes, suffixes);
 	}
 
@@ -99,7 +100,7 @@ public class FormatServiceTest {
 			while (System.currentTimeMillis() - time < 10000) {
 				final String s = new BigInteger(64, random).toString() + ".tif";
 				try {
-					formatService.getFormat(s);
+					formatService.getFormat(new FileLocation(s));
 				}
 				catch (final FormatException exc) {
 					return;
