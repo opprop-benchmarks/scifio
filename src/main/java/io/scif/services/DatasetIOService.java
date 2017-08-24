@@ -30,13 +30,16 @@
 
 package io.scif.services;
 
-import java.io.IOException;
-import java.util.List;
-
 import io.scif.Metadata;
 import io.scif.SCIFIOService;
 import io.scif.config.SCIFIOConfig;
+
+import java.io.IOException;
+import java.util.List;
+
 import net.imagej.Dataset;
+
+import org.scijava.io.location.Location;
 
 /**
  * A service for opening and saving {@link Dataset}s using SCIFIO.
@@ -47,26 +50,26 @@ public interface DatasetIOService extends SCIFIOService {
 
 	/**
 	 * Determines whether the given source can be opened as a {@link Dataset}
-	 * using the {@link #open(String)} method.
+	 * using the {@link #open(Location)} method.
 	 */
-	boolean canOpen(String source);
+	boolean canOpen(Location source);
 
 	/**
 	 * Determines whether the given destination can be used to save a
-	 * {@link Dataset} using the {@link #save(Dataset, String)} method.
+	 * {@link Dataset} using the {@link #save(Dataset, Location)} method.
 	 */
-	boolean canSave(String destination);
+	boolean canSave(Location destination);
 
 	/**
 	 * Loads a dataset from a source (such as a file on disk).
 	 */
-	Dataset open(String source) throws IOException;
+	Dataset open(Location source) throws IOException;
 
 	/**
-	 * As {@link #open(String)}, with the given
+	 * As {@link #open(Location)}, with the given
 	 * {@code io.scif.config.SCIFIOConfig}.
 	 */
-	Dataset open(String source, SCIFIOConfig config) throws IOException;
+	Dataset open(Location source, SCIFIOConfig config) throws IOException;
 
 	/**
 	 * Load all the datasets from a given source (such as a file on disk). (Useful
@@ -76,10 +79,10 @@ public interface DatasetIOService extends SCIFIOService {
 	 * @return a list of all datasets contained by the image file.
 	 * @throws IOException
 	 */
-	List<Dataset> openAll(String source) throws IOException;
+	List<Dataset> openAll(Location source) throws IOException;
 
 	/**
-	 * As {@link #openAll(String)}, with a given
+	 * As {@link #openAll(Location)}, with a given
 	 * {@code io.scif.config.SCIFIOConfig}.
 	 *
 	 * @param source path on the disk
@@ -87,7 +90,8 @@ public interface DatasetIOService extends SCIFIOService {
 	 * @return a list of all datasets contained by the image file.
 	 * @throws IOException
 	 */
-	List<Dataset> openAll(String source, SCIFIOConfig config) throws IOException;
+	List<Dataset> openAll(Location source, SCIFIOConfig config)
+		throws IOException;
 
 	/**
 	 * Reverts the given dataset to its original source.
@@ -101,7 +105,7 @@ public interface DatasetIOService extends SCIFIOService {
 	 * @param destination Where the dataset should be saved (e.g., a file path on
 	 *          disk).
 	 */
-	Metadata save(Dataset dataset, String destination) throws IOException;
+	Metadata save(Dataset dataset, Location destination) throws IOException;
 
 	/**
 	 * Saves a dataset to a destination (such as a file on disk).
@@ -112,7 +116,7 @@ public interface DatasetIOService extends SCIFIOService {
 	 * @param config The {@code io.scif.config.SCIFIOConfig} describing how the
 	 *          data should be saved.
 	 */
-	Metadata save(Dataset dataset, String destination, SCIFIOConfig config)
+	Metadata save(Dataset dataset, Location destination, SCIFIOConfig config)
 		throws IOException;
 
 }
