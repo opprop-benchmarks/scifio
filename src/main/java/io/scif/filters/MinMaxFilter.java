@@ -259,9 +259,8 @@ public class MinMaxFilter extends AbstractReaderFilter {
 	 * @param imageIndex the image index within the dataset
 	 * @param planeIndex the plane index within the image.
 	 * @param buf a pre-allocated buffer.
-	 * @param len as {@code buf} may be larger than the actual pixel count
-	 *          having been written to it, the length (in bytes) of the those
-	 *          pixels.
+	 * @param len as {@code buf} may be larger than the actual pixel count having
+	 *          been written to it, the length (in bytes) of the those pixels.
 	 */
 	private void updateMinMax(final int imageIndex, final long planeIndex,
 		final byte[] buf, final int len)
