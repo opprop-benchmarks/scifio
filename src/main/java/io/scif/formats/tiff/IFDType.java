@@ -67,8 +67,8 @@ public enum IFDType implements CodedEnum {
 	 * Retrieves a IFD type by reverse lookup of its "code".
 	 *
 	 * @param code The code to look up.
-	 * @return The {@code IFDType} instance for the {@code code} or
-	 *         {@code null} if it does not exist.
+	 * @return The {@code IFDType} instance for the {@code code} or {@code null}
+	 *         if it does not exist.
 	 */
 	public static IFDType get(final int code) {
 		final IFDType toReturn = lookup.get(code);

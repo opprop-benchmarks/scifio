@@ -131,7 +131,7 @@ public enum TiffCompression implements CodedEnum {
 			}
 		},
 		ALT_JPEG2000(33005, JPEG2000Codec.class, "JPEG-2000")
-	{
+		{
 
 			@Override
 			public CodecOptions getCompressionCodecOptions(final IFD ifd)
@@ -160,7 +160,7 @@ public enum TiffCompression implements CodedEnum {
 		},
 		ALT_JPEG(33007, JPEGCodec.class, "JPEG"), OLYMPUS_JPEG2000(34712,
 			JPEG2000Codec.class, "JPEG-2000")
-	{
+		{
 
 			@Override
 			public CodecOptions getCompressionCodecOptions(final IFD ifd)
