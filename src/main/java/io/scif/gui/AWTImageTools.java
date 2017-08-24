@@ -748,8 +748,7 @@ public final class AWTImageTools {
 	 * from the provided Reader's Metadata.
 	 */
 	public static BufferedImage openImage(final Plane plane, final Reader r,
-		final long[] axes, final int imageIndex) throws FormatException,
-		IOException
+		final long[] axes, final int imageIndex) throws FormatException, IOException
 	{
 		return openImage(plane, plane.getBytes(), r, axes, imageIndex);
 	}
@@ -861,8 +860,7 @@ public final class AWTImageTools {
 	 */
 	public static BufferedImage openThumbImage(final Plane plane, final Reader r,
 		final int imageIndex, final long[] axes, final int thumbSizeX,
-		final int thumbSizeY, final boolean pad) throws FormatException,
-		IOException
+		final int thumbSizeY, final boolean pad) throws FormatException, IOException
 	{
 
 		BufferedImage img = AWTImageTools.openImage(plane, r, axes, imageIndex);
