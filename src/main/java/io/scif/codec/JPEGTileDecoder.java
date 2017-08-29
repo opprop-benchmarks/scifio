@@ -73,14 +73,16 @@ public class JPEGTileDecoder extends AbstractContextual {
 
 	// -- JPEGTileDecoder API methods --
 
-	public void initialize(final DataHandle<Location> in, final int imageWidth) {
-		initialize(in, 0, imageWidth);
+	public void initialize(final DataHandle<Location> handle,
+		final int imageWidth)
+	{
+		initialize(handle, 0, imageWidth);
 	}
 
-	public void initialize(final DataHandle<Location> in, final int y,
+	public void initialize(final DataHandle<Location> handle, final int y,
 		final int h)
 	{
-		this.in = in;
+		this.in = handle;
 		tiles = new TileCache(getContext(), y, h);
 
 		// pre-process the stream to make sure that the
@@ -125,9 +127,9 @@ public class JPEGTileDecoder extends AbstractContextual {
 
 		try {
 			final Toolkit toolkit = Toolkit.getDefaultToolkit();
-			final byte[] data = new byte[(int) this.in.length()]; // FIXME potentially
-																														// wrong
-			this.in.readFully(data);
+			// read remaining bytes, potentially wrong!
+			final byte[] data = new byte[(int) (in.length() - in.offset())];
+			in.readFully(data);
 			final Image image = toolkit.createImage(data);
 			final ImageProducer producer = image.getSource();
 
@@ -135,7 +137,9 @@ public class JPEGTileDecoder extends AbstractContextual {
 			producer.startProduction(consumer);
 			while (producer.isConsumer(consumer)) { /* Loop over image consumers */}
 		}
-		catch (final IOException e) {}
+		catch (final IOException e) {
+			log.error("Could not read JPEGTile: " + e);
+		}
 	}
 
 	public byte[] getScanline(final int y) {
