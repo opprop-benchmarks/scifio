@@ -187,12 +187,12 @@ public class MicromanagerFormat extends AbstractFormat {
 		{
 			try {
 				final Location metaFile = location.createSibling(METADATA);
-				// FIXME Why is this call duplicated?
-				boolean validTIFF = isFormat(handle);
+				boolean validMetaData = isFormat(handle);
+				if (!validMetaData) return false;
 				final io.scif.Checker checker;
 				checker = formatService.getFormatFromClass(MinimalTIFFFormat.class)
 					.createChecker();
-				validTIFF = checker.isFormat(handle);
+				boolean validTIFF = checker.isFormat(handle);
 				return validTIFF && isFormat(metaFile, config);
 			}
 			catch (final FormatException | IOException e) {
@@ -210,6 +210,7 @@ public class MicromanagerFormat extends AbstractFormat {
 			if (validMetadataFile(location)) {
 				checkMetadataHandle(handle);
 			}
+			// FIXME add more checks here
 
 			// ensure we can look for neighbors
 			return handle.get() instanceof BrowsableLocation;
@@ -333,8 +334,13 @@ public class MicromanagerFormat extends AbstractFormat {
 				}
 				if (!noPixels) {
 					for (final Location tiff : pos.tiffs) {
-						// FIXME check if files exists?
-						files.add(tiff);
+						try {
+							if (dataHandleService.handleExists(tiff)) files.add(tiff);
+						}
+						catch (final IOException exc) {
+							log().error("Could not check if location: " + tiff.getURI()
+								.toString() + " encountered exception: " + exc);
+						}
 					}
 				}
 			}
