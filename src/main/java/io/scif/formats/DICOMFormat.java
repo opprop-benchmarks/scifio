@@ -944,10 +944,9 @@ public class DICOMFormat extends AbstractFormat {
 				.getName() + ".mif");
 			if (dataHandleService.handleExists(mifSibling)) {
 
-				// FIXME: This will add empty folders, how could this be fixed?
 				final Set<BrowsableLocation> list = grandparent.getChildren();
 				for (final BrowsableLocation f : list) {
-					if (f.getChildren().isEmpty()) {
+					if (!f.isDirectory()) {
 						companionFiles.add(f);
 					}
 				}
@@ -992,86 +991,85 @@ public class DICOMFormat extends AbstractFormat {
 			final BrowsableLocation file, final boolean checkSeries)
 			throws FormatException, IOException
 		{
-			final DataHandle<Location> stream = dataHandleService.create(file);
-			if (!getFormat().createChecker().isFormat(stream)) {
-				stream.close();
-				return;
-			}
-			stream.setOrder(ByteOrder.LITTLE_ENDIAN);
-
-			stream.seek(128);
-			if (!"DICM".equals(stream.readString(4))) stream.seek(0);
-
-			int fileSeries = -1;
-
-			String date = null, time = null, instance = null;
-			while (date == null || time == null || instance == null || (checkSeries &&
-				fileSeries < 0))
-			{
-				final long fp = stream.offset();
-				if (fp + 4 >= stream.length() || fp < 0) break;
-				final DICOMTag tag = DICOMUtils.getNextTag(stream);
-				final String key = TYPES.name(tag.get());
-				if ("Instance Number".equals(key)) {
-					instance = stream.readString(tag.getElementLength()).trim();
-					if (instance.length() == 0) instance = null;
+			try (final DataHandle<Location> stream = dataHandleService.create(file)) {
+				if (!getFormat().createChecker().isFormat(stream)) {
+					return;
 				}
-				else if ("Acquisition Time".equals(key)) {
-					time = stream.readString(tag.getElementLength());
-				}
-				else if ("Acquisition Date".equals(key)) {
-					date = stream.readString(tag.getElementLength());
-				}
-				else if ("Series Number".equals(key)) {
-					fileSeries = Integer.parseInt(stream.readString(tag
-						.getElementLength()).trim());
-				}
-				else stream.skipBytes(tag.getElementLength());
-			}
-			stream.close();
+				stream.setOrder(ByteOrder.LITTLE_ENDIAN);
 
-			if (date == null || time == null || instance == null || (checkSeries &&
-				fileSeries == getMetadata().getOriginalSeries()))
-			{
-				return;
-			}
+				stream.seek(128);
+				if (!"DICM".equals(stream.readString(4))) stream.seek(0);
 
-			int stamp = 0;
-			try {
-				stamp = Integer.parseInt(time);
-			}
-			catch (final NumberFormatException e) {}
+				int fileSeries = -1;
 
-			int timestamp = 0;
-			try {
-				timestamp = Integer.parseInt(getMetadata().getOriginalTime());
-			}
-			catch (final NumberFormatException e) {}
-
-			if (date.equals(getMetadata().getOriginalDate()) && (Math.abs(stamp -
-				timestamp) < 150))
-			{
-				int position = Integer.parseInt(instance) - 1;
-				if (position < 0) position = 0;
-				if (fileList.get(fileSeries) == null) {
-					fileList.put(fileSeries, new ArrayList<BrowsableLocation>());
+				String date = null, time = null, instance = null;
+				while (date == null || time == null || instance == null ||
+					(checkSeries && fileSeries < 0))
+				{
+					final long fp = stream.offset();
+					if (fp + 4 >= stream.length() || fp < 0) break;
+					final DICOMTag tag = DICOMUtils.getNextTag(stream);
+					final String key = TYPES.name(tag.get());
+					if ("Instance Number".equals(key)) {
+						instance = stream.readString(tag.getElementLength()).trim();
+						if (instance.length() == 0) instance = null;
+					}
+					else if ("Acquisition Time".equals(key)) {
+						time = stream.readString(tag.getElementLength());
+					}
+					else if ("Acquisition Date".equals(key)) {
+						date = stream.readString(tag.getElementLength());
+					}
+					else if ("Series Number".equals(key)) {
+						fileSeries = Integer.parseInt(stream.readString(tag
+							.getElementLength()).trim());
+					}
+					else stream.skipBytes(tag.getElementLength());
 				}
-				if (position < fileList.get(fileSeries).size()) {
-					while (position < fileList.get(fileSeries).size() && fileList.get(
-						fileSeries).get(position) != null)
-					{
-						position++;
+
+				if (date == null || time == null || instance == null || (checkSeries &&
+					fileSeries == getMetadata().getOriginalSeries()))
+				{
+					return;
+				}
+
+				int stamp = 0;
+				try {
+					stamp = Integer.parseInt(time);
+				}
+				catch (final NumberFormatException e) {}
+
+				int timestamp = 0;
+				try {
+					timestamp = Integer.parseInt(getMetadata().getOriginalTime());
+				}
+				catch (final NumberFormatException e) {}
+
+				if (date.equals(getMetadata().getOriginalDate()) && (Math.abs(stamp -
+					timestamp) < 150))
+				{
+					int position = Integer.parseInt(instance) - 1;
+					if (position < 0) position = 0;
+					if (fileList.get(fileSeries) == null) {
+						fileList.put(fileSeries, new ArrayList<BrowsableLocation>());
 					}
 					if (position < fileList.get(fileSeries).size()) {
-						fileList.get(fileSeries).set(position, file);
+						while (position < fileList.get(fileSeries).size() && fileList.get(
+							fileSeries).get(position) != null)
+						{
+							position++;
+						}
+						if (position < fileList.get(fileSeries).size()) {
+							fileList.get(fileSeries).set(position, file);
+						}
+						else fileList.get(fileSeries).add(file);
 					}
-					else fileList.get(fileSeries).add(file);
-				}
-				else {
-					while (position > fileList.get(fileSeries).size()) {
-						fileList.get(fileSeries).add(null);
+					else {
+						while (position > fileList.get(fileSeries).size()) {
+							fileList.get(fileSeries).add(null);
+						}
+						fileList.get(fileSeries).add(file);
 					}
-					fileList.get(fileSeries).add(file);
 				}
 			}
 		}
