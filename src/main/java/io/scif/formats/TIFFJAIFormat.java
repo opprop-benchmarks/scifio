@@ -38,8 +38,6 @@ import io.scif.Format;
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
 import io.scif.MissingLibraryException;
-import io.scif.common.ReflectException;
-import io.scif.common.ReflectedUniverse;
 import io.scif.config.SCIFIOConfig;
 import io.scif.gui.AWTImageTools;
 import io.scif.gui.BufferedImageReader;
@@ -58,6 +56,8 @@ import org.scijava.io.location.FileLocation;
 import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
+import org.scijava.util.ReflectException;
+import org.scijava.util.ReflectedUniverse;
 
 /**
  * TiffJAIReader is a file format reader for TIFF images. It uses the Java
@@ -161,7 +161,7 @@ public class TIFFJAIFormat extends AbstractFormat {
 			ReflectedUniverse r = null;
 
 			try {
-				r = new ReflectedUniverse(log());
+				r = new ReflectedUniverse();
 				r.exec("import javax.media.jai.NullOpImage");
 				r.exec("import javax.media.jai.OpImage");
 				r.exec("import com.sun.media.jai.codec.FileSeekableStream");
