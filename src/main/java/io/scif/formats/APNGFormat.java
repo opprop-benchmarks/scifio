@@ -646,11 +646,9 @@ public class APNGFormat extends AbstractFormat {
 				processChunk(imageIndex, plte.getLength(), plte.getOffset(), coords,
 					stream, false);
 			}
-			// FIXME: This is a bit too complicated
 			final Location loc = new BytesLocation(stream.toByteArray());
-			final DataHandle<Location> s = dataHandleService.create(loc);
-			final DataInputStream dis = new DataInputStream(new BufferedInputStream(
-				new DataHandleInputStream<>(s), 4096));
+			final DataHandleInputStream<Location> dis = new DataHandleInputStream<>(
+				dataHandleService.create(loc));
 			final BufferedImage bi = ImageIO.read(dis);
 			dis.close();
 
@@ -1054,7 +1052,7 @@ public class APNGFormat extends AbstractFormat {
 	 * used to write it can not be guaranteed valid.
 	 * </p>
 	 */
-	@Plugin(type = Translator.class, priority = Priority.LOW_PRIORITY)
+	@Plugin(type = Translator.class, priority = Priority.LOW)
 	public static class APNGTranslator extends
 		AbstractTranslator<io.scif.Metadata, Metadata>
 	{
