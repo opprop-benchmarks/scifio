@@ -1658,7 +1658,7 @@ public class AVIFormat extends AbstractFormat {
 		}
 	}
 
-	@Plugin(type = io.scif.Translator.class, priority = Priority.LOW_PRIORITY)
+	@Plugin(type = io.scif.Translator.class, priority = Priority.LOW)
 	public static class Translator extends
 		AbstractTranslator<io.scif.Metadata, Metadata>
 	{
@@ -1921,11 +1921,10 @@ public class AVIFormat extends AbstractFormat {
 			// a
 			// smaller one
 			final int[] lastDims = meta.getLastDimensions();
-			boolean smaller = false;
-			smaller = smaller && dims[0] > lastDims[0];
-			smaller = smaller && dims[1] > lastDims[1];
-			smaller = smaller && dims[2] < lastDims[2];
-			smaller = smaller && dims[3] < lastDims[3];
+			boolean smaller = dims[0] > lastDims[0] //
+				&& dims[1] > lastDims[1] //
+				&& dims[2] < lastDims[2] //
+				&& dims[3] < lastDims[3];
 			return !smaller;
 		}
 	}
