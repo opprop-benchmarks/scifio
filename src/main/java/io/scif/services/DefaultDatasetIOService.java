@@ -194,10 +194,7 @@ public class DefaultDatasetIOService extends AbstractService implements
 		try {
 			metadata = imageSaver.saveImg(destination, img, config);
 		}
-		catch (final ImgIOException exc) {
-			throw new IOException(exc);
-		}
-		catch (final IncompatibleTypeException exc) {
+		catch (ImgIOException | IncompatibleTypeException exc) {
 			throw new IOException(exc);
 		}
 		final String name = destination.getName();
@@ -213,7 +210,7 @@ public class DefaultDatasetIOService extends AbstractService implements
 			// no way to revert
 			throw new IOException("Cannot revert image of unknown origin");
 		}
-		// FIXME: this is not correct
+		// FIXME: this is only correct if the dataset is stored locally
 		final Dataset revertedDataset = open(new FileLocation(source));
 		revertedDataset.copyInto(dataset);
 	}

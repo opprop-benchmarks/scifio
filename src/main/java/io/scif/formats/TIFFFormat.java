@@ -471,7 +471,7 @@ public class TIFFFormat extends AbstractFormat {
 
 						// FIXME This logic is too crude
 						if (name.contains(".")) {
-							name = name.substring(0, name.indexOf("."));
+							name = name.substring(0, name.indexOf('.'));
 						}
 
 						if (currentName.startsWith(name) && FormatTools.checkSuffix(file

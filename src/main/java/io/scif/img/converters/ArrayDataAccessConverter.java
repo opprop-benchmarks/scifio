@@ -89,11 +89,9 @@ public class ArrayDataAccessConverter extends AbstractPlaneConverter {
 		// FIXME actually do need to pass a reader w/ metadata to the loader
 
 		// FIXME loaders are faster than byte buffers but of course slower than
-		// a
-		// direct system.arraycopy call, and slower still than passing the array
-		// directly.
-		// however that simply may not be feasible given the variety of data
-		// types.
+		// a direct system.arraycopy call, and slower still than passing the array
+		// directly. however that simply may not be feasible given the variety of
+		// data types.
 
 		if (store instanceof ByteArray) {
 			final ByteArrayLoader loader = new ByteArrayLoader(reader, config

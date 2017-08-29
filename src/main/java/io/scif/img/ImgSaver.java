@@ -243,7 +243,7 @@ public class ImgSaver extends AbstractImgIOComponent {
 		final int imageIndex, final SCIFIOConfig config) throws ImgIOException,
 		IncompatibleTypeException
 	{
-		// FIXME: this is not necessarily correct.
+		// FIXME: this is not correct.
 		writeImg(new FileLocation(img.getSource()), w, img, imageIndex, config);
 	}
 
